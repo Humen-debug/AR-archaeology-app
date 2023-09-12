@@ -1,5 +1,6 @@
 {
   "extends": "expo/tsconfig.base",
+  "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": ".",
     "lib": ["es6", "dom"],
@@ -7,5 +8,8 @@
     "noImplicitThis": true,
     "strictNullChecks": true
   },
-  "paths": { "~/*": ["./*"] }
+  "paths":{
+    "@/*":["./**/*"]
+  },
+  "include":["./**/*","custom.d.ts"]
 }

@@ -1,16 +1,25 @@
-import { Tabs } from "expo-router";
-
-import { IconButton } from "react-native-paper";
+import NavBar from "../../components/nav_bar";
+import { Tabs } from "expo-router/tabs";
+import HomeIcon from "../../assets/icons/home.svg";
+import ProfileIcon from "../../assets/icons/profile.svg";
 
 export default function TabLayout() {
   return (
-    <Tabs initialRouteName="home" screenOptions={{ headerShown: false }}>
+    <Tabs screenOptions={{ headerShown: false }} tabBar={(props) => <NavBar {...props} />}>
       <Tabs.Screen
         name="home"
         options={{
           href: "/home",
           tabBarLabel: "Home",
-          tabBarIcon: ({ color, size }) => <IconButton icon="home" iconColor={color} size={size} />,
+          tabBarIcon: ({ color, size }) => <HomeIcon fill={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          href: "/profile",
+          tabBarLabel: "Profile",
+          tabBarIcon: ({ color, size }) => <ProfileIcon fill={color} size={size} />,
         }}
       />
     </Tabs>

@@ -16,6 +16,7 @@ export default function MainBody({ children, padding }: { children: JSX.Element;
         paddingBottom: bottom,
         paddingLeft: left,
         paddingRight: right,
+        position: "relative",
       }}
     >
       {children}
