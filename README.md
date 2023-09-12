@@ -11,6 +11,14 @@ For better type annotation, typescript is recommended.
 ## Folder structure
 
 - app: stores all the pages for front-end.
-  - tabs: stores the navigation bar layout
-  - _layout: root stack/layout
+  - (tabs): contains pages having the bottom navigation bar.
+    - _layout: stores the navigation bar layout.
+    - home: Home Page shows the collections of items.
+    - profile: User account and settings
+  - _layout: root stack/layout router
+- assets: stores static assets, mainly images
+- components: stores customized components/widgets.
+- models: stores the database schema or classes
+- providers
+- styles
   
