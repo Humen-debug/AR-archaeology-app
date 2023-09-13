@@ -19,7 +19,7 @@ export default function MainBody({ children, padding }: { children: JSX.Element;
         position: "relative",
       }}
     >
-      {children}
+      <View style={{ flex: 1 }}>{children}</View>
     </View>
   );
 }

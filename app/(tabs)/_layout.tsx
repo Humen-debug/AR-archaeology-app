@@ -1,11 +1,19 @@
 import NavBar from "../../components/nav_bar";
 import { Tabs } from "expo-router/tabs";
 import HomeIcon from "../../assets/icons/home.svg";
-import ProfileIcon from "../../assets/icons/profile.svg";
+import ExploreIcon from "../../assets/icons/explore.svg";
+import { View } from "react-native";
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ headerShown: false }} tabBar={(props) => <NavBar {...props} />}>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarHideOnKeyboard: true,
+        tabBarStyle: null,
+      }}
+      tabBar={(props) => (props.state.index === 1 ? <View /> : <NavBar {...props} />)}
+    >
       <Tabs.Screen
         name="home"
         options={{
@@ -15,11 +23,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="explore"
         options={{
-          href: "/profile",
-          tabBarLabel: "Profile",
-          tabBarIcon: ({ color, size }) => <ProfileIcon fill={color} size={size} />,
+          href: "/explore",
+          tabBarLabel: "Explore",
+          tabBarIcon: ({ color, size }) => <ExploreIcon fill={color} size={size} />,
         }}
       />
     </Tabs>

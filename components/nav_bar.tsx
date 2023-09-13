@@ -59,7 +59,7 @@ export default function NavBar({ state, descriptors, navigation, insets }: Botto
                   target: route.key,
                 });
               };
-              const color = isActive ? theme.colors.grey1 : theme.colors.grey3;
+              const color = isActive ? theme.colors.highlight : theme.colors.grey1;
               return (
                 <TouchableOpacity
                   accessibilityRole="button"
@@ -81,7 +81,7 @@ export default function NavBar({ state, descriptors, navigation, insets }: Botto
             })}
           </LinearGradient>
         </View>
-        <Fab onPress={onExplorePress} />
+        {/* <Fab onPress={onExplorePress} /> */}
       </View>
     </View>
   );

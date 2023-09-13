@@ -4,15 +4,18 @@ import { theme } from "../styles";
 import { Stack } from "expo-router";
 
 import { PaperProvider } from "react-native-paper";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function RootLayout() {
   return (
     <PaperProvider theme={theme}>
-      <AuthProvider>
+      <SafeAreaProvider>
+        {/* <AuthProvider> */}
         <Stack initialRouteName="(tabs)" screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
-      </AuthProvider>
+        {/* </AuthProvider> */}
+      </SafeAreaProvider>
     </PaperProvider>
   );
 }

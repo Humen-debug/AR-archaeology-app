@@ -1,10 +1,10 @@
-import { MD2DarkTheme, useTheme } from "react-native-paper";
+import { MD3DarkTheme, useTheme } from "react-native-paper";
 
 export const theme = {
-  ...MD2DarkTheme,
+  ...MD3DarkTheme,
   myOwnProperty: true,
   colors: {
-    ...MD2DarkTheme.colors,
+    ...MD3DarkTheme.colors,
     primary: "#427e55",
     secondary: "#f4c03e",
     tertiary: "#B07f2f",
@@ -16,11 +16,13 @@ export const theme = {
     grey2: "#a4a2a2",
     grey3: "#736e6e",
     grey4: "#363535",
+    gradientBlack: ["#2D302D", "#2C2F2C"],
+    onSurfaceVariant: "white",
   },
   spacing: {
-    xs: 4,
-    sm: 8,
-    md: 12,
+    xs: 8,
+    sm: 12,
+    md: 16,
     lg: 20,
     xl: 32,
   },
