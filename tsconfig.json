@@ -11,5 +11,5 @@
   "paths":{
     "@/*":["./**/*"]
   },
-  "include":["./**/*","custom.d.ts"]
+  "include":["./**/*","./types/custom.d.ts"]
 }

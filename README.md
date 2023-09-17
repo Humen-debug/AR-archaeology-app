@@ -21,4 +21,5 @@ For better type annotation, typescript is recommended.
 - models: stores the database schema or classes
 - providers
 - styles
+- types: declared or modified types in other packages
   

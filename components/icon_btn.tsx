@@ -28,8 +28,7 @@ const _style = StyleSheet.create({
     overflow: "hidden",
   },
   gradient: {
-    width: "100%",
-    height: "100%",
+    flex: 1,
     flexShrink: 0,
     display: "flex",
     alignContent: "center",
