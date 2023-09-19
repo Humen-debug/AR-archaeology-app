@@ -8,7 +8,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 
 export default function RootLayout() {
-  const [loadedFont] = useFonts(customFonts);
+  const [loadedFont, error] = useFonts(customFonts);
   if (!loadedFont) return null;
   return (
     <PaperProvider theme={theme}>

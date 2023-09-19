@@ -88,16 +88,16 @@ interface ItemCardProps {
 const ItemCard = (props: ItemCardProps) => {
   const { item, onPress } = props;
   return (
-    <TouchableRipple onPress={onPress}>
-      <View style={_style.itemCard}>
+    <View style={_style.itemCard}>
+      <TouchableRipple onPress={onPress ?? (() => router.push(`/detail?id=${item._id}`))}>
         <ImageBackground resizeMode="cover" style={_style.itemImg} source={item.image || require("../../assets/images/demo_item.png")}>
           <LinearGradient colors={["#0000006B", "#00000000"]} start={{ x: 0.5, y: 1 }} end={{ x: 0.5, y: 0 }} style={_style.gradient} />
           <Text variant="labelSmall" style={_style.itemText} numberOfLines={2}>
             {item.name}
           </Text>
         </ImageBackground>
-      </View>
-    </TouchableRipple>
+      </TouchableRipple>
+    </View>
   );
 };
 

@@ -51,10 +51,11 @@ export default function SearchResultPage() {
             onChangeText={search}
             mode="bar"
             icon={() => null}
-            iconColor={theme.colors.grey4}
+            iconColor={theme.colors.grey1}
             elevation={0}
-            style={{ flexGrow: 1, backgroundColor: "#6D6D6D33", borderRadius: 4, paddingRight: 0 }}
-            traileringIcon={({ color }) => <SearchIcon fill={color} />}
+            style={{ flexGrow: 1, flexShrink: 1, backgroundColor: "#6D6D6D33", borderRadius: 4, paddingRight: 0 }}
+            traileringIconColor={theme.colors.grey1}
+            traileringIcon={({ color }) => <SearchIcon fill={color || theme.colors.grey1} />}
           />
           <TouchableOpacity>
             <SortIcon fill="white" />

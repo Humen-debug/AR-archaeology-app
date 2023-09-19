@@ -1,0 +1,23 @@
+# Blender 3.6.2 MTL File: 'None'
+# www.blender.org
+
+newmtl Material.001
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /Users/hiumanchau/GitHub/FYP_AR_archaeology/React-Native-Three-Fiber-Getting-Started/assets/Airmax/Users/abe/Desktop/Scarpe3D_Sparkle/02_AIRMAX/01_Airmax/textures/Airmax_Sketchfab_BaseColor.jpg
+map_Ns /Users/hiumanchau/GitHub/FYP_AR_archaeology/React-Native-Three-Fiber-Getting-Started/assets/Airmax/Users/abe/Desktop/Scarpe3D_Sparkle/02_AIRMAX/01_Airmax/textures/Airmax_Sketchfab_Roughness.png
+map_Bump -bm 1.000000 /Users/hiumanchau/GitHub/FYP_AR_archaeology/React-Native-Three-Fiber-Getting-Started/assets/Airmax/Users/abe/Desktop/Scarpe3D_Sparkle/02_AIRMAX/01_Airmax/textures/Airmax_Sketchfab_Normal.jpg
+
+newmtl _texture.002
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd scan.jpg
