@@ -3,10 +3,10 @@ import { Canvas, useFrame, useLoader, MeshProps, useThree, PerspectiveCameraProp
 import { useSpring, config } from "@react-spring/core";
 import { useGesture } from "@use-gesture/react";
 import _ from "lodash";
-import * as THREE from "three";
+
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
-import { loadObjAsync } from "expo-three";
+import { loadObjAsync, THREE } from "expo-three";
 import { useAnimatedSensor, SensorType, AnimatedSensor } from "react-native-reanimated";
 import { Mesh, TextureLoader } from "three";
 import { Asset } from "expo-asset";
