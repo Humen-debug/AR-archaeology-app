@@ -4,7 +4,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "lib": ["es6", "dom"],
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noImplicitThis": true,
     "strictNullChecks": true,
     "jsx": "react-jsx"

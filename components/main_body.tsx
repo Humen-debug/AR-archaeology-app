@@ -13,6 +13,7 @@ interface MainBodyProps {
 export default function MainBody({ children, padding, backgroundColor }: MainBodyProps): JSX.Element {
   const theme = useAppTheme();
   const { top, bottom, left, right } = padding || useSafeAreaInsets();
+
   const bgColor: string[] = backgroundColor
     ? Array.isArray(backgroundColor)
       ? backgroundColor

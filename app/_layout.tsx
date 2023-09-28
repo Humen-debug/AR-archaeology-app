@@ -6,6 +6,7 @@ import { Stack } from "expo-router";
 import { PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
+import { StatusBar } from "expo-status-bar";
 
 export default function RootLayout() {
   const [loadedFont, error] = useFonts(customFonts);
@@ -19,6 +20,7 @@ export default function RootLayout() {
           <Stack.Screen name="category" options={{}} />
           <Stack.Screen name="detail" options={{}} />
         </Stack>
+        <StatusBar style="light" />
       </SafeAreaProvider>
     </PaperProvider>
   );

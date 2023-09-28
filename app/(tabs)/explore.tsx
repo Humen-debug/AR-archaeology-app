@@ -29,8 +29,6 @@ export default function Explore() {
 
 const _style = StyleSheet.create({
   tabBar: {
-    position: "absolute",
-    left: 20,
     flexDirection: "row",
     flexShrink: 0,
     alignContent: "center",
