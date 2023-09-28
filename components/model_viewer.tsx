@@ -1,17 +1,13 @@
-import { useState, useRef, Suspense, useLayoutEffect, useEffect, useCallback } from "react";
-import { Canvas, useFrame, useLoader, MeshProps, useThree, PerspectiveCameraProps, extend } from "@react-three/fiber/native";
-import { useSpring, config } from "@react-spring/core";
-import { useGesture } from "@use-gesture/react";
+import { useState, useRef, Suspense, useLayoutEffect, useEffect, forwardRef, ForwardedRef } from "react";
+import { Canvas, useFrame, useLoader, MeshProps, useThree, PerspectiveCameraProps } from "@react-three/fiber/native";
 import _ from "lodash";
-
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
-import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 import { loadObjAsync, loadTextureAsync, THREE } from "expo-three";
-import ExpoTHREE from "expo-three";
-import { useAnimatedSensor, SensorType, AnimatedSensor } from "react-native-reanimated";
+import { AnimatedSensor } from "react-native-reanimated";
 import { Mesh, TextureLoader } from "three";
 import { Asset } from "expo-asset";
 import { Platform, ViewStyle } from "react-native";
+import OrbitControlsView from "expo-three-orbit-controls";
 
 interface ModelViewProps {
   animatedSensor?: AnimatedSensor<any>;
@@ -26,7 +22,7 @@ function Model(props: ModelViewProps & MeshProps) {
   const [texture, setTexture] = useState<THREE.Texture | null>(null);
 
   // componentDidMount
-  useEffect(() => {
+  useLayoutEffect(() => {
     const loadAsset = async () => {
       const textureAsset = Asset.fromModule(require("../assets/models/demo/scan.jpg"));
       await textureAsset.downloadAsync();
@@ -80,7 +76,6 @@ function Model(props: ModelViewProps & MeshProps) {
     }
 
     if (Array.isArray(obj)) {
-      console.log("obj is array");
       obj.forEach((it) => it?.traverse(callback));
     } else if (obj) {
       obj?.traverse(callback);
@@ -90,8 +85,8 @@ function Model(props: ModelViewProps & MeshProps) {
   useFrame(({ clock }, delta, frame) => {
     if (!meshRef) return;
     if (!meshRef.current?.rotation) return;
-    const y = clock.getElapsedTime();
-    meshRef.current.rotation.y = y;
+    // const y = clock.getElapsedTime();
+    // meshRef.current.rotation.y = y;
   });
 
   return (
@@ -101,15 +96,58 @@ function Model(props: ModelViewProps & MeshProps) {
   );
 }
 
+// solution of setting default camera: https://github.com/pmndrs/react-three-fiber/discussions/1148
+// solution of using ref.current in forwardRef: https://stackoverflow.com/questions/62238716/using-ref-current-in-react-forwardref
+const Camera = forwardRef(function Camera(props: PerspectiveCameraProps, ref: ForwardedRef<THREE.PerspectiveCamera>) {
+  const set = useThree((state) => state.set);
+  const size = useThree(({ size }) => size);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+
+  useLayoutEffect(() => {
+    if (cameraRef.current) {
+      cameraRef.current.aspect = size.width / size.height;
+      cameraRef.current.updateProjectionMatrix();
+    }
+  }, [size, props]);
+
+  useLayoutEffect(() => {
+    const node = cameraRef.current;
+    if (node) {
+      console.log("set default camera");
+
+      set({ camera: node });
+    }
+  }, [ref]);
+
+  const useForwardRef = (...refs: React.Ref<THREE.PerspectiveCamera>[]) => {
+    return (node: THREE.PerspectiveCamera | null) => {
+      refs.forEach((r) => {
+        if (typeof r === "function") {
+          r(node);
+        } else if (r) {
+          (r as React.MutableRefObject<THREE.PerspectiveCamera | null>).current = node;
+        }
+      });
+    };
+  };
+
+  //   useFrame(() => cameraRef.current?.updateMatrixWorld());
+  return <perspectiveCamera ref={useForwardRef(cameraRef, ref)} {...props} />;
+});
+
 export default function ModelViewer(props: ModelViewProps) {
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   return (
-    <Canvas onCreated={() => console.log("canvas created")} style={props.style}>
-      <ambientLight />
-      <pointLight position={[0, 2, 2]} />
-      <directionalLight />
-      <Suspense fallback={null}>
-        <Model {...props} />
-      </Suspense>
-    </Canvas>
+    <OrbitControlsView style={[props.style, { flex: 1 }]} camera={cameraRef && cameraRef.current}>
+      <Canvas onCreated={() => console.log("canvas created")}>
+        <ambientLight />
+        <pointLight position={[0, 2, 2]} />
+        <directionalLight />
+        <Camera ref={cameraRef} position={[0, 0, 10]} />
+        <Suspense fallback={null}>
+          <Model {...props} />
+        </Suspense>
+      </Canvas>
+    </OrbitControlsView>
   );
 }
