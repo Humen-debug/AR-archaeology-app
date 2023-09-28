@@ -1,16 +1,15 @@
 import { useState, useRef, Suspense, useLayoutEffect, useEffect, useCallback } from "react";
 import { useGesture } from "@use-gesture/react";
 import _ from "lodash";
-import * as THREE from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
-import { Renderer } from "expo-three";
+import { Renderer, THREE } from "expo-three";
 import { useAnimatedSensor, SensorType, AnimatedSensor } from "react-native-reanimated";
 import { Mesh, Scene, MeshBasicMaterial, PerspectiveCamera, BoxGeometry, TextureLoader } from "three";
 import { Asset } from "expo-asset";
 import { Platform, ViewStyle } from "react-native";
 
-import { GLView } from "expo-gl";
+import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 interface ModelViewProps {
@@ -46,20 +45,19 @@ export default function ModelView(props: ModelViewProps) {
         child.material.map = texture;
       }
     });
-    // object.scale.set(0.05, 0.05, 0.05);
 
     console.log(object.position);
     return object;
   };
 
-  const onContextCreate = async (gl: any) => {
+  const onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const scene = new Scene();
     const camera = new PerspectiveCamera(75, gl.drawingBufferWidth / gl.drawingBufferHeight, 0.1, 1000);
 
-    gl.canvas = {
-      width: gl.drawingBufferWidth,
-      height: gl.drawingBufferHeight,
-    };
+    // gl.canvas = {
+    //   width: gl.drawingBufferWidth,
+    //   height: gl.drawingBufferHeight,
+    // };
     // set camera position away from cube
     camera.position.z = 2;
 

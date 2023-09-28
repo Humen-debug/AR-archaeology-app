@@ -6,7 +6,8 @@ import _ from "lodash";
 
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
-import { loadObjAsync, THREE } from "expo-three";
+import { loadObjAsync, loadTextureAsync, THREE } from "expo-three";
+import ExpoTHREE from "expo-three";
 import { useAnimatedSensor, SensorType, AnimatedSensor } from "react-native-reanimated";
 import { Mesh, TextureLoader } from "three";
 import { Asset } from "expo-asset";
@@ -22,20 +23,35 @@ interface ModelViewProps {
 /// 3D model loader solution https://github.com/expo/expo-three/issues/151
 function Model(props: ModelViewProps & MeshProps) {
   const [obj, setObj] = useState<THREE.Group<THREE.Object3DEventMap> | null>(null);
-  const [texture] = useLoader(TextureLoader, [require("../assets/models/demo/scan.jpg")]);
+  const [texture, setTexture] = useState<THREE.Texture | null>(null);
 
   // componentDidMount
   useEffect(() => {
     const loadAsset = async () => {
+      const textureAsset = Asset.fromModule(require("../assets/models/demo/scan.jpg"));
+      await textureAsset.downloadAsync();
+      const { localUri: textureLocalUri, uri: textureUri } = textureAsset;
+
       var object: THREE.Group<THREE.Object3DEventMap> | THREE.Group<THREE.Object3DEventMap>[] | null | any = null;
+
       switch (Platform.OS) {
         case "android":
           object = await loadObjAsync({ asset: require("../assets/models/demo/scan.obj"), mtlAsset: require("../assets/models/demo/scan.mtl") });
-          console.log("object loaded");
+          const texture = await loadTextureAsync({ asset: require("../assets/models/demo/scan.jpg") });
+          setTexture(texture);
           setObj(object);
           break;
         default:
-          object = useLoader(OBJLoader, require("../assets/models/demo/scan.obj"));
+          const mtlAsset = Asset.fromModule(require("../assets/models/demo/scan.mtl"));
+          await mtlAsset.downloadAsync();
+          const { localUri: mtlLocalUri, uri: mtlUri } = mtlAsset;
+          const base = new TextureLoader().load(textureLocalUri || textureUri);
+          setTexture(base);
+          const objAsset = Asset.fromModule(require("../assets/models/demo/scan.obj"));
+          await objAsset.downloadAsync();
+          const { localUri: objLocalUri, uri: objUri } = objAsset;
+          //   const material = useLoader(MTLLoader, mtlLocalUri || mtlUri);
+          object = useLoader(OBJLoader, require("../assets/models/demo/scan.obj"), (loader) => console.log("loader", loader));
           if (Array.isArray(object)) {
             setObj(object[0]);
           } else if (object) {
@@ -52,21 +68,24 @@ function Model(props: ModelViewProps & MeshProps) {
   const meshRef = useRef<Mesh>(null);
   useLayoutEffect(() => {
     function callback(child: THREE.Object3D) {
+      if (!texture) return;
       if (child instanceof THREE.Mesh) {
         try {
           child.material.map = texture;
+          child.material.normalMap = texture;
         } catch {
           console.log("cannot set material map");
         }
       }
     }
-    console.log("loading texture");
+
     if (Array.isArray(obj)) {
-      for (var it of obj) it?.traverse(callback);
-    } else {
+      console.log("obj is array");
+      obj.forEach((it) => it?.traverse(callback));
+    } else if (obj) {
       obj?.traverse(callback);
     }
-  }, [obj]);
+  }, [obj, texture]);
 
   useFrame(({ clock }, delta, frame) => {
     if (!meshRef) return;
@@ -86,7 +105,7 @@ export default function ModelViewer(props: ModelViewProps) {
   return (
     <Canvas onCreated={() => console.log("canvas created")} style={props.style}>
       <ambientLight />
-      <pointLight position={[0, 10, 10]} />
+      <pointLight position={[0, 2, 2]} />
       <directionalLight />
       <Suspense fallback={null}>
         <Model {...props} />

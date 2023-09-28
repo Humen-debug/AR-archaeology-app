@@ -4,3 +4,5 @@ declare module "*.svg" {
   export const ReactComponent: React.FunctionComponent<SvgProps & { fill?: string }>;
   export default content;
 }
+
+declare type PossibleAsset = number | string | Expo.Asset;
