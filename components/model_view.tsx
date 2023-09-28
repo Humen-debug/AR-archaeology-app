@@ -1,6 +1,4 @@
 import { useState, useRef, Suspense, useLayoutEffect, useEffect, useCallback } from "react";
-import { Canvas, useFrame, useLoader, MeshProps, useThree, PerspectiveCameraProps, extend } from "@react-three/fiber/native";
-import { useSpring, config } from "@react-spring/core";
 import { useGesture } from "@use-gesture/react";
 import _ from "lodash";
 import * as THREE from "three";
@@ -22,55 +20,6 @@ interface ModelViewProps {
   textureURL?: string[] | string;
   style?: ViewStyle;
 }
-/// 3D model loader solution https://github.com/expo/expo-three/issues/151
-// function Model(props: ModelViewProps & MeshProps) {
-//   let obj: THREE.Group<THREE.Object3DEventMap> | null = null;
-//   let texture: THREE.Texture | null = null;
-
-//   const loadAsset = async () => {
-//     texture = await loadTextureAsync({ asset: require("../assets/models/demo/scan.jpg") });
-//     obj = await loadObjAsync({ asset: require("../assets/models/demo/scan.obj") });
-//   };
-
-//   // componentDidMount
-//   useEffect(() => {
-//     loadAsset()
-//       .catch((error) => console.log("error", error))
-//       .then(() => console.log("loaded"));
-//   }, []);
-
-//   const meshRef = useRef<Mesh>(null);
-//   useLayoutEffect(() => {
-//     function callback(child: THREE.Object3D) {
-//       if (child instanceof THREE.Mesh) {
-//         try {
-//           child.material.map = texture;
-//         } catch {
-//           console.log("cannot set material map");
-//         }
-//       }
-//     }
-
-//     if (Array.isArray(obj)) {
-//       for (var it of obj) it?.traverse(callback);
-//     } else {
-//       obj?.traverse(callback);
-//     }
-//   }, [obj]);
-
-//   useFrame(({ clock }, delta, frame) => {
-//     if (!meshRef) return;
-//     if (!meshRef.current?.rotation) return;
-//     const y = clock.getElapsedTime();
-//     meshRef.current.rotation.y = y;
-//   });
-
-//   return (
-//     <mesh ref={meshRef} {...props}>
-//       {obj ? <primitive object={obj} scale={0.05} /> : null}
-//     </mesh>
-//   );
-// }
 
 export default function ModelView(props: ModelViewProps) {
   const createObj = async () => {
@@ -97,7 +46,7 @@ export default function ModelView(props: ModelViewProps) {
         child.material.map = texture;
       }
     });
-    object.scale.set(0.05, 0.05, 0.05);
+    // object.scale.set(0.05, 0.05, 0.05);
 
     console.log(object.position);
     return object;
@@ -122,20 +71,24 @@ export default function ModelView(props: ModelViewProps) {
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     const cube = new THREE.Mesh(geometry, material);
     scene.add(cube);
+    console.log(cube.matrixWorld);
 
     const controls = new OrbitControls(camera, renderer.domElement);
 
-    camera.position.set(0, 20, 10);
+    // camera.position.set(0, 2, 2);
     controls.update();
     // render object
-    // const obj = await createObj();
-    // obj.position.copy(new THREE.Vector3(-400, 0, 0));
-    // scene.add(obj);
+    var target = new THREE.Vector3();
+    const obj = await createObj();
+    if (obj && obj.children) {
+      obj.children.map((child) => console.log(child.localToWorld(target), child.matrixWorld));
+    }
+    obj.position.copy(new THREE.Vector3(-400, 0, 0));
+    scene.add(obj);
 
     // create render function
     const render = () => {
       requestAnimationFrame(render);
-
       controls.update();
       renderer.render(scene, camera);
       gl.endFrameEXP();

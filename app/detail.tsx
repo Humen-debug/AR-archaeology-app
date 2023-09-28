@@ -13,6 +13,7 @@ import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { router, useLocalSearchParams } from "expo-router";
 import IconBtn from "../components/icon_btn";
 import ModelView from "../components/model_view";
+import ModelViewer from "../components/model_viewer";
 
 export default function DetailPage() {
   const theme = useAppTheme();
@@ -33,7 +34,8 @@ export default function DetailPage() {
             <IconBtn icon={<CreateARIcon fill={theme.colors.grey1} />} onPress={() => {}} />
           </View>
         </View>
-        <ModelView />
+        {/* <ModelView /> */}
+        <ModelViewer />
         <View style={_style.columnLayout}>
           <Text variant="headlineSmall">Urartu</Text>
           <View style={_style.rowLayout}>
