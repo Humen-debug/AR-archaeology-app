@@ -9,10 +9,9 @@ import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import ShareIcon from "../assets/icons/share.svg";
 import CreateARIcon from "../assets/icons/create-ar.svg";
 import { Artifact } from "models/artifact";
-import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { router, useLocalSearchParams } from "expo-router";
 import IconBtn from "../components/icon_btn";
-import ModelView from "../components/model_view";
+import { ActivityIndicator } from "react-native";
 import ModelViewer from "../components/model_viewer";
 import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods, BottomSheetView } from "@gorhom/bottom-sheet";
 import AudioPlayer from "../components/audio_player";
@@ -21,10 +20,10 @@ export default function DetailPage() {
   const theme = useAppTheme();
   const params = useLocalSearchParams<{ id?: string }>();
   const [bookmarked, setBookmarked] = useState(false);
+  const [loading, setLoading] = useState(false);
   // ref
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetScrollRef = useRef<BottomSheetScrollViewMethods | null>(null);
-
   // variables
   const snapPoints = useMemo(() => ["50%", "85%"], []);
   // TODO: load item by id
@@ -42,8 +41,14 @@ export default function DetailPage() {
             <IconBtn icon={<CreateARIcon fill={theme.colors.grey1} />} onPress={() => {}} />
           </View>
         </View>
-
-        <ModelViewer style={{ flex: 1 / 2 }} />
+        <View style={{ flex: 0.5, position: "relative" }}>
+          <ModelViewer style={{ flex: 1 }} setLoading={setLoading} />
+          {loading && (
+            <View style={_style.centerContainer}>
+              <ActivityIndicator size="large" animating={loading} />
+            </View>
+          )}
+        </View>
         <BottomSheet
           ref={bottomSheetRef}
           snapPoints={snapPoints}
@@ -125,5 +130,14 @@ const _style = StyleSheet.create({
     shadowOffset: { width: 0, height: -32 },
     shadowOpacity: 0.2,
     shadowRadius: 16,
+  },
+  centerContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

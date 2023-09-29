@@ -7,7 +7,6 @@ import { AnimatedSensor } from "react-native-reanimated";
 import { Mesh, TextureLoader } from "three";
 import { Asset } from "expo-asset";
 import { Platform, ViewStyle } from "react-native";
-import OrbitControlsView from "expo-three-orbit-controls";
 
 interface ModelViewProps {
   animatedSensor?: AnimatedSensor<any>;
@@ -15,14 +14,16 @@ interface ModelViewProps {
   materialURL?: string[] | string;
   textureURL?: string[] | string;
   style?: ViewStyle;
+  setLoading: (value: boolean) => void;
 }
 /// 3D model loader solution https://github.com/expo/expo-three/issues/151
 function Model(props: ModelViewProps & MeshProps) {
-  const [obj, setObj] = useState<THREE.Group<THREE.Object3DEventMap> | null>(null);
+  const [obj, setObj] = useState<THREE.Group<THREE.Object3DEventMap> | THREE.Group<THREE.Object3DEventMap>[] | null>(null);
   const [texture, setTexture] = useState<THREE.Texture | null>(null);
 
   // componentDidMount
   useLayoutEffect(() => {
+    props.setLoading(obj === null);
     const loadAsset = async () => {
       const textureAsset = Asset.fromModule(require("../assets/models/demo/scan.jpg"));
       await textureAsset.downloadAsync();
@@ -49,7 +50,7 @@ function Model(props: ModelViewProps & MeshProps) {
           //   const material = useLoader(MTLLoader, mtlLocalUri || mtlUri);
           object = useLoader(OBJLoader, require("../assets/models/demo/scan.obj"), (loader) => console.log("loader", loader));
           if (Array.isArray(object)) {
-            setObj(object[0]);
+            setObj(object);
           } else if (object) {
             setObj(object);
           }
@@ -58,7 +59,8 @@ function Model(props: ModelViewProps & MeshProps) {
     };
     loadAsset()
       .catch((error) => console.log("error", error))
-      .then(() => console.log("loaded"));
+      .then(() => console.log("loaded"))
+      .finally(() => props.setLoading(false));
   }, []);
 
   const meshRef = useRef<Mesh>(null);
@@ -137,7 +139,6 @@ const Camera = forwardRef(function Camera(props: PerspectiveCameraProps, ref: Fo
 export default function ModelViewer(props: ModelViewProps) {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   return (
-    // <OrbitControlsView style={[props.style, { flex: 1 }]} camera={cameraRef && cameraRef.current}>
     <Canvas onCreated={() => console.log("canvas created")} style={props.style}>
       <ambientLight />
       <pointLight position={[0, 2, 2]} />
@@ -147,6 +148,5 @@ export default function ModelViewer(props: ModelViewProps) {
         <Model {...props} />
       </Suspense>
     </Canvas>
-    // </OrbitControlsView>
   );
 }
