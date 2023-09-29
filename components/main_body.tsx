@@ -3,6 +3,7 @@ import { useAppTheme } from "../styles";
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { ReactElement, ReactNode } from "react";
+import _ from "lodash";
 
 interface MainBodyProps {
   children?: ReactElement;
@@ -12,7 +13,7 @@ interface MainBodyProps {
 
 export default function MainBody({ children, padding, backgroundColor }: MainBodyProps): JSX.Element {
   const theme = useAppTheme();
-  const { top, bottom, left, right } = padding || useSafeAreaInsets();
+  const { top, bottom, left, right } = { ...useSafeAreaInsets(), ..._.omitBy(padding, _.isNull) } as EdgeInsets;
 
   const bgColor: string[] = backgroundColor
     ? Array.isArray(backgroundColor)

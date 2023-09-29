@@ -91,7 +91,7 @@ function Model(props: ModelViewProps & MeshProps) {
 
   return (
     <mesh ref={meshRef} {...props}>
-      {obj ? <primitive object={obj} scale={0.05} /> : null}
+      {obj ? <primitive object={obj} scale={0.1} /> : null}
     </mesh>
   );
 }
@@ -137,16 +137,16 @@ const Camera = forwardRef(function Camera(props: PerspectiveCameraProps, ref: Fo
 export default function ModelViewer(props: ModelViewProps) {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   return (
-    <OrbitControlsView style={[props.style, { flex: 1 }]} camera={cameraRef && cameraRef.current}>
-      <Canvas onCreated={() => console.log("canvas created")}>
-        <ambientLight />
-        <pointLight position={[0, 2, 2]} />
-        <directionalLight />
-        <Camera ref={cameraRef} position={[0, 0, 10]} />
-        <Suspense fallback={null}>
-          <Model {...props} />
-        </Suspense>
-      </Canvas>
-    </OrbitControlsView>
+    // <OrbitControlsView style={[props.style, { flex: 1 }]} camera={cameraRef && cameraRef.current}>
+    <Canvas onCreated={() => console.log("canvas created")} style={props.style}>
+      <ambientLight />
+      <pointLight position={[0, 2, 2]} />
+      <directionalLight />
+      <Camera ref={cameraRef} position={[0, 0, 10]} />
+      <Suspense fallback={null}>
+        <Model {...props} />
+      </Suspense>
+    </Canvas>
+    // </OrbitControlsView>
   );
 }
