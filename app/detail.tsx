@@ -34,7 +34,7 @@ export default function DetailPage() {
             <IconBtn icon={<CreateARIcon fill={theme.colors.grey1} />} onPress={() => {}} />
           </View>
         </View>
-        <ModelView />
+
         <ModelViewer />
         <View style={_style.columnLayout}>
           <Text variant="headlineSmall">Urartu</Text>

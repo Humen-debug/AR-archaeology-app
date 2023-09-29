@@ -21,6 +21,7 @@ export default function TabLayout() {
           options={{
             href: "/home",
             tabBarLabel: "Home",
+
             tabBarIcon: ({ color, size }) => <HomeIcon fill={color} size={size} />,
           }}
         />

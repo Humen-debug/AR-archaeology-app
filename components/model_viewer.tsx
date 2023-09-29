@@ -114,7 +114,7 @@ const Camera = forwardRef(function Camera(props: PerspectiveCameraProps, ref: Fo
     const node = cameraRef.current;
     if (node) {
       console.log("set default camera");
-
+      node.lookAt(new THREE.Vector3(0, 0, 0));
       set({ camera: node });
     }
   }, [ref]);
@@ -131,7 +131,6 @@ const Camera = forwardRef(function Camera(props: PerspectiveCameraProps, ref: Fo
     };
   };
 
-  //   useFrame(() => cameraRef.current?.updateMatrixWorld());
   return <perspectiveCamera ref={useForwardRef(cameraRef, ref)} {...props} />;
 });
 
