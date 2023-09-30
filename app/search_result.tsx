@@ -36,76 +36,74 @@ export default function SearchResultPage() {
   }));
 
   return (
-    <BottomSheetModalProvider>
-      <MainBody backgroundColor={theme.colors.gradientBackground} padding={{ top: 0 }}>
-        <>
-          <View
-            style={[
-              _style.header,
-              {
-                backgroundColor: theme.colors.background,
-                paddingTop: useSafeAreaInsets().top,
-                padding: theme.spacing.md,
-                gap: theme.spacing.sm,
-              },
-            ]}
-          >
-            <TouchableOpacity onPress={() => router.back()}>
-              <ChevronLeftIcon fill="white" />
-            </TouchableOpacity>
-            <Searchbar
-              placeholder="Search"
-              value={searchText}
-              onChangeText={search}
-              mode="bar"
-              icon={() => null}
-              iconColor={theme.colors.grey1}
-              elevation={0}
-              style={{ flexGrow: 1, flexShrink: 1, backgroundColor: "#6D6D6D33", borderRadius: 4, paddingRight: 0 }}
-              traileringIconColor={theme.colors.grey1}
-              traileringIcon={({ color }) => <SearchIcon fill={color || theme.colors.grey1} />}
-            />
-            <TouchableOpacity
-              onPress={() => {
-                bottomSheetModalRef.current?.present();
-              }}
-            >
-              <SortIcon fill="white" />
-            </TouchableOpacity>
-          </View>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            data={items}
-            renderItem={({ item }) => <ItemCard item={item} />}
-            columnWrapperStyle={{ gap: theme.spacing.sm, paddingBottom: theme.spacing.md, justifyContent: "flex-start" }}
-            numColumns={2}
-            keyExtractor={(item, index) => item._id}
-            style={{ padding: theme.spacing.md }}
+    <MainBody backgroundColor={theme.colors.gradientBackground} padding={{ top: 0 }}>
+      <>
+        <View
+          style={[
+            _style.header,
+            {
+              backgroundColor: theme.colors.background,
+              paddingTop: useSafeAreaInsets().top,
+              padding: theme.spacing.md,
+              gap: theme.spacing.sm,
+            },
+          ]}
+        >
+          <TouchableOpacity onPress={() => router.back()}>
+            <ChevronLeftIcon fill="white" />
+          </TouchableOpacity>
+          <Searchbar
+            placeholder="Search"
+            value={searchText}
+            onChangeText={search}
+            mode="bar"
+            icon={() => null}
+            iconColor={theme.colors.grey1}
+            elevation={0}
+            style={{ flexGrow: 1, flexShrink: 1, backgroundColor: "#6D6D6D33", borderRadius: 4, paddingRight: 0 }}
+            traileringIconColor={theme.colors.grey1}
+            traileringIcon={({ color }) => <SearchIcon fill={color || theme.colors.grey1} />}
           />
-          <SortFilterSheet
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            snapPoints={snapPoints}
-            filters={filters}
-            setFilter={(item) => {
-              setFilters((old) => {
-                const items = [...old];
-                const idx = items.indexOf(item);
-
-                if (idx === -1) {
-                  items.push(item);
-                } else {
-                  items.splice(idx, 1);
-                }
-
-                return items;
-              });
+          <TouchableOpacity
+            onPress={() => {
+              bottomSheetModalRef.current?.present();
             }}
-            ref={bottomSheetModalRef}
-          />
-        </>
-      </MainBody>
-    </BottomSheetModalProvider>
+          >
+            <SortIcon fill="white" />
+          </TouchableOpacity>
+        </View>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={items}
+          renderItem={({ item }) => <ItemCard item={item} />}
+          columnWrapperStyle={{ gap: theme.spacing.sm, paddingBottom: theme.spacing.md, justifyContent: "flex-start" }}
+          numColumns={2}
+          keyExtractor={(item, index) => item._id}
+          style={{ padding: theme.spacing.md }}
+        />
+        <SortFilterSheet
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          snapPoints={snapPoints}
+          filters={filters}
+          setFilter={(item) => {
+            setFilters((old) => {
+              const items = [...old];
+              const idx = items.indexOf(item);
+
+              if (idx === -1) {
+                items.push(item);
+              } else {
+                items.splice(idx, 1);
+              }
+
+              return items;
+            });
+          }}
+          ref={bottomSheetModalRef}
+        />
+      </>
+    </MainBody>
   );
 }
 

@@ -15,12 +15,14 @@ import { ActivityIndicator } from "react-native";
 import ModelViewer from "../components/model_viewer";
 import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods, BottomSheetView } from "@gorhom/bottom-sheet";
 import AudioPlayer from "../components/audio_player";
+import ErrorIcon from "../assets/icons/error-outline.svg";
 
 export default function DetailPage() {
   const theme = useAppTheme();
   const params = useLocalSearchParams<{ id?: string }>();
   const [bookmarked, setBookmarked] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [modelError, setModelError] = useState(null);
   // ref
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetScrollRef = useRef<BottomSheetScrollViewMethods | null>(null);
@@ -42,10 +44,15 @@ export default function DetailPage() {
           </View>
         </View>
         <View style={{ flex: 0.5, position: "relative" }}>
-          <ModelViewer style={{ flex: 1 }} setLoading={setLoading} />
+          <ModelViewer style={{ flex: 1 }} setLoading={setLoading} setError={setModelError} />
           {loading && (
             <View style={_style.centerContainer}>
               <ActivityIndicator size="large" animating={loading} />
+            </View>
+          )}
+          {modelError && (
+            <View style={_style.centerContainer}>
+              <ErrorIcon fill="white" />
             </View>
           )}
         </View>

@@ -7,6 +7,7 @@ import { AnimatedSensor } from "react-native-reanimated";
 import { Mesh, TextureLoader } from "three";
 import { Asset } from "expo-asset";
 import { Platform, ViewStyle } from "react-native";
+import OrbitControlsView from "expo-three-orbit-controls";
 
 interface ModelViewProps {
   animatedSensor?: AnimatedSensor<any>;
@@ -15,9 +16,15 @@ interface ModelViewProps {
   textureURL?: string[] | string;
   style?: ViewStyle;
   setLoading: (value: boolean) => void;
+  setError: (value: any) => void;
 }
+
+interface ModelProps {
+  setObjPos: (pos: THREE.Vector3) => void;
+}
+
 /// 3D model loader solution https://github.com/expo/expo-three/issues/151
-function Model(props: ModelViewProps & MeshProps) {
+function Model(props: ModelViewProps & ModelProps & MeshProps) {
   const [obj, setObj] = useState<THREE.Group<THREE.Object3DEventMap> | THREE.Group<THREE.Object3DEventMap>[] | null>(null);
   const [texture, setTexture] = useState<THREE.Texture | null>(null);
 
@@ -58,7 +65,7 @@ function Model(props: ModelViewProps & MeshProps) {
       }
     };
     loadAsset()
-      .catch((error) => console.log("error", error))
+      .catch((error) => props.setError(error))
       .then(() => console.log("loaded"))
       .finally(() => props.setLoading(false));
   }, []);
@@ -79,16 +86,18 @@ function Model(props: ModelViewProps & MeshProps) {
 
     if (Array.isArray(obj)) {
       obj.forEach((it) => it?.traverse(callback));
+      props.setObjPos(obj[0].position);
     } else if (obj) {
       obj?.traverse(callback);
+      props.setObjPos(obj.position);
     }
   }, [obj, texture]);
 
   useFrame(({ clock }, delta, frame) => {
     if (!meshRef) return;
     if (!meshRef.current?.rotation) return;
-    // const y = clock.getElapsedTime();
-    // meshRef.current.rotation.y = y;
+    const y = clock.getElapsedTime();
+    meshRef.current.rotation.y = y;
   });
 
   return (
@@ -100,26 +109,37 @@ function Model(props: ModelViewProps & MeshProps) {
 
 // solution of setting default camera: https://github.com/pmndrs/react-three-fiber/discussions/1148
 // solution of using ref.current in forwardRef: https://stackoverflow.com/questions/62238716/using-ref-current-in-react-forwardref
-const Camera = forwardRef(function Camera(props: PerspectiveCameraProps, ref: ForwardedRef<THREE.PerspectiveCamera>) {
+const Camera = forwardRef(function Camera(
+  props: PerspectiveCameraProps & { objPos: THREE.Vector3 | null },
+  ref: ForwardedRef<THREE.PerspectiveCamera>
+) {
   const set = useThree((state) => state.set);
   const size = useThree(({ size }) => size);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
 
   useLayoutEffect(() => {
-    if (cameraRef.current) {
-      cameraRef.current.aspect = size.width / size.height;
-      cameraRef.current.updateProjectionMatrix();
+    const node = cameraRef.current;
+    if (node) {
+      node.aspect = size.width / size.height;
+      node.updateProjectionMatrix();
     }
-  }, [size, props]);
+  }, [size]);
 
   useLayoutEffect(() => {
     const node = cameraRef.current;
     if (node) {
       console.log("set default camera");
-      node.lookAt(new THREE.Vector3(0, 0, 0));
       set({ camera: node });
     }
   }, [ref]);
+
+  useEffect(() => {
+    const node = cameraRef.current;
+    if (node && props.objPos) {
+      console.log("look at obj position:", props.objPos);
+      node.lookAt(props.objPos);
+    }
+  }, [props]);
 
   const useForwardRef = (...refs: React.Ref<THREE.PerspectiveCamera>[]) => {
     return (node: THREE.PerspectiveCamera | null) => {
@@ -138,14 +158,15 @@ const Camera = forwardRef(function Camera(props: PerspectiveCameraProps, ref: Fo
 
 export default function ModelViewer(props: ModelViewProps) {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const [objPos, setObjPos] = useState<THREE.Vector3 | null>(null);
   return (
     <Canvas onCreated={() => console.log("canvas created")} style={props.style}>
       <ambientLight />
       <pointLight position={[0, 2, 2]} />
       <directionalLight />
-      <Camera ref={cameraRef} position={[0, 0, 10]} />
+      <Camera ref={cameraRef} objPos={objPos} position={[0, 0, 10]} />
       <Suspense fallback={null}>
-        <Model {...props} />
+        <Model setObjPos={setObjPos} {...props} />
       </Suspense>
     </Canvas>
   );
