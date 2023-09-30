@@ -16,6 +16,7 @@ import ModelViewer from "../components/model_viewer";
 import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods, BottomSheetView } from "@gorhom/bottom-sheet";
 import AudioPlayer from "../components/audio_player";
 import ErrorIcon from "../assets/icons/error-outline.svg";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function DetailPage() {
   const theme = useAppTheme();
@@ -23,26 +24,18 @@ export default function DetailPage() {
   const [bookmarked, setBookmarked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [modelError, setModelError] = useState(null);
+
   // ref
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetScrollRef = useRef<BottomSheetScrollViewMethods | null>(null);
   // variables
   const snapPoints = useMemo(() => ["50%", "85%"], []);
+
+  const { top } = useSafeAreaInsets();
   // TODO: load item by id
   return (
     <MainBody backgroundColor={theme.colors.gradientBackground} padding={{ left: theme.spacing.md, right: theme.spacing.md }}>
       <>
-        <View style={[_style.rowLayout, { justifyContent: "space-between" }]}>
-          <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
-          <View style={[_style.rowLayout, { gap: theme.spacing.sm }]}>
-            <IconBtn icon={<ShareIcon fill={theme.colors.grey1} />} onPress={() => {}} />
-            <IconBtn
-              icon={bookmarked ? <BookmarkIcon fill={theme.colors.grey1} /> : <BookmarkOutlineIcon fill={theme.colors.grey1} />}
-              onPress={() => setBookmarked(!bookmarked)}
-            />
-            <IconBtn icon={<CreateARIcon fill={theme.colors.grey1} />} onPress={() => {}} />
-          </View>
-        </View>
         <View style={{ flex: 0.5, position: "relative" }}>
           <ModelViewer style={{ flex: 1 }} setLoading={setLoading} setError={setModelError} />
           {loading && (
@@ -111,6 +104,23 @@ export default function DetailPage() {
             </View>
           </BottomSheetScrollView>
         </BottomSheet>
+        {/* Header */}
+        <View
+          style={[
+            _style.rowLayout,
+            { justifyContent: "space-between", position: "absolute", top: top, left: 0, right: 0, paddingHorizontal: theme.spacing.md },
+          ]}
+        >
+          <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
+          <View style={[_style.rowLayout, { gap: theme.spacing.sm }]}>
+            <IconBtn icon={<ShareIcon fill={theme.colors.grey1} />} onPress={() => {}} />
+            <IconBtn
+              icon={bookmarked ? <BookmarkIcon fill={theme.colors.grey1} /> : <BookmarkOutlineIcon fill={theme.colors.grey1} />}
+              onPress={() => setBookmarked(!bookmarked)}
+            />
+            <IconBtn icon={<CreateARIcon fill={theme.colors.grey1} />} onPress={() => {}} />
+          </View>
+        </View>
       </>
     </MainBody>
   );

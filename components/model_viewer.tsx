@@ -52,20 +52,35 @@ function Model(props: ModelViewProps & ModelProps & MeshProps) {
           setObj(object);
           break;
         default:
+          const loadManager = new THREE.LoadingManager();
+          loadManager.onProgress = function (item, loaded, total) {
+            console.log(item);
+            console.log(`${(loaded / total) * 100}% loaded`);
+          };
+          loadManager.onError = function (url) {
+            console.log(`An error on "${url}"`);
+          };
+
           const mtlAsset = Asset.fromModule(require("../assets/models/demo/material.mtl"));
           await mtlAsset.downloadAsync();
           const { localUri: mtlLocalUri, uri: mtlUri } = mtlAsset;
-          const base = new TextureLoader().load(textureLocalUri || textureUri);
-          setTexture(base);
+          try {
+            const base = new TextureLoader().load(textureLocalUri || textureUri);
+            setTexture(base);
+          } catch (error) {
+            console.log("unable to load texture");
+            throw error;
+          }
+
+          const material = await new MTLLoader(loadManager).loadAsync(mtlAsset.localUri || mtlAsset.uri);
+          material.preload();
+
           const objAsset = Asset.fromModule(require("../assets/models/demo/object.obj"));
           await objAsset.downloadAsync();
           const { localUri: objLocalUri, uri: objUri } = objAsset;
-          const material = useLoader(MTLLoader, mtlLocalUri || mtlUri);
 
-          object = useLoader(OBJLoader, require("../assets/models/demo/object.obj"), (loader) => {
-            material.preload();
-            loader.setMaterials(material);
-          });
+          object = await new OBJLoader(loadManager).setMaterials(material).loadAsync(objAsset.localUri || objAsset.uri);
+
           if (Array.isArray(object)) {
             setObj(object);
           } else if (object) {
@@ -75,7 +90,10 @@ function Model(props: ModelViewProps & ModelProps & MeshProps) {
       }
     };
     loadAsset()
-      .catch((error) => props.setError(error))
+      .catch((error) => {
+        props.setError(error);
+        console.log(error);
+      })
       .then(() => console.log("loaded"))
       .finally(() => props.setLoading(false));
   }, []);
@@ -109,70 +127,6 @@ function Model(props: ModelViewProps & ModelProps & MeshProps) {
   );
 }
 
-// solution of setting default camera: https://github.com/pmndrs/react-three-fiber/discussions/1148
-// solution of using ref.current in forwardRef: https://stackoverflow.com/questions/62238716/using-ref-current-in-react-forwardref
-
-const Camera = forwardRef(function Camera(
-  props: PerspectiveCameraProps & { objPos: THREE.Vector3 | null },
-  ref: ForwardedRef<THREE.PerspectiveCamera>
-) {
-  const set = useThree((state) => state.set);
-  const size = useThree(({ size }) => size);
-  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-
-  useLayoutEffect(() => {
-    const node = cameraRef.current;
-    if (node) {
-      node.aspect = size.width / size.height;
-      node.updateProjectionMatrix();
-    }
-  }, [size]);
-
-  useLayoutEffect(() => {
-    const node = cameraRef.current;
-    if (node) {
-      console.log("set default camera");
-      //   initControls();
-      set({ camera: node });
-    }
-  }, [ref]);
-
-  useEffect(() => {
-    const node = cameraRef.current;
-    if (node && props.objPos) {
-      console.log("look at obj position:", props.objPos);
-      node.lookAt(props.objPos);
-    }
-  }, [props]);
-
-  const initControls = () => {
-    const camera = cameraRef.current;
-    if (!camera) return;
-    const controls = new OrbitControls(camera);
-    controls.enableZoom = true;
-    controls.enableRotate = true;
-    // The nearest distance between object and camera
-    controls.minDistance = 200;
-    // The furthest distance
-
-    controls.update();
-  };
-
-  const useForwardRef = (...refs: React.Ref<THREE.PerspectiveCamera>[]) => {
-    return (node: THREE.PerspectiveCamera | null) => {
-      refs.forEach((r) => {
-        if (typeof r === "function") {
-          r(node);
-        } else if (r) {
-          (r as React.MutableRefObject<THREE.PerspectiveCamera | null>).current = node;
-        }
-      });
-    };
-  };
-
-  return <perspectiveCamera ref={useForwardRef(cameraRef, ref)} {...props} />;
-});
-
 // solution of orbit control without @react-three/drei: https://codesandbox.io/s/react-three-fiber-orbit-controls-without-drei-7c11y
 function CameraControls(props: PerspectiveCameraProps & { objPos?: THREE.Vector3 }) {
   // Get a reference to the Three.js Camera, and the canvas html element.
@@ -187,7 +141,7 @@ function CameraControls(props: PerspectiveCameraProps & { objPos?: THREE.Vector3
   const controls = useRef<OrbitControls | null>(null);
   useFrame((state) => {
     const control = controls.current;
-    if (control) {
+    if (control && control.autoRotate) {
       control.update();
     }
   });
@@ -196,12 +150,19 @@ function CameraControls(props: PerspectiveCameraProps & { objPos?: THREE.Vector3
     const control = controls.current;
     if (control) {
       if (props.objPos) camera.lookAt(props.objPos);
+      control.addEventListener("start", () => console.log("start dragging"));
     }
-  }, []);
+    return () => {
+      if (control) {
+        control.dispose();
+      }
+    };
+  }, [camera, domElement]);
   return (
     <orbitControls
       ref={controls}
       args={[camera, domElement]}
+      enabled={true}
       enableZoom={true}
       enableRotate={true}
       enablePan={true}
@@ -224,9 +185,12 @@ export default function ModelViewer(props: ModelViewProps) {
       onCreated={(state) => {
         console.log("canvas created");
       }}
+      shadows
+      gl={{ preserveDrawingBuffer: true, alpha: true }}
       style={props.style}
     >
       <CameraControls objPos={objPos} position={[0, 0, 10]} />
+
       <ambientLight />
       <pointLight position={[0, 0, 2]} />
       <directionalLight />
