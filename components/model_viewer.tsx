@@ -7,7 +7,6 @@ import { AnimatedSensor } from "react-native-reanimated";
 import { Mesh, TextureLoader } from "three";
 import { Asset } from "expo-asset";
 import { Platform, ViewStyle } from "react-native";
-import OrbitControlsView from "expo-three-orbit-controls";
 
 interface ModelViewProps {
   animatedSensor?: AnimatedSensor<any>;

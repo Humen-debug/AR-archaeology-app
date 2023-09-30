@@ -1,16 +1,16 @@
 import { Searchbar, Text, TouchableRipple, Button } from "react-native-paper";
 import { useAppTheme } from "../../styles";
 import MainBody from "../../components/main_body";
-import { View, ScrollView, GestureResponderEvent, Image, StyleSheet, ImageBackground, Linking } from "react-native";
+import { View, ScrollView, GestureResponderEvent, Image, StyleSheet, ImageBackground } from "react-native";
 import { useState } from "react";
 import SearchIcon from "../../assets/icons/search.svg";
 import BookMarkOutlineIcon from "../../assets/icons/bookmark-outline.svg";
-
+import * as Linking from "expo-linking";
 import { Artifact } from "models/artifact";
 import { LinearGradient } from "expo-linear-gradient";
 import { FlatList } from "react-native-gesture-handler";
 import IconBtn from "../../components/icon_btn";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
 
 export default function Home() {
