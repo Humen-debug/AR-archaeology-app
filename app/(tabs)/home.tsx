@@ -1,7 +1,7 @@
 import { Searchbar, Text, TouchableRipple, Button } from "react-native-paper";
 import { useAppTheme } from "../../styles";
 import MainBody from "../../components/main_body";
-import { View, ScrollView, GestureResponderEvent, Image, StyleSheet, ImageBackground } from "react-native";
+import { View, ScrollView, GestureResponderEvent, Image, StyleSheet, ImageBackground, Linking } from "react-native";
 import { useState } from "react";
 import SearchIcon from "../../assets/icons/search.svg";
 import BookMarkOutlineIcon from "../../assets/icons/bookmark-outline.svg";
@@ -10,7 +10,8 @@ import { Artifact } from "models/artifact";
 import { LinearGradient } from "expo-linear-gradient";
 import { FlatList } from "react-native-gesture-handler";
 import IconBtn from "../../components/icon_btn";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
+import { TouchableOpacity } from "@gorhom/bottom-sheet";
 
 export default function Home() {
   const theme = useAppTheme();
@@ -20,16 +21,24 @@ export default function Home() {
   const search = (query: string) => setSearchText(query);
 
   // for dev use
-  const categories: String[] = ["Daily Features", "Antiquities"];
+  const categories: String[] = ["Daily Features", "Antiquities", "Artifacts"];
   // for dev use
   const items: Artifact[] = Array.from({ length: 5 }, (_, i) => ({
     _id: `${i}`,
     name: "The 8th century reliquary hand of Saint Abulmuse",
   }));
 
+  const openAPSAP = async () => {
+    const url = "http://openarchaeology.org/home/index";
+    if (await Linking.canOpenURL(url)) {
+      Linking.openURL(url);
+    }
+  };
+
   return (
     <MainBody>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView style={_style.scrollView} contentContainerStyle={_style.contentContainer}>
+        {/* header */}
         <View style={{ flexDirection: "row", padding: theme.spacing.md, alignItems: "center", gap: theme.spacing.sm }}>
           <Searchbar
             placeholder="Search"
@@ -44,6 +53,24 @@ export default function Home() {
             traileringIcon={({ color }) => <SearchIcon fill={color} />}
           />
           <IconBtn icon={<BookMarkOutlineIcon fill="white" />} />
+        </View>
+        <View>
+          <Text variant="titleMedium" style={{ paddingHorizontal: 20 }}>
+            Digital Site Visit
+          </Text>
+          <TouchableOpacity activeOpacity={1} onPress={openAPSAP}>
+            <ImageBackground
+              source={require("../../assets/images/thumbnail.png")}
+              style={[_style.thumbnail, { borderRadius: theme.spacing.lg, marginHorizontal: 14, marginVertical: 10 }]}
+            >
+              <LinearGradient colors={["transparent", theme.colors.grey4]} style={{ flex: 1, padding: theme.spacing.lg }}>
+                <View style={{ flex: 1, flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", gap: 4 }}>
+                  <Text variant="titleMedium">Vedi Fortress</Text>
+                  <Text variant="labelSmall">Armenia</Text>
+                </View>
+              </LinearGradient>
+            </ImageBackground>
+          </TouchableOpacity>
         </View>
         <>
           {categories.map((cat, index) => (
@@ -130,5 +157,21 @@ const _style = StyleSheet.create({
     paddingLeft: 20,
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  scrollView: {
+    alignSelf: "center",
+    flex: 1,
+    flexGrow: 1,
+    overflow: "scroll",
+    width: "100%",
+    height: "100%",
+  },
+  contentContainer: {
+    paddingBottom: 100,
+  },
+  thumbnail: {
+    height: 205,
+    width: "auto",
+    overflow: "hidden",
   },
 });

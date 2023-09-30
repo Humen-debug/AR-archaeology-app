@@ -7,33 +7,31 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function TabLayout() {
   return (
-    <SafeAreaProvider>
-      <Tabs
-        screenOptions={{
-          headerShown: false,
-          tabBarHideOnKeyboard: true,
-          tabBarStyle: null,
-        }}
-        tabBar={(props) => (props.state.index === 1 ? <View /> : <NavBar {...props} />)}
-      >
-        <Tabs.Screen
-          name="home"
-          options={{
-            href: "/home",
-            tabBarLabel: "Home",
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarHideOnKeyboard: true,
+        tabBarStyle: null,
+      }}
+      tabBar={(props) => (props.state.index === 1 ? <View /> : <NavBar {...props} />)}
+    >
+      <Tabs.Screen
+        name="home"
+        options={{
+          href: "/home",
+          tabBarLabel: "Home",
 
-            tabBarIcon: ({ color, size }) => <HomeIcon fill={color} size={size} />,
-          }}
-        />
-        <Tabs.Screen
-          name="explore"
-          options={{
-            href: "/explore",
-            tabBarLabel: "Explore",
-            tabBarIcon: ({ color, size }) => <ExploreIcon fill={color} size={size} />,
-          }}
-        />
-      </Tabs>
-    </SafeAreaProvider>
+          tabBarIcon: ({ color, size }) => <HomeIcon fill={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          href: "/explore",
+          tabBarLabel: "Explore",
+          tabBarIcon: ({ color, size }) => <ExploreIcon fill={color} size={size} />,
+        }}
+      />
+    </Tabs>
   );
 }

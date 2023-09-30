@@ -74,27 +74,35 @@ export default function DetailPage() {
           </View>
           <BottomSheetScrollView ref={bottomSheetScrollRef} showsVerticalScrollIndicator={false}>
             <View
-              style={{ flex: 1, overflow: "hidden", flexDirection: "column", paddingHorizontal: theme.spacing.xl, paddingBottom: theme.spacing.xl }}
+              style={{
+                flex: 1,
+                overflow: "hidden",
+                flexDirection: "column",
+                paddingHorizontal: theme.spacing.xl,
+                paddingBottom: theme.spacing.xl,
+                gap: theme.spacing.lg,
+              }}
             >
-              <Text variant="bodyMedium" style={{ marginTop: theme.spacing.lg * 2 }}>
+              <Text variant="bodyMedium">
                 The arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510.
                 The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been
                 a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from
                 the lower east shelf.
               </Text>
-              <Text variant="bodyMedium" style={{ marginTop: theme.spacing.lg * 2 }}>
+              <Text variant="bodyMedium">(Below testing the scrolling of long long description)</Text>
+              <Text variant="bodyMedium">
                 The arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510.
                 The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been
                 a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from
                 the lower east shelf.
               </Text>
-              <Text variant="bodyMedium" style={{ marginTop: theme.spacing.lg * 2 }}>
+              <Text variant="bodyMedium">
                 The arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510.
                 The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been
                 a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from
                 the lower east shelf.
               </Text>
-              <Text variant="bodyMedium" style={{ marginTop: theme.spacing.lg * 2 }}>
+              <Text variant="bodyMedium">
                 The arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510.
                 The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been
                 a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from
