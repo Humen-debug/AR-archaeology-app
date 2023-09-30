@@ -47,9 +47,10 @@ export default function Home() {
             onSubmitEditing={(e) => router.push(`/search_result?q=${searchText}`)}
             mode="bar"
             icon={() => null}
-            iconColor={theme.colors.grey4}
             elevation={0}
             style={{ flexGrow: 1, backgroundColor: "#6D6D6D33", borderRadius: 4, paddingRight: 0 }}
+            iconColor={theme.colors.grey1}
+            traileringIconColor={theme.colors.grey1}
             traileringIcon={({ color }) => <SearchIcon fill={color} />}
           />
           <IconBtn icon={<BookMarkOutlineIcon fill="white" />} />
