@@ -29,6 +29,7 @@
     "expo-router": "^2.0.0",
     "expo-status-bar": "~1.6.0",
     "expo-three": "^7.0.0",
+    "expo-three-orbit-controls": "./node_modules/expo-three-orbit-controls",
     "loadash": "^1.0.0",
     "moment": "^2.29.4",
     "react": "^18.2.0",

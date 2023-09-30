@@ -12,6 +12,7 @@ import { Artifact } from "models/artifact";
 import { router, useLocalSearchParams } from "expo-router";
 import IconBtn from "../components/icon_btn";
 import { ActivityIndicator } from "react-native";
+import ModelView from "../components/model_view";
 import ModelViewer from "../components/model_viewer";
 import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods, BottomSheetView } from "@gorhom/bottom-sheet";
 import AudioPlayer from "../components/audio_player";
@@ -34,10 +35,10 @@ export default function DetailPage() {
   const { top } = useSafeAreaInsets();
   // TODO: load item by id
   return (
-    <MainBody backgroundColor={theme.colors.gradientBackground} padding={{ left: theme.spacing.md, right: theme.spacing.md }}>
+    <MainBody backgroundColor={theme.colors.gradientBackground} padding={{ right: 0, left: 0 }}>
       <>
         <View style={{ flex: 0.5, position: "relative" }}>
-          <ModelViewer style={{ flex: 1 }} setLoading={setLoading} setError={setModelError} />
+          <ModelView style={{ flex: 1 }} setLoading={setLoading} setError={setModelError} />
           {loading && (
             <View style={_style.centerContainer}>
               <ActivityIndicator size="large" animating={loading} />

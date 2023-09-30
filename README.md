@@ -23,3 +23,6 @@ For better type annotation, typescript is recommended.
 - styles
 - types: declared or modified types in other packages
   
+## Package versions
+
+NOTE: package: `expo-three-orbit-controls` on github is using outdated version of `three@0.108`. To solve the code conflict, an update is made in local `node_module`.
