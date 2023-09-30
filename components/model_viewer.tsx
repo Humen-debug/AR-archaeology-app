@@ -87,7 +87,6 @@ function Model(props: ModelViewProps & ModelProps & MeshProps) {
       if (child instanceof THREE.Mesh) {
         try {
           child.material.map = texture;
-          child.material.normalMap = texture;
         } catch {
           console.log("cannot set material map");
         }
@@ -103,13 +102,6 @@ function Model(props: ModelViewProps & ModelProps & MeshProps) {
     }
   }, [obj, texture]);
 
-  useFrame(({ clock }, delta, frame) => {
-    if (!meshRef) return;
-    if (!meshRef.current?.rotation) return;
-    // const y = clock.getElapsedTime();
-    // meshRef.current.rotation.y = y;
-  });
-
   return (
     <mesh ref={meshRef} {...props}>
       {obj ? <primitive object={obj} scale={0.1} /> : null}
@@ -119,7 +111,7 @@ function Model(props: ModelViewProps & ModelProps & MeshProps) {
 
 // solution of setting default camera: https://github.com/pmndrs/react-three-fiber/discussions/1148
 // solution of using ref.current in forwardRef: https://stackoverflow.com/questions/62238716/using-ref-current-in-react-forwardref
-// solution of orbit control without @react-three/drei: https://codesandbox.io/s/react-three-fiber-orbit-controls-without-drei-7c11y
+
 const Camera = forwardRef(function Camera(
   props: PerspectiveCameraProps & { objPos: THREE.Vector3 | null },
   ref: ForwardedRef<THREE.PerspectiveCamera>
@@ -181,7 +173,7 @@ const Camera = forwardRef(function Camera(
   return <perspectiveCamera ref={useForwardRef(cameraRef, ref)} {...props} />;
 });
 
-// solution of orbit-controls without drei: https://codesandbox.io/s/react-three-fiber-orbit-controls-without-drei-7c11y?file=/src/App.js:1325-1517
+// solution of orbit control without @react-three/drei: https://codesandbox.io/s/react-three-fiber-orbit-controls-without-drei-7c11y
 function CameraControls(props: PerspectiveCameraProps & { objPos?: THREE.Vector3 }) {
   // Get a reference to the Three.js Camera, and the canvas html element.
   // We need these to setup the OrbitControls class.
@@ -236,7 +228,7 @@ export default function ModelViewer(props: ModelViewProps) {
     >
       <CameraControls objPos={objPos} position={[0, 0, 10]} />
       <ambientLight />
-      <pointLight position={[0, 2, 2]} />
+      <pointLight position={[0, 0, 2]} />
       <directionalLight />
 
       <Suspense fallback={null}>

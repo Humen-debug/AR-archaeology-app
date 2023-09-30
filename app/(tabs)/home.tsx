@@ -39,7 +39,7 @@ export default function Home() {
     <MainBody>
       <ScrollView style={_style.scrollView} contentContainerStyle={_style.contentContainer}>
         {/* header */}
-        <View style={{ flexDirection: "row", padding: theme.spacing.md, alignItems: "center", gap: theme.spacing.sm }}>
+        <View style={{ flexDirection: "row", padding: theme.spacing.md, alignItems: "center", gap: theme.spacing.sm, width: "100%" }}>
           <Searchbar
             placeholder="Search"
             value={searchText}
@@ -48,7 +48,7 @@ export default function Home() {
             mode="bar"
             icon={() => null}
             elevation={0}
-            style={{ flexGrow: 1, backgroundColor: "#6D6D6D33", borderRadius: 4, paddingRight: 0 }}
+            style={{ flex: 1, flexGrow: 1, backgroundColor: "#6D6D6D33", borderRadius: 4, paddingRight: 0 }}
             iconColor={theme.colors.grey1}
             traileringIconColor={theme.colors.grey1}
             traileringIcon={({ color }) => <SearchIcon fill={color} />}
