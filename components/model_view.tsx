@@ -125,10 +125,10 @@ export default function ModelView(props: ModelViewProps) {
     const renderer = new Renderer({ gl });
     // set size of buffer to be equal to drawing buffer width
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
-
+    var obj: THREE.Group<THREE.Object3DEventMap> | THREE.Group<THREE.Object3DEventMap>[] | null;
     // render object
     try {
-      const obj = await createObj();
+      obj = await createObj();
       if (Array.isArray(obj)) {
         obj.forEach((it) => {
           scene.add(it);
@@ -147,6 +147,13 @@ export default function ModelView(props: ModelViewProps) {
     // create render function
     const render = () => {
       timeout = requestAnimationFrame(render);
+      if (Array.isArray(obj)) {
+        obj.forEach((it) => {
+          it.rotation.y += 0.01;
+        });
+      } else if (obj) {
+        obj.rotation.y += 0.01;
+      }
       renderer.render(scene, camera);
       gl.endFrameEXP();
     };
@@ -156,7 +163,7 @@ export default function ModelView(props: ModelViewProps) {
   };
 
   return (
-    <OrbitControlsView style={{ flex: 1 }} camera={camera} autoRotate={true}>
+    <OrbitControlsView style={{ flex: 1 }} camera={camera} minDistance={10}>
       <GLView onContextCreate={onContextCreate} style={{ flex: 1 }} />
     </OrbitControlsView>
   );

@@ -1,5 +1,5 @@
 diff --git a/node_modules/expo-three-orbit-controls/build/OrbitControls.d.ts b/node_modules/expo-three-orbit-controls/build/OrbitControls.d.ts
-index be2f5eb..3ff5c0c 100644
+index be2f5eb..357f965 100644
 --- a/node_modules/expo-three-orbit-controls/build/OrbitControls.d.ts
 +++ b/node_modules/expo-three-orbit-controls/build/OrbitControls.d.ts
 @@ -10,6 +10,7 @@
@@ -10,198 +10,83 @@ index be2f5eb..3ff5c0c 100644
  export declare class OrbitControls extends EventDispatcher {
      object: Camera & {
          fov: number;
-@@ -21,7 +22,167 @@ export declare class OrbitControls extends EventDispatcher {
+@@ -21,7 +22,7 @@ export declare class OrbitControls extends EventDispatcher {
          updateProjectionMatrix: () => void;
          isOrthographicCamera?: boolean;
          isPerspectiveCamera?: boolean;
 -    };
-+        
-+        /**
-+         * The focus point of the controls, the .object orbits around this.
-+         * It can be updated manually at any point to change the focus
-+         * of the controls.
-+         */
-+        target?: Vector3;
-+
-+        /**
-+         * How far you can dolly in ( PerspectiveCamera only ).
-+         * @default 0
-+         */
-+        minDistance?: number;
-+
-+        /**
-+         * How far you can dolly out ( PerspectiveCamera only ).
-+         * @default Infinity
-+         */
-+        maxDistance?: number;
-+
-+        /**
-+         * How far you can zoom in ( OrthographicCamera only ).
-+         * @default 0
-+         */
-+        minZoom?: number;
-+
-+        /**
-+         * How far you can zoom out ( OrthographicCamera only ).
-+         * @default Infinity
-+         */
-+        maxZoom?: number;
-+
-+        /**
-+         * How far you can orbit vertically, lower limit.
-+         * Range is 0 to Math.PI radians.
-+         * @default 0
-+         */
-+        minPolarAngle?: number;
-+
-+        /**
-+         * How far you can orbit vertically, upper limit.
-+         * Range is 0 to Math.PI radians.
-+         * @default Math.PI.
-+         */
-+        maxPolarAngle?: number;
-+
-+        /**
-+         * How far you can orbit horizontally, lower limit.
-+         * If set, the interval [ min, max ]
-+         * must be a sub-interval of [ - 2 PI, 2 PI ],
-+         * with ( max - min < 2 PI ).
-+         * @default Infinity
-+         */
-+        minAzimuthAngle?: number;
-+
-+        /**
-+         * How far you can orbit horizontally, upper limit.
-+         * If set, the interval [ min, max ] must be a sub-interval
-+         * of [ - 2 PI, 2 PI ], with ( max - min < 2 PI ).
-+         * @default Infinity
-+         */
-+        maxAzimuthAngle?: number;
-+
-+        /**
-+         * Set to true to enable damping (inertia), which can
-+         * be used to give a sense of weight to the controls.
-+         * Note that if this is enabled, you must call
-+         * .update () in your animation loop.
-+         * @default false
-+         */
-+        enableDamping?: boolean;
-+
-+        /**
-+         * The damping inertia used if .enableDamping is set to true.
-+         * Note that for this to work,
-+         * you must call .update () in your animation loop.
-+         * @default 0.05
-+         */
-+        dampingFactor?: number;
-+
-+        /**
-+         * Enable or disable zooming (dollying) of the camera.
-+         * @default true
-+         */
-+        enableZoom?: boolean;
-+
-+        /**
-+         * Speed of zooming / dollying.
-+         * @default 1
-+         */
-+        zoomSpeed?: number;
-+
-+        /**
-+         * Setting this property to `true` allows to zoom to the cursor's position.
-+         * @default false
-+         */
-+        zoomToCursor?: boolean;
-+
-+        /**
-+         * Enable or disable horizontal and
-+         * vertical rotation of the camera.
-+         * Note that it is possible to disable a single axis
-+         * by setting the min and max of the polar angle or
-+         * azimuth angle to the same value, which will cause
-+         * the vertical or horizontal rotation to be fixed at that value.
-+         * @default true
-+         */
-+        enableRotate?: boolean;
-+
-+        /**
-+         * Speed of rotation.
-+         * @default 1
-+         */
-+        rotateSpeed?: number;
-+
-+        /**
-+         * Enable or disable camera panning.
-+         * @default true
-+         */
-+        enablePan?: boolean;
-+
-+        /**
-+         * Speed of panning.
-+         * @default 1
-+         */
-+        panSpeed?: number;
-+
-+        /**
-+         * Defines how the camera's position is translated when panning.
-+         * If true, the camera pans in screen space. Otherwise,
-+         * the camera pans in the plane orthogonal to the camera's
-+         * up direction. Default is true for OrbitControls; false for MapControls.
-+         * @default true
-+         */
-+        screenSpacePanning?: boolean;
-+
-+        /**
-+         * How fast to pan the camera when the keyboard is used.
-+         * Default is 7.0 pixels per keypress.
-+         * @default 7
-+         */
-+        keyPanSpeed?: number;
-+
-+        /**
-+         * Set to true to automatically rotate around the target.
-+         * Note that if this is enabled, you must call .update() in your animation loop. If you want the auto-rotate speed
-+         * to be independent of the frame rate (the refresh rate of the display), you must pass the time `deltaTime`, in
-+         * seconds, to .update().
-+         */
-+        autoRotate?: boolean;
-+
-+        /**
-+         * How fast to rotate around the target if .autoRotate is true.
-+         * Default is 2.0, which equates to 30 seconds per orbit at 60fps.
-+         * Note that if .autoRotate is enabled, you must call
-+         * .update () in your animation loop.
-+         * @default 2
-+         */
-+        autoRotateSpeed?: number;
-+
 +    } ;
      enabled: boolean;
      target: Vector3;
      minDistance: number;
+@@ -96,7 +97,33 @@ export declare class OrbitControls extends EventDispatcher {
+         updateProjectionMatrix: () => void;
+         isOrthographicCamera?: boolean;
+         isPerspectiveCamera?: boolean;
+-    }, ref?: any);
++    }, ref?: any,
++    props?: {
++        enabled: boolean;
++        target?: Vector3;
++        minDistance?: number;
++        maxDistance?: number;
++        minZoom?: number;
++        maxZoom?: number;
++        minPolarAngle?: number;
++        maxPolarAngle?: number;
++        minAzimuthAngle?: number;
++        maxAzimuthAngle?: number;
++        enableDamping?: boolean;
++        dampingFactor?: number;
++        enableZoom?: boolean;
++        zoomSpeed?: number;
++        enableRotate?: boolean;
++        rotateSpeed?: number;
++        enablePan?: boolean;
++        panSpeed?: number;
++        screenSpacePanning?: boolean;
++        keyPanSpeed?: number;
++        autoRotate?: boolean;
++        autoRotateSpeed?: number;
++        enableKeys?: boolean;
++        },
++    );
+     getPolarAngle: () => number;
+     getAzimuthalAngle: () => number;
+     saveState: () => void;
 diff --git a/node_modules/expo-three-orbit-controls/build/OrbitControls.js b/node_modules/expo-three-orbit-controls/build/OrbitControls.js
-index 5540eb2..a73909c 100644
+index 5540eb2..f1885d6 100644
 --- a/node_modules/expo-three-orbit-controls/build/OrbitControls.js
 +++ b/node_modules/expo-three-orbit-controls/build/OrbitControls.js
-@@ -39,39 +39,39 @@ export class OrbitControls extends EventDispatcher {
+@@ -31,47 +31,47 @@ const STATE = {
+ const EPS = 0.000001;
+ const useDOM = false;
+ export class OrbitControls extends EventDispatcher {
+-    constructor(object, ref) {
++    constructor(object, ref, props) {
+         super();
+         this.object = object;
+         // Set to false to disable this control
+-        this.enabled = true;
++        this.enabled =  props.enabled || true;
          // "target" sets the location of focus, where the object orbits around
          this.target = new Vector3();
          // How far you can dolly in and out ( PerspectiveCamera only )
 -        this.minDistance = 0;
 -        this.maxDistance = Infinity;
-+        this.minDistance = object.minDistance || 0;
-+        this.maxDistance = object.maxDistance || Infinity;
++        this.minDistance = props.minDistance || 0;
++        this.maxDistance = props.maxDistance || Infinity;
          // How far you can zoom in and out ( OrthographicCamera only )
 -        this.minZoom = 0;
 -        this.maxZoom = Infinity;
-+        this.minZoom = object.minZoom || 0;
-+        this.maxZoom = object.maxZoom || Infinity;
++        this.minZoom = props.minZoom || 0;
++        this.maxZoom = props.maxZoom || Infinity;
          // How far you can orbit vertically, upper and lower limits.
          // Range is 0 to Math.PI radians.
 -        this.minPolarAngle = 0; // radians
 -        this.maxPolarAngle = Math.PI; // radians
-+        this.minPolarAngle = object.minPolarAngle || 0; // radians
-+        this.maxPolarAngle = object.maxPolarAngle|| Math.PI; // radians
++        this.minPolarAngle = props.minPolarAngle || 0; // radians
++        this.maxPolarAngle = props.maxPolarAngle|| Math.PI; // radians
          // How far you can orbit horizontally, upper and lower limits.
          // If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
          this.minAzimuthAngle = -Infinity; // radians
@@ -210,32 +95,32 @@ index 5540eb2..a73909c 100644
          // If damping is enabled, you must call controls.update() in your animation loop
 -        this.enableDamping = false;
 -        this.dampingFactor = 0.05;
-+        this.enableDamping = object.enableDamping|| false;
-+        this.dampingFactor = object.dampingFactor || 0.05;
++        this.enableDamping = props.enableDamping|| false;
++        this.dampingFactor = props.dampingFactor || 0.05;
          // This option actually enables dollying in and out; left as "zoom" for backwards compatibility.
          // Set to false to disable zooming
 -        this.enableZoom = true;
 -        this.zoomSpeed = 1.0;
-+        this.enableZoom = object.enableZoom ||  true;
-+        this.zoomSpeed = object.zoomSpeed || 1.0;
++        this.enableZoom = props.enableZoom ||  true;
++        this.zoomSpeed = props.zoomSpeed || 1.0;
          // Set to false to disable rotating
 -        this.enableRotate = true;
 -        this.rotateSpeed = 1.0;
-+        this.enableRotate = object.enableRotate || true;
-+        this.rotateSpeed = object.rotateSpeed || 1.0;
++        this.enableRotate = props.enableRotate || true;
++        this.rotateSpeed = props.rotateSpeed || 1.0;
          // Set to false to disable panning
 -        this.enablePan = true;
 -        this.panSpeed = 1.0;
-+        this.enablePan = object.enablePan || false;
-+        this.panSpeed = object.panSpeed || 1.0;
++        this.enablePan = props.enablePan || false;
++        this.panSpeed = props.panSpeed || 1.0;
          this.screenSpacePanning = false; // if true, pan in screen-space
          this.keyPanSpeed = 7.0; // pixels moved per arrow key push
          // Set to true to automatically rotate around the target
          // If auto-rotate is enabled, you must call controls.update() in your animation loop
 -        this.autoRotate = false;
 -        this.autoRotateSpeed = 2.0; // 30 seconds per round when fps is 60
-+        this.autoRotate = object.autoRotate || false;
-+        this.autoRotateSpeed = object.autoRotateSpeed || 2.0; // 30 seconds per round when fps is 60
++        this.autoRotate = props.autoRotate || false;
++        this.autoRotateSpeed = props.autoRotateSpeed || 2.0; // 30 seconds per round when fps is 60
          // Set to false to disable use of the keys
          this.enableKeys = true;
          // The four arrow keys
@@ -273,8 +158,42 @@ index 5540eb2..a73909c 100644
              const lastPosition = new Vector3();
              const lastQuaternion = new Quaternion();
              return () => {
+diff --git a/node_modules/expo-three-orbit-controls/build/OrbitControlsView.d.ts b/node_modules/expo-three-orbit-controls/build/OrbitControlsView.d.ts
+index b5af5a2..71dc79b 100644
+--- a/node_modules/expo-three-orbit-controls/build/OrbitControlsView.d.ts
++++ b/node_modules/expo-three-orbit-controls/build/OrbitControlsView.d.ts
+@@ -2,6 +2,29 @@ import { ViewProps } from 'react-native';
+ import { Camera } from 'three';
+ export declare type OrbitControlsViewProps = {
+     camera: null | Camera;
++    enabled?: boolean;
++    target?: Vector3;
++    minDistance?: number;
++    maxDistance?: number;
++    minZoom?: number;
++    maxZoom?: number;
++    minPolarAngle?: number;
++    maxPolarAngle?: number;
++    minAzimuthAngle?: number;
++    maxAzimuthAngle?: number;
++    enableDamping?: boolean;
++    dampingFactor?: number;
++    enableZoom?: boolean;
++    zoomSpeed?: number;
++    enableRotate?: boolean;
++    rotateSpeed?: number;
++    enablePan?: boolean;
++    panSpeed?: number;
++    screenSpacePanning?: boolean;
++    keyPanSpeed?: number;
++    autoRotate?: boolean;
++    autoRotateSpeed?: number;
++    enableKeys?: boolean;
+ } & ViewProps;
+ declare const OrbitControlsView: any;
+ export default OrbitControlsView;
 diff --git a/node_modules/expo-three-orbit-controls/build/OrbitControlsView.js b/node_modules/expo-three-orbit-controls/build/OrbitControlsView.js
-index c1c0d43..e97734c 100644
+index c1c0d43..e303512 100644
 --- a/node_modules/expo-three-orbit-controls/build/OrbitControlsView.js
 +++ b/node_modules/expo-three-orbit-controls/build/OrbitControlsView.js
 @@ -13,6 +13,8 @@ function polyfillEventTouches(nativeEvent) {
@@ -286,7 +205,16 @@ index c1c0d43..e97734c 100644
  const OrbitControlsView = React.forwardRef(({ camera, ...props }, ref) => {
      var _a;
      const [size, setSize] = React.useState(null);
-@@ -42,11 +44,20 @@ const OrbitControlsView = React.forwardRef(({ camera, ...props }, ref) => {
+@@ -20,7 +22,7 @@ const OrbitControlsView = React.forwardRef(({ camera, ...props }, ref) => {
+     const controls = React.useMemo(() => {
+         var _a;
+         if (camera && ((_a = viewRef) === null || _a === void 0 ? void 0 : _a.current)) {
+-            return new OrbitControls(camera, viewRef.current);
++            return new OrbitControls(camera, viewRef.current, props);
+         }
+         return null;
+     }, [camera, (_a = viewRef) === null || _a === void 0 ? void 0 : _a.current]);
+@@ -42,12 +44,22 @@ const OrbitControlsView = React.forwardRef(({ camera, ...props }, ref) => {
              return (_a = controls) === null || _a === void 0 ? void 0 : _a.onTouchEnd(polyfill);
          }
          return PanResponder.create({
@@ -308,5 +236,7 @@ index c1c0d43..e97734c 100644
 -            onPanResponderGrant({ nativeEvent }) {
 +            onPanResponderGrant({ nativeEvent }, gestureState) {
                  var _a;
++                console.log(gestureState.numberActiveTouches)
                  return (_a = controls) === null || _a === void 0 ? void 0 : _a.onTouchStart(nativeEvent);
              },
+             onPanResponderMove({ nativeEvent }) {
