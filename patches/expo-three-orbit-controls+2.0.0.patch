@@ -1,5 +1,5 @@
 diff --git a/node_modules/expo-three-orbit-controls/build/OrbitControls.d.ts b/node_modules/expo-three-orbit-controls/build/OrbitControls.d.ts
-index be2f5eb..357f965 100644
+index be2f5eb..fbd1693 100644
 --- a/node_modules/expo-three-orbit-controls/build/OrbitControls.d.ts
 +++ b/node_modules/expo-three-orbit-controls/build/OrbitControls.d.ts
 @@ -10,6 +10,7 @@
@@ -26,7 +26,7 @@ index be2f5eb..357f965 100644
 -    }, ref?: any);
 +    }, ref?: any,
 +    props?: {
-+        enabled: boolean;
++        enabled?: boolean;
 +        target?: Vector3;
 +        minDistance?: number;
 +        maxDistance?: number;
@@ -193,7 +193,7 @@ index b5af5a2..71dc79b 100644
  declare const OrbitControlsView: any;
  export default OrbitControlsView;
 diff --git a/node_modules/expo-three-orbit-controls/build/OrbitControlsView.js b/node_modules/expo-three-orbit-controls/build/OrbitControlsView.js
-index c1c0d43..e303512 100644
+index c1c0d43..c15e291 100644
 --- a/node_modules/expo-three-orbit-controls/build/OrbitControlsView.js
 +++ b/node_modules/expo-three-orbit-controls/build/OrbitControlsView.js
 @@ -13,6 +13,8 @@ function polyfillEventTouches(nativeEvent) {
@@ -214,7 +214,7 @@ index c1c0d43..e303512 100644
          }
          return null;
      }, [camera, (_a = viewRef) === null || _a === void 0 ? void 0 : _a.current]);
-@@ -42,12 +44,22 @@ const OrbitControlsView = React.forwardRef(({ camera, ...props }, ref) => {
+@@ -42,11 +44,20 @@ const OrbitControlsView = React.forwardRef(({ camera, ...props }, ref) => {
              return (_a = controls) === null || _a === void 0 ? void 0 : _a.onTouchEnd(polyfill);
          }
          return PanResponder.create({
@@ -236,7 +236,5 @@ index c1c0d43..e303512 100644
 -            onPanResponderGrant({ nativeEvent }) {
 +            onPanResponderGrant({ nativeEvent }, gestureState) {
                  var _a;
-+                console.log(gestureState.numberActiveTouches)
                  return (_a = controls) === null || _a === void 0 ? void 0 : _a.onTouchStart(nativeEvent);
              },
-             onPanResponderMove({ nativeEvent }) {
