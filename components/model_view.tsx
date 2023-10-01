@@ -48,13 +48,6 @@ export default function ModelView(props: ModelViewProps) {
         });
 
         texture = await loadTextureAsync({ asset: require("../assets/models/demo/texture.jpg") });
-        try {
-          const obj = await ExpoTHREE.loadAsync(require("../assets/models/demo/object.obj"));
-          const mtl = await ExpoTHREE.loadAsync(require("../assets/models/demo/material.mtl"));
-          console.log(mtl);
-        } catch {
-          console.log("fail using expoThree");
-        }
 
         break;
       default:
@@ -112,18 +105,18 @@ export default function ModelView(props: ModelViewProps) {
     const scene = new Scene();
     const camera = new PerspectiveCamera(75, gl.drawingBufferWidth / gl.drawingBufferHeight, 0.05, 1000);
 
-    // set camera position away from cube
-    camera.position.z = 10;
-
     setCamera(camera);
+    // set camera position away from object
+    camera.position.z = 50;
 
-    const ambientLight = new AmbientLight(0xffffff, 0.5);
+    const ambientLight = new AmbientLight(0xffffff, 0.75);
     scene.add(ambientLight);
 
     const pointLight = new PointLight(0xffffff, 2, 1000, 1);
     pointLight.position.set(0, 200, 200);
     scene.add(pointLight);
 
+    // spot light on the top
     const spotLight = new SpotLight(0xffffff, 0.5);
     spotLight.position.set(0, 500, 100);
     spotLight.lookAt(scene.position);
@@ -138,11 +131,9 @@ export default function ModelView(props: ModelViewProps) {
       const obj = await createObj();
       if (Array.isArray(obj)) {
         obj.forEach((it) => {
-          it.scale.set(0.2, 0.2, 0.2);
           scene.add(it);
         });
       } else if (obj) {
-        obj.scale.set(0.2, 0.2, 0.2);
         scene.add(obj);
         camera.lookAt(obj.position);
       }
@@ -165,7 +156,7 @@ export default function ModelView(props: ModelViewProps) {
   };
 
   return (
-    <OrbitControlsView style={{ flex: 1 }} camera={camera}>
+    <OrbitControlsView style={{ flex: 1 }} camera={camera} autoRotate={true}>
       <GLView onContextCreate={onContextCreate} style={{ flex: 1 }} />
     </OrbitControlsView>
   );

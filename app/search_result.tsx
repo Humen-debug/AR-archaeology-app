@@ -75,7 +75,15 @@ export default function SearchResultPage() {
         <FlatList
           showsVerticalScrollIndicator={false}
           data={items}
-          renderItem={({ item }) => <ItemCard item={item} />}
+          renderItem={({ item }) => (
+            <ItemCard
+              item={item}
+              onPress={() => {
+                router.push(`/detail?id=${item._id}`);
+                bottomSheetModalRef.current?.dismiss();
+              }}
+            />
+          )}
           columnWrapperStyle={{ gap: theme.spacing.sm, paddingBottom: theme.spacing.md, justifyContent: "flex-start" }}
           numColumns={2}
           keyExtractor={(item, index) => item._id}
