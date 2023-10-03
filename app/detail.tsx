@@ -8,17 +8,18 @@ import BookmarkIcon from "../assets/icons/bookmark.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import ShareIcon from "../assets/icons/share.svg";
 import CreateARIcon from "../assets/icons/create-ar.svg";
-import { Artifact } from "models/artifact";
+import { Artifact } from "../models/artifact";
 import { router, useLocalSearchParams } from "expo-router";
 import IconBtn from "../components/icon_btn";
 import { ActivityIndicator } from "react-native";
 import ModelView from "../components/model_view";
-import ModelViewer from "../components/model_viewer";
 import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods, BottomSheetView } from "@gorhom/bottom-sheet";
 import AudioPlayer from "../components/audio_player";
 import ErrorIcon from "../assets/icons/error-outline.svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import moment from "moment";
+import { useObject } from "../models";
+import { Realm } from "@realm/react";
 
 export default function DetailPage() {
   const theme = useAppTheme();
@@ -33,16 +34,10 @@ export default function DetailPage() {
   // variables
   const snapPoints = useMemo(() => ["50%", "85%"], []);
 
-  // dev use
-  const item: Artifact = {
-    _id: params.id || "0",
-    name: "Arrow Head",
-    desc: "The arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510. The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from the lower east shelf.\n(Below testing the scrolling of long long description)\nThe arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510. The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from the lower east shelf.\nThe arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510. The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from the lower east shelf.\nThe arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510. The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from the lower east shelf.\n",
-    date: "Early Medieval Times (559-646 C.E.)",
-  };
+  const item = useObject(Artifact, new Realm.BSON.ObjectId(params.id));
 
   const { top } = useSafeAreaInsets();
-  // TODO: load item by id
+
   return (
     <MainBody backgroundColor={theme.colors.gradientBackground} padding={{ right: 0, left: 0 }}>
       <>
@@ -64,19 +59,25 @@ export default function DetailPage() {
           snapPoints={snapPoints}
           backgroundStyle={[{ backgroundColor: theme.colors.container, marginHorizontal: theme.spacing.md }, _style.bottomSheetShadow]}
         >
-          <View style={[_style.columnLayout, { flex: 0, marginTop: theme.spacing.md }]}>
-            <Text variant="headlineSmall" style={{ marginBottom: theme.spacing.sm }}>
-              {item.name}
-            </Text>
-            <View style={_style.rowLayout}>
-              {item.date && (
-                <Text variant="bodyMedium" style={{ color: theme.colors.tertiary, textAlign: "center" }}>
-                  {typeof item.date === "string" ? item.date : moment(item.date).format("YYYY")}
-                </Text>
-              )}
+          {item && (
+            <View style={[_style.columnLayout, { flex: 0, marginTop: theme.spacing.md }]}>
+              <Text variant="headlineSmall" style={{ marginBottom: theme.spacing.sm }}>
+                {item.name}
+              </Text>
+              <View style={_style.rowLayout}>
+                {
+                  <Text variant="bodyMedium" style={{ color: theme.colors.tertiary, textAlign: "center" }}>
+                    {item.getPropertyType("date") === "string"
+                      ? (item.date as string)
+                      : item.getPropertyType("date") === "date"
+                      ? moment(item.date as Date).format("YYYY")
+                      : ""}
+                  </Text>
+                }
+              </View>
+              <AudioPlayer soundUri={require("../assets/audio/arrowhead.mp3")} />
             </View>
-            <AudioPlayer soundUri={require("../assets/audio/arrowhead.mp3")} />
-          </View>
+          )}
 
           <BottomSheetScrollView ref={bottomSheetScrollRef} showsVerticalScrollIndicator={false}>
             <View
@@ -90,7 +91,7 @@ export default function DetailPage() {
               }}
             >
               <>
-                {item.desc?.split(/\r?\n/).map((desc, idx) => (
+                {item?.desc?.split(/\r?\n/).map((desc, idx) => (
                   <Text variant="bodyMedium" key={idx}>
                     {desc}
                   </Text>

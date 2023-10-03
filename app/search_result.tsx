@@ -6,12 +6,13 @@ import { ForwardedRef, Ref, forwardRef, useEffect, useMemo, useRef, useState } f
 import SearchIcon from "../assets/icons/search.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import SortIcon from "../assets/icons/sort.svg";
-import { Artifact } from "models/artifact";
+import { Artifact } from "../models/artifact";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ItemCard } from "../components/item_card";
 import { BottomSheetModal, BottomSheetModalProvider, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { useQuery } from "../models";
 
 export default function SearchResultPage() {
   const theme = useAppTheme();
@@ -28,12 +29,8 @@ export default function SearchResultPage() {
     router.setParams({ q: searchText });
   };
   // for dev use
-  const items: Artifact[] = Array.from({ length: 5 }, (_, i) => ({
-    _id: `${i}`,
-    name: "The 8th century reliquary hand of Saint Abulmuse",
-    location: "Vedi Fortress",
-    date: new Date("1960-8-1"),
-  }));
+  const [allItems, setAllItems] = useState<Realm.Results<Artifact>>();
+  const items = useQuery(Artifact);
 
   return (
     <MainBody backgroundColor={theme.colors.gradientBackground} padding={{ top: 0 }}>
@@ -86,7 +83,7 @@ export default function SearchResultPage() {
           )}
           columnWrapperStyle={{ gap: theme.spacing.sm, paddingBottom: theme.spacing.md, justifyContent: "flex-start" }}
           numColumns={2}
-          keyExtractor={(item, index) => item._id}
+          keyExtractor={(item, index) => item._id.toString()}
           style={{ padding: theme.spacing.md }}
         />
         <SortFilterSheet

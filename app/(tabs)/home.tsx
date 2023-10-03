@@ -6,12 +6,13 @@ import { useState } from "react";
 import SearchIcon from "../../assets/icons/search.svg";
 import BookMarkOutlineIcon from "../../assets/icons/bookmark-outline.svg";
 import * as Linking from "expo-linking";
-import { Artifact } from "models/artifact";
 import { LinearGradient } from "expo-linear-gradient";
 import { FlatList } from "react-native-gesture-handler";
 import IconBtn from "../../components/icon_btn";
 import { router } from "expo-router";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
+import { useQuery } from "../../models";
+import { Artifact } from "../../models/artifact";
 
 export default function Home() {
   const theme = useAppTheme();
@@ -22,11 +23,8 @@ export default function Home() {
 
   // for dev use
   const categories: String[] = ["Daily Features", "Antiquities", "Artifacts"];
-  // for dev use
-  const items: Artifact[] = Array.from({ length: 5 }, (_, i) => ({
-    _id: `${i}`,
-    name: "The 8th century reliquary hand of Saint Abulmuse",
-  }));
+
+  const items = useQuery(Artifact);
 
   const openAPSAP = async () => {
     const url = "http://openarchaeology.org/home/index";
@@ -117,7 +115,7 @@ const ItemCard = (props: ItemCardProps) => {
   const { item, onPress } = props;
   return (
     <View style={_style.itemCard}>
-      <TouchableRipple onPress={onPress ?? (() => router.push(`/detail?id=${item._id}`))}>
+      <TouchableRipple onPress={onPress ?? (() => router.push(`/detail?id=${item._id.toString()}`))}>
         <ImageBackground resizeMode="cover" style={_style.itemImg} source={item.image || require("../../assets/images/demo_item.png")}>
           <LinearGradient colors={["#0000006B", "#00000000"]} start={{ x: 0.5, y: 1 }} end={{ x: 0.5, y: 0 }} style={_style.gradient} />
           <Text variant="labelSmall" style={_style.itemText} numberOfLines={2}>
