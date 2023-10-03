@@ -18,6 +18,7 @@ import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods, Botto
 import AudioPlayer from "../components/audio_player";
 import ErrorIcon from "../assets/icons/error-outline.svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import moment from "moment";
 
 export default function DetailPage() {
   const theme = useAppTheme();
@@ -31,6 +32,14 @@ export default function DetailPage() {
   const bottomSheetScrollRef = useRef<BottomSheetScrollViewMethods | null>(null);
   // variables
   const snapPoints = useMemo(() => ["50%", "85%"], []);
+
+  // dev use
+  const item: Artifact = {
+    _id: params.id || "0",
+    name: "Arrow Head",
+    desc: "The arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510. The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from the lower east shelf.\n(Below testing the scrolling of long long description)\nThe arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510. The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from the lower east shelf.\nThe arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510. The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from the lower east shelf.\nThe arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510. The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from the lower east shelf.\n",
+    date: "Early Medieval Times (559-646 C.E.)",
+  };
 
   const { top } = useSafeAreaInsets();
   // TODO: load item by id
@@ -57,15 +66,18 @@ export default function DetailPage() {
         >
           <View style={[_style.columnLayout, { flex: 0, marginTop: theme.spacing.md }]}>
             <Text variant="headlineSmall" style={{ marginBottom: theme.spacing.sm }}>
-              Arrow head
+              {item.name}
             </Text>
             <View style={_style.rowLayout}>
-              <Text variant="bodyMedium" style={{ color: theme.colors.tertiary, textAlign: "center" }}>
-                Early Medieval Times (559-646 C.E.)
-              </Text>
+              {item.date && (
+                <Text variant="bodyMedium" style={{ color: theme.colors.tertiary, textAlign: "center" }}>
+                  {typeof item.date === "string" ? item.date : moment(item.date).format("YYYY")}
+                </Text>
+              )}
             </View>
             <AudioPlayer soundUri={require("../assets/audio/arrowhead.mp3")} />
           </View>
+
           <BottomSheetScrollView ref={bottomSheetScrollRef} showsVerticalScrollIndicator={false}>
             <View
               style={{
@@ -77,31 +89,13 @@ export default function DetailPage() {
                 gap: theme.spacing.lg,
               }}
             >
-              <Text variant="bodyMedium">
-                The arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510.
-                The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been
-                a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from
-                the lower east shelf.
-              </Text>
-              <Text variant="bodyMedium">(Below testing the scrolling of long long description)</Text>
-              <Text variant="bodyMedium">
-                The arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510.
-                The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been
-                a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from
-                the lower east shelf.
-              </Text>
-              <Text variant="bodyMedium">
-                The arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510.
-                The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been
-                a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from
-                the lower east shelf.
-              </Text>
-              <Text variant="bodyMedium">
-                The arrow head is made of stone and dates back to Early Medieval Times. It is found in the citadel-east trench, N.38.478200.4419510.
-                The treach sits at the eastern edge of the citadal and is bisected by a single Early Medieval retaining wall. This seems to have been
-                a terrace or retaining wall to support building further up into the citadel and perhaps it also served to defend this approach from
-                the lower east shelf.
-              </Text>
+              <>
+                {item.desc?.split(/\r?\n/).map((desc, idx) => (
+                  <Text variant="bodyMedium" key={idx}>
+                    {desc}
+                  </Text>
+                ))}
+              </>
             </View>
           </BottomSheetScrollView>
         </BottomSheet>

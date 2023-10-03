@@ -31,7 +31,7 @@ export const ItemCard = (props: ItemCardProps) => {
       <Card.Cover source={require("../assets/images/demo_item.png")} resizeMode="cover" style={_style.cardImg} />
       <Card.Content style={{ paddingHorizontal: 0, paddingBottom: 0 }}>
         <LinearGradient
-          colors={theme.colors.gradientBlack}
+          colors={theme.colors.gradientGrey}
           start={{ x: 0, y: 1 }}
           end={{ x: 1, y: 0 }}
           style={[_style.gradient, _style.cardContext, { paddingVertical: theme.spacing.sm, paddingHorizontal: theme.spacing.md }]}

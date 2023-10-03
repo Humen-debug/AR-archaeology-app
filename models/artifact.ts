@@ -4,6 +4,6 @@ export interface Artifact {
   image?: string;
   desc?: string;
   location?: string;
-  date?: Date;
+  date?: Date | string;
   category?: string;
 }
