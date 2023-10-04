@@ -1,5 +1,4 @@
-import * as React from "react";
-import { AuthProvider } from "../providers/auth_provider";
+
 import { customFonts, theme } from "../styles";
 import { Stack } from "expo-router";
 
@@ -9,7 +8,6 @@ import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { AppWrapperNonSync } from "../providers/db_provider";
 import { AppWrapperSync } from "../providers/db_sync_provider";
 import { SYNC_CONFIG } from "../sync.config";
 

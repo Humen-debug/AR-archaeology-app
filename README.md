@@ -25,4 +25,5 @@ For better type annotation, typescript is recommended.
   
 ## Package versions
 
-NOTE: package: `expo-three-orbit-controls` on github is using outdated version of `three@0.108`. To solve the code conflict, an update is made in local `node_module`.
+NOTE: package: `expo-three-orbit-controls` on github is using outdated version of `three@0.108`. To solve the code conflict, an update is made by using `package-patch`.
+Please run `yarn postinstall` before you build.
