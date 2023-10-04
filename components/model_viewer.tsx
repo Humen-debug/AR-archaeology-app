@@ -4,7 +4,7 @@ import _ from "lodash";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { loadMtlAsync, loadObjAsync, loadTextureAsync, Renderer, THREE } from "expo-three";
+import { loadObjAsync, loadTextureAsync, Renderer, THREE } from "expo-three";
 import { AnimatedSensor } from "react-native-reanimated";
 import { Mesh, TextureLoader } from "three";
 import { Asset } from "expo-asset";

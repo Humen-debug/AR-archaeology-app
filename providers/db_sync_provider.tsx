@@ -1,7 +1,7 @@
 import { AppProvider, UserProvider, useApp } from "@realm/react";
 import { RealmProvider } from "../models";
-import { OpenRealmBehaviorType, OpenRealmTimeOutBehavior } from "realm";
-import { Redirect } from "expo-router";
+import { OpenRealmBehaviorType, OpenRealmTimeOutBehavior, CompensatingWriteError } from "realm";
+import Realm from "realm";
 import { useEffect } from "react";
 
 export const AppWrapperSync: React.FC<{ appId: string; children: JSX.Element | JSX.Element[] }> = ({ appId, children }) => {
@@ -11,11 +11,30 @@ export const AppWrapperSync: React.FC<{ appId: string; children: JSX.Element | J
         <RealmProvider
           sync={{
             flexible: true,
-            onError: console.error,
+            onError: (_session, error) => {
+              if (error instanceof CompensatingWriteError) {
+                console.debug({
+                  code: error.code,
+                  name: error.name,
+                  category: error.category,
+                  message: error.message,
+                  url: error.logUrl,
+                  writes: error.writes,
+                });
+              } else {
+                console.error(error);
+              }
+            },
             existingRealmFileBehavior: {
               type: OpenRealmBehaviorType.DownloadBeforeOpen,
-              timeOut: 1000,
+              timeOut: 30 * 1000,
               timeOutBehavior: OpenRealmTimeOutBehavior.OpenLocalRealm ?? "openLocalRealm",
+            },
+            initialSubscriptions: {
+              update: (subs, realm) => {
+                subs.add(realm.objects("Artifact"));
+              },
+              rerunOnOpen: true,
             },
           }}
         >
@@ -28,13 +47,16 @@ export const AppWrapperSync: React.FC<{ appId: string; children: JSX.Element | J
 
 function LogIn() {
   const app = useApp();
-
   // uses anonymous authentication
   async function loginUser() {
-    await app.logIn(Realm.Credentials.anonymous());
+    try {
+      await app.logIn(Realm.Credentials.anonymous());
+    } catch (error) {
+      console.error("fail to login");
+    }
   }
   useEffect(() => {
     loginUser();
   }, []);
-  return <Redirect href={"/home"} />;
+  return <></>;
 }

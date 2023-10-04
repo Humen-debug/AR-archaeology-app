@@ -4,22 +4,19 @@ import MainBody from "../components/main_body";
 import { View, ScrollView, StyleSheet } from "react-native";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import SortIcon from "../assets/icons/sort.svg";
-import { Artifact } from "models/artifact";
+import { Artifact } from "../models/artifact";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { router, useLocalSearchParams } from "expo-router";
 import { ItemCard } from "../components/item_card";
+import { useObject, useQuery } from "../models";
+import { useState } from "react";
 
 export default function CategoryPage() {
   const theme = useAppTheme();
   const params = useLocalSearchParams<{ cat?: string }>();
 
-  // for dev use
-  const items: Artifact[] = Array.from({ length: 5 }, (_, i) => ({
-    _id: `${i}`,
-    name: "The 8th century reliquary hand of Saint Abulmuse",
-    location: "Vedi Fortress",
-    date: new Date("1960-8-1"),
-  }));
+  const [allItems, setAllItems] = useState<Realm.Results<Artifact>>();
+  const items = useQuery(Artifact);
   return (
     <MainBody backgroundColor={theme.colors.gradientBackground}>
       <ScrollView>
@@ -41,7 +38,7 @@ export default function CategoryPage() {
           renderItem={({ item }) => <ItemCard item={item} />}
           columnWrapperStyle={{ gap: theme.spacing.sm, paddingBottom: theme.spacing.md, justifyContent: "flex-start" }}
           numColumns={2}
-          keyExtractor={(item, index) => item._id}
+          keyExtractor={(item, index) => item._id.toString()}
           style={{ padding: theme.spacing.md }}
         />
       </ScrollView>

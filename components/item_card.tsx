@@ -16,6 +16,8 @@ interface ItemCardProps {
 }
 export const ItemCard = (props: ItemCardProps) => {
   const { item, onPress, onLongPress, style } = props;
+  const imageUri = item.image ?? require("../assets/images/demo_item.png");
+
   return (
     <Card
       mode="contained"
@@ -28,19 +30,18 @@ export const ItemCard = (props: ItemCardProps) => {
       onLongPress={onLongPress}
       style={[_style.itemCard, style]}
     >
-      <Card.Cover source={require("../assets/images/demo_item.png")} resizeMode="cover" style={_style.cardImg} />
+      <Card.Cover source={imageUri} resizeMode="cover" style={_style.cardImg} />
       <Card.Content style={{ paddingHorizontal: 0, paddingBottom: 0 }}>
         <LinearGradient
           colors={theme.colors.gradientGrey}
           start={{ x: 0, y: 1 }}
           end={{ x: 1, y: 0 }}
-          style={[_style.gradient, _style.cardContext, { paddingVertical: theme.spacing.sm, paddingHorizontal: theme.spacing.md }]}
+          style={[_style.cardContext, { paddingVertical: theme.spacing.sm, paddingHorizontal: theme.spacing.md }]}
         >
           <Text variant="labelSmall" numberOfLines={2}>
             {item.name}
           </Text>
           <View style={_style.wrapper}>
-            {/* TODO add non-null attributes */}
             {item.location && (
               <View style={_style.labelContainer}>
                 <LocationIcon fill={theme.colors.tertiary} width={12} />
@@ -49,11 +50,16 @@ export const ItemCard = (props: ItemCardProps) => {
                 </Text>
               </View>
             )}
-            {item.date && (
+
+            {item && item.date !== undefined && item.date !== null && (
               <View style={_style.labelContainer}>
                 <TimeIcon fill={theme.colors.tertiary} width={12} />
                 <Text variant="labelSmall" style={{ fontSize: 10 }}>
-                  {moment(item.date).format("YYYY") || ""}
+                  {item.getPropertyType("date") === "string"
+                    ? item.date?.toString()
+                    : item.getPropertyType("date") === "date"
+                    ? moment(item.date as Date).format("YYYY-MM-DD")
+                    : ""}
                 </Text>
               </View>
             )}

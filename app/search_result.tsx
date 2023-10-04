@@ -2,9 +2,10 @@ import { Checkbox, List, RadioButton, Searchbar, Text } from "react-native-paper
 import { useAppTheme } from "../styles";
 import MainBody from "../components/main_body";
 import { View, StyleSheet } from "react-native";
-import { ForwardedRef, Ref, forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { ForwardedRef, forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import SearchIcon from "../assets/icons/search.svg";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
+
 import SortIcon from "../assets/icons/sort.svg";
 import { Artifact } from "../models/artifact";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
@@ -20,17 +21,28 @@ export default function SearchResultPage() {
   const [searchText, setSearchText] = useState(params.q || "");
   const [sortBy, setSortBy] = useState("");
   const [filters, setFilters] = useState<any[]>([]);
-
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ["45%", "65%"], []);
-
-  const search = (query: string) => {
-    setSearchText(query);
-    router.setParams({ q: searchText });
-  };
-  // for dev use
   const [allItems, setAllItems] = useState<Realm.Results<Artifact>>();
   const items = useQuery(Artifact);
+
+  const isEmptyResult = useMemo(() => allItems?.length === 0, [allItems]);
+
+  // on init, filter items by search text
+  useEffect(() => {
+    searchItems(searchText);
+  }, [params.q]);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    router.setParams({ q: searchText });
+    router.push(`/search_result?q=${searchText}`);
+  };
+
+  const searchItems = (text: string) => {
+    const filtered = items.filtered(`name CONTAINS[c] $0`, text);
+    setAllItems(filtered);
+  };
 
   return (
     <MainBody backgroundColor={theme.colors.gradientBackground} padding={{ top: 0 }}>
@@ -49,10 +61,14 @@ export default function SearchResultPage() {
           <TouchableOpacity onPress={() => router.back()}>
             <ChevronLeftIcon fill="white" />
           </TouchableOpacity>
+          {/* NOTE: only after submitting the search text will activate search engine.
+              And it will push to new search result page
+            */}
           <Searchbar
             placeholder="Search"
             value={searchText}
-            onChangeText={search}
+            onChangeText={setSearchText}
+            onSubmitEditing={onSubmit}
             mode="bar"
             icon={() => null}
             elevation={0}
@@ -69,23 +85,28 @@ export default function SearchResultPage() {
             <SortIcon fill="white" />
           </TouchableOpacity>
         </View>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={items}
-          renderItem={({ item }) => (
-            <ItemCard
-              item={item}
-              onPress={() => {
-                router.push(`/detail?id=${item._id}`);
-                bottomSheetModalRef.current?.dismiss();
-              }}
-            />
-          )}
-          columnWrapperStyle={{ gap: theme.spacing.sm, paddingBottom: theme.spacing.md, justifyContent: "flex-start" }}
-          numColumns={2}
-          keyExtractor={(item, index) => item._id.toString()}
-          style={{ padding: theme.spacing.md }}
-        />
+
+        {isEmptyResult ? (
+          <View style={_style.columnLayout}></View>
+        ) : (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={allItems}
+            renderItem={({ item }) => (
+              <ItemCard
+                item={item}
+                onPress={() => {
+                  router.push(`/detail?id=${item._id}`);
+                  bottomSheetModalRef.current?.dismiss();
+                }}
+              />
+            )}
+            columnWrapperStyle={{ gap: theme.spacing.sm, paddingBottom: theme.spacing.md, justifyContent: "flex-start" }}
+            numColumns={2}
+            keyExtractor={(item, index) => item._id.toString()}
+            style={{ padding: theme.spacing.md }}
+          />
+        )}
         <SortFilterSheet
           sortBy={sortBy}
           setSortBy={setSortBy}
@@ -229,5 +250,11 @@ const _style = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     flexWrap: "wrap",
+  },
+  columnLayout: {
+    flexDirection: "column",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

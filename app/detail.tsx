@@ -75,6 +75,7 @@ export default function DetailPage() {
                   </Text>
                 }
               </View>
+
               <AudioPlayer soundUri={require("../assets/audio/arrowhead.mp3")} />
             </View>
           )}
@@ -91,11 +92,14 @@ export default function DetailPage() {
               }}
             >
               <>
-                {item?.desc?.split(/\r?\n/).map((desc, idx) => (
-                  <Text variant="bodyMedium" key={idx}>
-                    {desc}
-                  </Text>
-                ))}
+                {item?.desc
+                  ?.replace(/\\n/g, "\n")
+                  .split(/\r?\n/g)
+                  .map((desc, idx) => (
+                    <Text variant="bodyMedium" key={idx}>
+                      {desc}
+                    </Text>
+                  ))}
               </>
             </View>
           </BottomSheetScrollView>
@@ -107,7 +111,7 @@ export default function DetailPage() {
             { justifyContent: "space-between", position: "absolute", top: top, left: 0, right: 0, paddingHorizontal: theme.spacing.md },
           ]}
         >
-          <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
+          <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => (loading ? null : router.back())} />
           <View style={[_style.rowLayout, { gap: theme.spacing.sm }]}>
             <IconBtn icon={<ShareIcon fill={theme.colors.grey1} />} onPress={() => {}} />
             <IconBtn

@@ -2,7 +2,7 @@ import { Searchbar, Text, TouchableRipple, Button } from "react-native-paper";
 import { useAppTheme } from "../../styles";
 import MainBody from "../../components/main_body";
 import { View, ScrollView, GestureResponderEvent, Image, StyleSheet, ImageBackground } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchIcon from "../../assets/icons/search.svg";
 import BookMarkOutlineIcon from "../../assets/icons/bookmark-outline.svg";
 import * as Linking from "expo-linking";
@@ -11,11 +11,14 @@ import { FlatList } from "react-native-gesture-handler";
 import IconBtn from "../../components/icon_btn";
 import { router } from "expo-router";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
-import { useQuery } from "../../models";
+import { useQuery, useRealm } from "../../models";
 import { Artifact } from "../../models/artifact";
+import { useUser } from "@realm/react";
 
 export default function Home() {
   const theme = useAppTheme();
+  const realm = useRealm();
+  const user = useUser();
 
   const [searchText, setSearchText] = useState("");
 
