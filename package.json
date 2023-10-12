@@ -8,7 +8,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "build_android": "eas build -p android --profile preview",
+    "build:android": "eas build -p android --profile preview",
+    "build:ios": "eas build -p ios --profile preview",
     "postinstall": "patch-package"
   },
   "dependencies": {
