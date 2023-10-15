@@ -20,21 +20,27 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import moment from "moment";
 import { useObject } from "../models";
 import { Realm } from "@realm/react";
+import { useBookmarks } from "../providers/bookmark_provider";
 
 export default function DetailPage() {
   const theme = useAppTheme();
   const params = useLocalSearchParams<{ id?: string }>();
-  const [bookmarked, setBookmarked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [modelError, setModelError] = useState(null);
+  const { bookmarks, setBookmark } = useBookmarks();
+  const item = useObject(Artifact, new Realm.BSON.ObjectId(params.id));
+
+  const isBookmarked = useMemo(() => {
+    const artifacts = bookmarks?.artifacts;
+    if (!artifacts || !item) return false;
+    return artifacts.indexOf(item._id.toString()) !== -1;
+  }, [bookmarks]);
 
   // ref
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetScrollRef = useRef<BottomSheetScrollViewMethods | null>(null);
   // variables
   const snapPoints = useMemo(() => ["50%", "85%"], []);
-
-  const item = useObject(Artifact, new Realm.BSON.ObjectId(params.id));
 
   const { top } = useSafeAreaInsets();
 
@@ -115,8 +121,10 @@ export default function DetailPage() {
           <View style={[_style.rowLayout, { gap: theme.spacing.sm }]}>
             <IconBtn icon={<ShareIcon fill={theme.colors.grey1} />} onPress={() => {}} />
             <IconBtn
-              icon={bookmarked ? <BookmarkIcon fill={theme.colors.grey1} /> : <BookmarkOutlineIcon fill={theme.colors.grey1} />}
-              onPress={() => setBookmarked(!bookmarked)}
+              icon={isBookmarked ? <BookmarkIcon fill={theme.colors.grey1} /> : <BookmarkOutlineIcon fill={theme.colors.grey1} />}
+              onPress={() => {
+                setBookmark(item?._id);
+              }}
             />
             <IconBtn icon={<CreateARIcon fill={theme.colors.grey1} />} onPress={() => {}} />
           </View>

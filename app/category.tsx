@@ -8,15 +8,20 @@ import { Artifact } from "../models/artifact";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { router, useLocalSearchParams } from "expo-router";
 import { ItemCard } from "../components/item_card";
-import { useObject, useQuery } from "../models";
-import { useState } from "react";
+import { useQuery } from "../models";
+import { useBookmarks } from "../providers/bookmark_provider";
+import { BSON } from "realm";
 
 export default function CategoryPage() {
   const theme = useAppTheme();
   const params = useLocalSearchParams<{ cat?: string }>();
-
-  const [allItems, setAllItems] = useState<Realm.Results<Artifact>>();
-  const items = useQuery(Artifact);
+  const { bookmarks } = useBookmarks();
+  const items = useQuery(
+    Artifact,
+    (collection) =>
+      params.cat === "bookmarks" ? collection.filtered("_id IN $0", bookmarks?.artifacts?.map((it) => new BSON.ObjectId(it)) ?? []) : collection,
+    [params.cat]
+  );
   return (
     <MainBody backgroundColor={theme.colors.gradientBackground}>
       <ScrollView>

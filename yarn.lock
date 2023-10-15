@@ -4021,6 +4021,11 @@ expo-router@^2.0.0:
     schema-utils "^4.0.1"
     url "^0.11.0"
 
+expo-secure-store@^12.5.0:
+  version "12.5.0"
+  resolved "https://registry.yarnpkg.com/expo-secure-store/-/expo-secure-store-12.5.0.tgz#f52456e15315d64d1e9000384d4a837eea9dbb1f"
+  integrity sha512-Ow2ei+SB1w4zPLxmOg2PVPf2i45Eii0T9KUaER5iRLJAMcBWN4nyGCxzESOoN3OrvxVadP0hAn6RVE1G3gdD+Q==
+
 expo-splash-screen@~0.20.2, expo-splash-screen@~0.20.5:
   version "0.20.5"
   resolved "https://registry.yarnpkg.com/expo-splash-screen/-/expo-splash-screen-0.20.5.tgz#ebeba3e3977606830f74f506ab2cc25042bb7efd"
@@ -6689,10 +6694,10 @@ readline@^1.3.0:
   resolved "https://registry.yarnpkg.com/readline/-/readline-1.3.0.tgz#c580d77ef2cfc8752b132498060dc9793a7ac01c"
   integrity sha512-k2d6ACCkiNYz222Fs/iNze30rRJ1iIicW7JuX/7/cozvih6YCkFZH+J6mAFDVgv0dRBaAyr4jDqC95R2y4IADg==
 
-realm@^12.2.0:
-  version "12.2.0"
-  resolved "https://registry.yarnpkg.com/realm/-/realm-12.2.0.tgz#a1758b5051bb6996bce90492cf94b6030ca7950d"
-  integrity sha512-4MFmWWl5eARaU0toMGX6cjgSX53/4jLNoHyc3UN30bXoTPKw3JVAsL070GM+Ywuhl4D5ubFZOU4y+x+r9vDgew==
+realm@^12.2.1:
+  version "12.2.1"
+  resolved "https://registry.yarnpkg.com/realm/-/realm-12.2.1.tgz#1a87bd36b38704223df6db5953898f7f0941cf83"
+  integrity sha512-r9lB5S3FiqS2QZmxRvwt8cRLAx/g8KGotz5neV/ky1AhG9b7FtqTwLyJwhVLjkstnV8j40GaY0xMjuAbURINDg==
   dependencies:
     bson "^4.7.2"
     debug "^4.3.4"

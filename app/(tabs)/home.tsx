@@ -54,7 +54,7 @@ export default function Home() {
             traileringIconColor={theme.colors.grey1}
             traileringIcon={({ color }) => <SearchIcon fill={color} />}
           />
-          <IconBtn icon={<BookMarkOutlineIcon fill="white" />} />
+          <IconBtn icon={<BookMarkOutlineIcon fill="white" />} onPress={() => router.push("/category?cat=bookmarks")} />
         </View>
         <View>
           <Text variant="titleMedium" style={{ paddingHorizontal: 20 }}>
