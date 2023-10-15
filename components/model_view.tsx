@@ -3,12 +3,12 @@ import { useState, useEffect } from "react";
 import _ from "lodash";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
-import ExpoTHREE, { Renderer, THREE, loadObjAsync, loadTextureAsync } from "expo-three";
+import ExpoTHREE, { Renderer, THREE, loadObjAsync, loadTextureAsync, TextureLoader } from "expo-three";
 import { AnimatedSensor } from "react-native-reanimated";
-import { Scene, PerspectiveCamera, TextureLoader, Camera, AmbientLight, PointLight, SpotLight } from "three";
+import { Scene, PerspectiveCamera, Camera, AmbientLight, PointLight, SpotLight, MeshBasicMaterial } from "three";
 import { Asset } from "expo-asset";
 import { Platform, ViewStyle } from "react-native";
-
+import * as FileSystem from "expo-file-system";
 import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
 import OrbitControlsView from "expo-three-orbit-controls";
 
@@ -22,6 +22,18 @@ interface ModelViewProps {
   setError: (value: any) => void;
 }
 
+const copyAssetToCacheAsync = async (assetModule: string | number, localFilename: string) => {
+  const localUri = `${FileSystem.cacheDirectory}asset_${localFilename}`;
+  const fileInfo = await FileSystem.getInfoAsync(localUri, { size: false });
+  if (!fileInfo.exists) {
+    const asset = Asset.fromModule(assetModule);
+    await asset.downloadAsync();
+    alert(`copy asset to cache ${asset.localUri} -> ${localUri}`);
+    await FileSystem.copyAsync({ from: asset.localUri || asset.uri, to: localUri });
+  }
+  return localUri;
+};
+
 export default function ModelView(props: ModelViewProps) {
   const [camera, setCamera] = useState<Camera | null>(null);
 
@@ -33,12 +45,10 @@ export default function ModelView(props: ModelViewProps) {
   }, []);
 
   /// 3D model loader solution https://github.com/expo/expo-three/issues/151
+  /// Image resolver in android release build: https://stackoverflow.com/questions/69389275/expo-asset-library-works-in-debug-but-not-in-release-expo-ejected-project-react
+  /// Note on loading a texture: https://github.com/expo/expo-three
   const createObj = async () => {
-    const textureAsset = Asset.fromModule(require("../assets/models/demo/texture.jpg"));
-    await textureAsset.downloadAsync();
-    const { localUri: textureLocalUri, uri: textureUri } = textureAsset;
-
-    var object: THREE.Group<THREE.Object3DEventMap> | THREE.Group<THREE.Object3DEventMap>[] | null = null;
+    var object: THREE.Group<THREE.Object3DEventMap> | null = null;
     var texture: THREE.Texture | null = null;
     switch (Platform.OS) {
       case "android":
@@ -47,7 +57,14 @@ export default function ModelView(props: ModelViewProps) {
           mtlAsset: require("../assets/models/demo/material.mtl"),
         });
 
-        texture = await loadTextureAsync({ asset: require("../assets/models/demo/texture.jpg") });
+        // if in release mode, build the image to android/android/src/main/assets.
+        // cuz expo-gl cannot handel them :(
+        if (!__DEV__) {
+          const uri = await copyAssetToCacheAsync(require("../assets/models/demo/texture.jpg"), "demo_texture");
+          texture = await loadTextureAsync({ asset: uri });
+        } else {
+          texture = await loadTextureAsync({ asset: require("../assets/models/demo/texture.jpg") });
+        }
 
         break;
       default:
@@ -63,22 +80,18 @@ export default function ModelView(props: ModelViewProps) {
         const mtlAsset = Asset.fromModule(require("../assets/models/demo/material.mtl"));
         await mtlAsset.downloadAsync();
         const { localUri: mtlLocalUri, uri: mtlUri } = mtlAsset;
-        try {
-          const base = new TextureLoader().load(textureLocalUri || textureUri);
-          texture = base;
-        } catch (error) {
-          console.log("unable to load texture");
-          throw error;
-        }
 
-        const material = await new MTLLoader(loadManager).loadAsync(mtlAsset.localUri || mtlAsset.uri);
+        const base = new TextureLoader(loadManager).load(require("../assets/models/demo/texture.jpg"));
+        texture = base;
+
+        const material = await new MTLLoader(loadManager).loadAsync(mtlLocalUri || mtlUri);
         material.preload();
 
         const objAsset = Asset.fromModule(require("../assets/models/demo/object.obj"));
         await objAsset.downloadAsync();
         const { localUri: objLocalUri, uri: objUri } = objAsset;
 
-        object = await new OBJLoader(loadManager).setMaterials(material).loadAsync(objAsset.localUri || objAsset.uri);
+        object = await new OBJLoader(loadManager).setMaterials(material).loadAsync(objLocalUri || objUri);
 
         break;
     }
@@ -92,11 +105,10 @@ export default function ModelView(props: ModelViewProps) {
         }
       }
     }
-    if (Array.isArray(object)) {
-      object.forEach((it) => it?.traverse(callback));
-    } else if (object) {
+    if (object) {
       object?.traverse(callback);
     }
+
     return object;
   };
 
@@ -125,15 +137,13 @@ export default function ModelView(props: ModelViewProps) {
     const renderer = new Renderer({ gl });
     // set size of buffer to be equal to drawing buffer width
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
-    var obj: THREE.Group<THREE.Object3DEventMap> | THREE.Group<THREE.Object3DEventMap>[] | null;
-    // render object
+
+    var obj: THREE.Group<THREE.Object3DEventMap> | null = null;
+
     try {
+      // render object
       obj = await createObj();
-      if (Array.isArray(obj)) {
-        obj.forEach((it) => {
-          scene.add(it);
-        });
-      } else if (obj) {
+      if (obj) {
         scene.add(obj);
         camera.lookAt(obj.position);
       }
@@ -143,16 +153,25 @@ export default function ModelView(props: ModelViewProps) {
     } finally {
       props.setLoading(false);
     }
+    // dev
+    if (Platform.OS === "ios") {
+      try {
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new MeshBasicMaterial({ color: "white" });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+      } catch (error) {
+        console.log(error);
+        props.setError(error);
+      }
+    }
 
     // create render function
     const render = () => {
       timeout = requestAnimationFrame(render);
-      if (Array.isArray(obj)) {
-        obj.forEach((it) => {
-          it.rotation.y += 0.01;
-        });
-      } else if (obj) {
+      if (obj) {
         obj.rotation.y += 0.01;
+        console.log("set rotate");
       }
       renderer.render(scene, camera);
       gl.endFrameEXP();

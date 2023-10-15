@@ -29,6 +29,8 @@ PODS:
     - React-NativeModulesApple
     - React-RCTAppDelegate
     - ReactCommon/turbomodule/core
+  - ExpoSecureStore (12.5.0):
+    - ExpoModulesCore
   - EXSplashScreen (0.20.5):
     - ExpoModulesCore
     - RCT-Folly (= 2021.07.22.00)
@@ -518,6 +520,7 @@ DEPENDENCIES:
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoLinearGradient (from `../node_modules/expo-linear-gradient/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
+  - ExpoSecureStore (from `../node_modules/expo-secure-store/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -598,6 +601,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-linear-gradient/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core"
+  ExpoSecureStore:
+    :path: "../node_modules/expo-secure-store/ios"
   EXSplashScreen:
     :path: "../node_modules/expo-splash-screen/ios"
   FBLazyVector:
@@ -702,6 +707,7 @@ SPEC CHECKSUMS:
   ExpoKeepAwake: be4cbd52d9b177cde0fd66daa1913afa3161fc1d
   ExpoLinearGradient: 5966dd5d49872cc9c104fedc8bbc298b6049b2e8
   ExpoModulesCore: 51cb2e7ab4c8da14be3f40b66d54c1781002e99d
+  ExpoSecureStore: 5372610a4bbcf5e50fafbe6f38f8d9c22edf8253
   EXSplashScreen: c0e7f2d4a640f3b875808ed0b88575538daf6d82
   FBLazyVector: 71803c074f6325f10b5ec891c443b6bbabef0ca7
   FBReactNativeSpec: 448e08a759d29a96e15725ae532445bf4343567c
