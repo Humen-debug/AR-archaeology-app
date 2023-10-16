@@ -7,7 +7,6 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
-import com.viromedia.bridge.ReactViroPackage;
 
 import expo.modules.ReactActivityDelegateWrapper;
 
@@ -28,21 +27,6 @@ public class MainActivity extends ReactActivity {
   @Override
   protected String getMainComponentName() {
     return "main";
-  }
-
-  /**
-   * Return the packages installed.
-   * This is for ViroReact
-   */
-  @Override
-  protected List<ReactPackage> getPackages() {
-    @SuppressWarnings("UnnecessaryLocalVariable")
-    List<ReactPackage> packages = new PackageList(this).getPackages();
-
-    // Add this line
-    packages.add(new ReactViroPackage(ReactViroPackage.ViroPlatform.valueOf("AR")));
-
-    return packages;
   }
 
   /**

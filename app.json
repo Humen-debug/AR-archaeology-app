@@ -33,10 +33,12 @@
     },
     "plugins": [
       "expo-router",
-      "@viro-community/react-viro",
-      {
-        "androidXrMode": "AR"
-      }
+      [
+        "@viro-community/react-viro",
+        {
+          "androidXrMode": "AR"
+        }
+      ]
     ],
     "extra": {
       "router": {
