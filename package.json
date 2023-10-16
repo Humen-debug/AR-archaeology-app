@@ -8,9 +8,11 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
+    "prebuild:android": "expo prebuild --clean -p android",
     "build:android": "eas build -p android --profile preview",
     "build:ios": "eas build -p ios --profile preview",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "pod-install": "cd ios && pod install"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^4.5.1",
@@ -19,6 +21,7 @@
     "@realm/react": "^0.6.0",
     "@types/lodash": "^4.14.199",
     "@use-gesture/react": "^10.3.0",
+    "@viro-community/react-viro": "^2.23.0",
     "base64-arraybuffer": "^1.0.2",
     "expo": "^49.0.0",
     "expo-av": "~13.4.1",

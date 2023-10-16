@@ -28,7 +28,7 @@ const copyAssetToCacheAsync = async (assetModule: string | number, localFilename
   if (!fileInfo.exists) {
     const asset = Asset.fromModule(assetModule);
     await asset.downloadAsync();
-    alert(`copy asset to cache ${asset.localUri} -> ${localUri}`);
+    // alert(`copy asset to cache ${asset.localUri} -> ${localUri}`);
     await FileSystem.copyAsync({ from: asset.localUri || asset.uri, to: localUri });
   }
   return localUri;
@@ -147,31 +147,26 @@ export default function ModelView(props: ModelViewProps) {
         scene.add(obj);
         camera.lookAt(obj.position);
       }
+      // dev
+      if (Platform.OS === "ios") {
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new MeshBasicMaterial({ color: "white" });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+      }
     } catch (error) {
       console.log(error);
       props.setError(error);
     } finally {
       props.setLoading(false);
     }
-    // dev
-    if (Platform.OS === "ios") {
-      try {
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const material = new MeshBasicMaterial({ color: "white" });
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
-      } catch (error) {
-        console.log(error);
-        props.setError(error);
-      }
-    }
 
     // create render function
+    console.log("render");
     const render = () => {
       timeout = requestAnimationFrame(render);
       if (obj) {
         obj.rotation.y += 0.01;
-        console.log("set rotate");
       }
       renderer.render(scene, camera);
       gl.endFrameEXP();
