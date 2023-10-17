@@ -54,7 +54,7 @@ export default function ModelView(props: ModelViewProps) {
       case "android":
         object = await loadObjAsync({
           asset: require("../assets/models/demo/object.obj"),
-          mtlAsset: require("../assets/models/demo/object.mtl"),
+          mtlAsset: require("../assets/models/demo/material.mtl"),
         });
 
         // if in release mode, build the image to android/android/src/main/assets.
@@ -77,7 +77,7 @@ export default function ModelView(props: ModelViewProps) {
           console.log(`An error on "${url}"`);
         };
 
-        const mtlAsset = Asset.fromModule(require("../assets/models/demo/object.mtl"));
+        const mtlAsset = Asset.fromModule(require("../assets/models/demo/material.mtl"));
         await mtlAsset.downloadAsync();
         const { localUri: mtlLocalUri, uri: mtlUri } = mtlAsset;
 
