@@ -1,4 +1,12 @@
-import { Viro3DObject, ViroARPlaneSelector, ViroARScene, ViroARSceneNavigator, ViroAmbientLight, ViroSpotLight } from "@viro-community/react-viro";
+import {
+  Viro3DObject,
+  ViroARPlaneSelector,
+  ViroARScene,
+  ViroARSceneNavigator,
+  ViroAmbientLight,
+  ViroQuad,
+  ViroSpotLight,
+} from "@viro-community/react-viro";
 import MainBody from "../components/main_body";
 import { StyleSheet, View } from "react-native";
 import { useAppTheme } from "../styles";
@@ -6,29 +14,44 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import IconBtn from "../components/icon_btn";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
 import { router } from "expo-router";
+import { useState } from "react";
 
 function ARPlacementPage() {
+  const [loading, setLoading] = useState(false);
+
+  function handleError(event) {
+    console.log("OBJ loading failed with error: " + event.nativeEvent.error);
+  }
+
   return (
     <ViroARScene>
-      <ViroAmbientLight color="#FFFFFF" intensity={400} />
-      <ViroSpotLight
-        position={[0, -0.5, -0.5]}
-        color="#111"
-        direction={[0, 0, -1]}
-        attenuationStartDistance={5}
-        attenuationEndDistance={10}
-        innerAngle={5}
-        outerAngle={20}
-      />
+      <ViroAmbientLight color="#FFFFFF" intensity={1000} />
       <ViroARPlaneSelector alignment="Horizontal" maxPlanes={5}>
+        <ViroSpotLight
+          innerAngle={5}
+          outerAngle={25}
+          direction={[0, -1, -0.2]}
+          position={[0, 3, 1]}
+          color="#ffffff"
+          castsShadow={true}
+          shadowMapSize={2048}
+          shadowNearZ={2}
+          shadowFarZ={5}
+          shadowOpacity={0.7}
+        />
         <Viro3DObject
           source={require("../assets/models/demo/object.obj")}
           resources={[require("../assets/models/demo/object.mtl"), require("../assets/models/demo/scan.jpg")]}
           highAccuracyEvents={true}
           position={[0, 0, 0]}
-          scale={[0.01, 0.01, 0.01]}
+          scale={[0.025, 0.025, 0.025]}
           type="OBJ"
+          onLoadStart={() => setLoading(true)}
+          onLoadEnd={() => setLoading(false)}
+          onError={handleError}
+          shadowCastingBitMask={2}
         />
+        <ViroQuad position={[0, 0, 0]} rotation={[-90, 0, 0]} width={4} height={4} arShadowReceiver={true} />
       </ViroARPlaneSelector>
     </ViroARScene>
   );
@@ -43,7 +66,14 @@ export default () => {
         <View
           style={[
             _style.rowLayout,
-            { justifyContent: "space-between", position: "absolute", top: top, left: 0, right: 0, paddingHorizontal: theme.spacing.md },
+            {
+              justifyContent: "space-between",
+              position: "absolute",
+              top: top + theme.spacing.xs,
+              left: 0,
+              right: 0,
+              paddingHorizontal: theme.spacing.md,
+            },
           ]}
         >
           <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
