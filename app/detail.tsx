@@ -117,7 +117,7 @@ export default function DetailPage() {
             { justifyContent: "space-between", position: "absolute", top: top, left: 0, right: 0, paddingHorizontal: theme.spacing.md },
           ]}
         >
-          <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => (loading ? null : router.back())} />
+          <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} disabled={loading} />
           <View style={[_style.rowLayout, { gap: theme.spacing.sm }]}>
             <IconBtn icon={<ShareIcon fill={theme.colors.grey1} />} onPress={() => {}} />
             <IconBtn
@@ -126,7 +126,13 @@ export default function DetailPage() {
                 setBookmark(item?._id);
               }}
             />
-            <IconBtn icon={<CreateARIcon fill={theme.colors.grey1} />} onPress={() => {}} />
+            <IconBtn
+              icon={<CreateARIcon fill={theme.colors.grey1} />}
+              disabled={loading}
+              onPress={() => {
+                router.push("/ar_placement");
+              }}
+            />
           </View>
         </View>
       </>

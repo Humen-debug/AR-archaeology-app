@@ -57,6 +57,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@expo/config-plugins": "^7.2.5",
     "@types/react": "^18.2.21",
     "@types/react-dom": "~18.0.10",
     "@types/react-native": "^0.72.2",

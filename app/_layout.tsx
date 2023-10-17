@@ -26,6 +26,7 @@ export default function RootLayout() {
                   <Stack.Screen name="search_result" options={{}} />
                   <Stack.Screen name="category" options={{}} />
                   <Stack.Screen name="detail" options={{}} />
+                  <Stack.Screen name="ar_placement" options={{}} />
                 </Stack>
                 <StatusBar style="light" />
               </BookmarkProvider>

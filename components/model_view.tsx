@@ -54,16 +54,16 @@ export default function ModelView(props: ModelViewProps) {
       case "android":
         object = await loadObjAsync({
           asset: require("../assets/models/demo/object.obj"),
-          mtlAsset: require("../assets/models/demo/material.mtl"),
+          mtlAsset: require("../assets/models/demo/object.mtl"),
         });
 
         // if in release mode, build the image to android/android/src/main/assets.
         // cuz expo-gl cannot handel them :(
         if (!__DEV__) {
-          const uri = await copyAssetToCacheAsync(require("../assets/models/demo/texture.jpg"), "demo_texture");
+          const uri = await copyAssetToCacheAsync(require("../assets/models/demo/scan.jpg"), "demo_texture");
           texture = await loadTextureAsync({ asset: uri });
         } else {
-          texture = await loadTextureAsync({ asset: require("../assets/models/demo/texture.jpg") });
+          texture = await loadTextureAsync({ asset: require("../assets/models/demo/scan.jpg") });
         }
 
         break;
@@ -77,11 +77,11 @@ export default function ModelView(props: ModelViewProps) {
           console.log(`An error on "${url}"`);
         };
 
-        const mtlAsset = Asset.fromModule(require("../assets/models/demo/material.mtl"));
+        const mtlAsset = Asset.fromModule(require("../assets/models/demo/object.mtl"));
         await mtlAsset.downloadAsync();
         const { localUri: mtlLocalUri, uri: mtlUri } = mtlAsset;
 
-        const base = new TextureLoader(loadManager).load(require("../assets/models/demo/texture.jpg"));
+        const base = new TextureLoader(loadManager).load(require("../assets/models/demo/scan.jpg"));
         texture = base;
 
         const material = await new MTLLoader(loadManager).loadAsync(mtlLocalUri || mtlUri);
