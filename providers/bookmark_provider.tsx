@@ -65,7 +65,7 @@ export function BookmarkProvider({ children }: { children: React.ReactNode }): J
   }, []);
 
   useEffect(() => {
-    if (state) SecureStore.setItem("bookmarks", JSON.stringify(state));
+    if (state) SecureStore.setItemAsync("bookmarks", JSON.stringify(state));
   }, [state]);
 
   return <BookmarkContext.Provider value={bookmarkContext}>{children}</BookmarkContext.Provider>;
