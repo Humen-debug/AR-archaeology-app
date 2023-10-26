@@ -6,10 +6,13 @@ import { GenericTouchableProps } from "react-native-gesture-handler/lib/typescri
 
 interface IconBtnProps {
   size?: number;
+  square?: boolean;
   icon: JSX.Element;
 }
 export default function IconBtn(props: IconBtnProps & GenericTouchableProps & TouchableOpacityProps) {
   const theme = useAppTheme();
+  const _style = useStyle({square: props.square});
+
   return (
     <TouchableOpacity {...props}>
       <View style={[_style.container, { width: props.size ?? 48, height: props.size ?? 48 }]}>
@@ -21,10 +24,10 @@ export default function IconBtn(props: IconBtnProps & GenericTouchableProps & To
   );
 }
 
-const _style = StyleSheet.create({
+const useStyle = ({square}: any) => StyleSheet.create({
   container: {
     position: "relative",
-    borderRadius: 100,
+    borderRadius: square ? 8 : 100,
     overflow: "hidden",
   },
   gradient: {

@@ -68,7 +68,7 @@ export default function Home() {
               <LinearGradient colors={["transparent", theme.colors.grey4]} style={{ flex: 1, padding: theme.spacing.lg }}>
                 <View style={{ flex: 1, flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", gap: 4 }}>
                   <Text variant="titleMedium">Vedi Fortress</Text>
-                  <Text variant="labelSmall">Armenia</Text>
+                  <Text variant="titleSmall">Armenia</Text>
                 </View>
               </LinearGradient>
             </ImageBackground>
@@ -121,7 +121,7 @@ const ItemCard = (props: ItemCardProps) => {
       <TouchableRipple onPress={onPress ?? (() => router.push(`/detail?id=${item._id.toString()}`))}>
         <ImageBackground resizeMode="cover" style={_style.itemImg} source={item.image || require("../../assets/images/demo_item.png")}>
           <LinearGradient colors={["#0000006B", "#00000000"]} start={{ x: 0.5, y: 1 }} end={{ x: 0.5, y: 0 }} style={_style.gradient} />
-          <Text variant="labelSmall" style={_style.itemText} numberOfLines={2}>
+          <Text variant="titleSmall" style={_style.itemText} numberOfLines={2}>
             {item.name}
           </Text>
         </ImageBackground>

@@ -38,14 +38,14 @@ export const ItemCard = (props: ItemCardProps) => {
           end={{ x: 1, y: 0 }}
           style={[_style.cardContext, { paddingVertical: theme.spacing.sm, paddingHorizontal: theme.spacing.md }]}
         >
-          <Text variant="labelSmall" numberOfLines={2}>
+          <Text variant="titleSmall" numberOfLines={2}>
             {item.name}
           </Text>
           <View style={_style.wrapper}>
             {item.location && (
               <View style={_style.labelContainer}>
                 <LocationIcon fill={theme.colors.tertiary} width={12} />
-                <Text variant="labelSmall" style={{ fontSize: 10 }}>
+                <Text variant="titleSmall" style={{ fontSize: 10 }}>
                   {item.location || ""}
                 </Text>
               </View>
@@ -54,7 +54,7 @@ export const ItemCard = (props: ItemCardProps) => {
             {item && item.date !== undefined && item.date !== null && (
               <View style={_style.labelContainer}>
                 <TimeIcon fill={theme.colors.tertiary} width={12} />
-                <Text variant="labelSmall" style={{ fontSize: 10 }}>
+                <Text variant="titleSmall" style={{ fontSize: 10 }}>
                   {item.getPropertyType("date") === "string"
                     ? item.date?.toString()
                     : item.getPropertyType("date") === "date"

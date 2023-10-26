@@ -29,7 +29,7 @@ export default function NavBar({ state, descriptors, navigation, insets }: Botto
       <View style={{ position: "relative", height: "100%", width: "100%", overflow: "visible" }}>
         <View style={_style.bar}>
           <LinearGradient
-            style={{ ..._style.gradient, paddingTop: 12, paddingHorizontal: 48 }}
+            style={{ ..._style.gradient, paddingTop: 12, paddingHorizontal: 64 }}
             colors={["#2B2E2B", "#2A2E2B", "#3A3D3B"]}
             start={{ x: 1, y: 0 }}
             end={{ x: 0, y: 1 }}

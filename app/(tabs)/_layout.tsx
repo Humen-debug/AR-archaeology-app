@@ -13,14 +13,13 @@ export default function TabLayout() {
         tabBarHideOnKeyboard: true,
         tabBarStyle: null,
       }}
-      tabBar={(props) => (props.state.index === 1 ? <View /> : <NavBar {...props} />)}
+      tabBar={(props) => <NavBar {...props} />}
     >
       <Tabs.Screen
         name="home"
         options={{
           href: "/home",
           tabBarLabel: "Home",
-
           tabBarIcon: ({ color, size }) => <HomeIcon fill={color} size={size} />,
         }}
       />

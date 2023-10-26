@@ -172,7 +172,7 @@ const SortFilterSheet = forwardRef(function SortFilterSheet<T>(props: SortFilter
       <BottomSheetScrollView
         contentContainerStyle={[_style.bottomSheetContainer, { paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.xl }]}
       >
-        <Text variant="titleSmall" style={[_style.wrapper, { paddingBottom: theme.spacing.lg }]}>
+        <Text variant="labelMedium" style={[_style.wrapper, { paddingBottom: theme.spacing.lg }]}>
           Sort By
         </Text>
         <RadioButton.Group onValueChange={props.setSortBy} value={props.sortBy}>
@@ -193,7 +193,7 @@ const SortFilterSheet = forwardRef(function SortFilterSheet<T>(props: SortFilter
           </View>
         </RadioButton.Group>
         <View style={{ height: theme.spacing.lg * 2 }} />
-        <Text variant="titleSmall" style={[_style.wrapper, { paddingBottom: theme.spacing.lg }]}>
+        <Text variant="labelMedium" style={[_style.wrapper, { paddingBottom: theme.spacing.lg }]}>
           Filter By
         </Text>
         <List.AccordionGroup>
