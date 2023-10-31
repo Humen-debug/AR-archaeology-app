@@ -1,4 +1,4 @@
-package com.apsap.arapp;
+package hk.hku.apsapapp;
 
 import android.app.Application;
 import android.content.res.Configuration;

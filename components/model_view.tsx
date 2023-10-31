@@ -156,18 +156,18 @@ export default function ModelView(props: ModelViewProps) {
     } finally {
       props.setLoading(false);
     }
-    // dev
-    if (Platform.OS === "ios") {
-      try {
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const material = new MeshBasicMaterial({ color: "white" });
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
-      } catch (error) {
-        console.log(error);
-        props.setError(error);
-      }
-    }
+    // // dev
+    // if (Platform.OS === "ios") {
+    //   try {
+    //     const geometry = new THREE.BoxGeometry(1, 1, 1);
+    //     const material = new MeshBasicMaterial({ color: "white" });
+    //     const cube = new THREE.Mesh(geometry, material);
+    //     scene.add(cube);
+    //   } catch (error) {
+    //     console.log(error);
+    //     props.setError(error);
+    //   }
+    // }
 
     // create render function
     const render = () => {
