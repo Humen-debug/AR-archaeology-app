@@ -81,9 +81,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace 'com.apsap.arapp'
+    namespace 'hk.hku.apsapapp'
     defaultConfig {
-        applicationId 'com.apsap.arapp'
+        applicationId 'hk.hku.apsapapp'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
