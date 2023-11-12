@@ -1,13 +1,8 @@
 import { Text, Button } from "react-native-paper";
 import { useRouter } from "expo-router";
 import { StyleSheet, View, FlatList, Modal } from "react-native";
-<<<<<<< HEAD
 import MapView, { Marker } from 'react-native-maps';
 import {Dimensions} from 'react-native';
-=======
-import MapView from "react-native-maps";
-import { Dimensions } from "react-native";
->>>>>>> 1e2fc7d8bd7a523bcddaba90c702ab9889a418c8
 import { useAppTheme } from "../../styles";
 import MainBody from "../../components/main_body";
 import IconBtn from "../../components/icon_btn";
@@ -142,30 +137,16 @@ export default function Explore() {
           <IconBtn style={_style.iconButton} icon={<CreateARIcon fill={theme.colors.grey1} />} onPress={() => {}} />
           <IconBtn square style={_style.iconButton} icon={<MenuIcon fill={theme.colors.grey1} />} onPress={() => setOpen(!open)} />
         </View>
-<<<<<<< HEAD
         {/* <Modal animationType="slide" transparent visible={open} onRequestClose={() => setOpen(false)}>
           <View style={{height: window.height, backgroundColor: "rgba(54, 54, 54, 0.6)"}}/>
-=======
-        <Modal animationType="slide" transparent visible={open} onRequestClose={() => setOpen(false)}>
-          <View style={{ height: window.height, backgroundColor: "rgba(54, 54, 54, 0.6)" }} />
->>>>>>> 1e2fc7d8bd7a523bcddaba90c702ab9889a418c8
           <View style={_style.modal}>
             <View style={{ width: "100%", alignItems: "center", justifyContent: "center", height: theme.spacing.xl }}>
               <View style={{ backgroundColor: "black", height: 4, width: 72 }} />
             </View>
-<<<<<<< HEAD
             <Text variant="labelSmall" style={{color: theme.colors.primary}}>test</Text>
           </View>         
         </Modal> */}
       </>  
-=======
-            <Text variant="labelSmall" style={{ color: theme.colors.primary }}>
-              test
-            </Text>
-          </View>
-        </Modal>
-      </>
->>>>>>> 1e2fc7d8bd7a523bcddaba90c702ab9889a418c8
     </MainBody>
   );
 }
