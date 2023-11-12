@@ -61,3 +61,6 @@ buck-out/
 # Other useless file
 .expo
 .vscode
+
+# Important and private variable
+.env

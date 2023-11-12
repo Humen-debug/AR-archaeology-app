@@ -41,7 +41,10 @@ export default function ModelView(props: ModelViewProps) {
 
   useEffect(() => {
     // Clear the animation loop when the component unmounts
-    return () => clearTimeout(timeout);
+    return () => {
+      console.log("end timeout");
+      clearTimeout(timeout);
+    };
   }, []);
 
   /// 3D model loader solution https://github.com/expo/expo-three/issues/151
@@ -153,25 +156,25 @@ export default function ModelView(props: ModelViewProps) {
     } finally {
       props.setLoading(false);
     }
-    // dev
-    if (Platform.OS === "ios") {
-      try {
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const material = new MeshBasicMaterial({ color: "white" });
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
-      } catch (error) {
-        console.log(error);
-        props.setError(error);
-      }
-    }
+    // // dev
+    // if (Platform.OS === "ios") {
+    //   try {
+    //     const geometry = new THREE.BoxGeometry(1, 1, 1);
+    //     const material = new MeshBasicMaterial({ color: "white" });
+    //     const cube = new THREE.Mesh(geometry, material);
+    //     scene.add(cube);
+    //   } catch (error) {
+    //     console.log(error);
+    //     props.setError(error);
+    //   }
+    // }
 
     // create render function
     const render = () => {
       timeout = requestAnimationFrame(render);
       if (obj) {
+        if (Platform.OS === "ios") console.log(`${Date.now()}: rotate`);
         obj.rotation.y += 0.01;
-        console.log("set rotate");
       }
       renderer.render(scene, camera);
       gl.endFrameEXP();
@@ -183,7 +186,7 @@ export default function ModelView(props: ModelViewProps) {
 
   return (
     <OrbitControlsView style={{ flex: 1 }} camera={camera} minDistance={10}>
-      <GLView onContextCreate={onContextCreate} style={{ flex: 1 }} />
+      <GLView onContextCreate={onContextCreate} style={{ flex: 1 }} msaaSamples={0} />
     </OrbitControlsView>
   );
 }

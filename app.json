@@ -15,7 +15,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.apsap.arapp",
+      "bundleIdentifier": "hk.hku.apsapapp",
       "config": {
         "usesNonExemptEncryption": false
       }
@@ -26,7 +26,7 @@
         "backgroundColor": "#ffffff"
       },
       "softwareKeyboardLayoutMode": "pan",
-      "package": "com.apsap.arapp"
+      "package": "hk.hku.apsapapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
