@@ -1,7 +1,7 @@
 import { Text, Button } from "react-native-paper";
 import { useRouter } from "expo-router";
 import { StyleSheet, View, FlatList, Modal } from "react-native";
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import {Dimensions} from 'react-native';
 import { useAppTheme } from "../../styles";
 import MainBody from "../../components/main_body";
@@ -12,7 +12,8 @@ import BookMarkIcon from "../../assets/icons/bookmark.svg";
 import CreateARIcon from "../../assets/icons/create-ar.svg";
 import LocateARIcon from "../../assets/icons/locate.svg";
 import MenuIcon from "../../assets/icons/menu.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import * as Location from "expo-location";
 
 interface ItemProps {
   title: string;
@@ -54,6 +55,16 @@ export default function Explore() {
   });
 
   const [open, setOpen] = useState(false);
+  const [location, setLocation] = useState<Location.LocationObject>();
+
+  useEffect(()=>{
+    (async () => {
+      let loc = await Location.getCurrentPositionAsync({});
+      console.log(loc);
+      setLocation(loc);
+    })();
+  }, []);
+
 
   const Item = ({title, length, isSaved}: ItemProps) => (
     <View style={_style.item}>
@@ -69,7 +80,7 @@ export default function Explore() {
           compact 
           labelStyle={_style.button}
           mode="outlined"
-          icon={() => isSaved ? <BookMarkIcon style={_style.icon} fill={"black"}/> : <BookMarkOutlineIcon style={_style.icon}/>}
+          icon={() => isSaved ? <BookMarkIcon style={_style.icon}/> : <BookMarkOutlineIcon style={_style.icon}/>}
           style={{marginLeft: 8, borderColor: theme.colors.primary}}
         >
           <Text variant="labelSmall" style={{color: theme.colors.primary}}>{isSaved ? "Saved" : "Save"}</Text>
@@ -89,7 +100,11 @@ export default function Explore() {
             latitudeDelta: 0.005,
             longitudeDelta: 0.005,
           }}
-        />
+        >
+          {/* location is not correct therefore the marker is in San Francisco for iphone simulator */}
+          {location && <Marker coordinate={{longitude: location.coords.longitude, latitude: location.coords.latitude }} />}
+          <Marker coordinate={{longitude: 114.1366, latitude: 22.2831}} />
+        </MapView>
         <FlatList
           snapToInterval={270 + itemSpacing}
           pagingEnabled={true}
@@ -106,7 +121,7 @@ export default function Explore() {
           <IconBtn style={_style.iconButton} icon={<CreateARIcon fill={theme.colors.grey1} />} onPress={() => {}} />
           <IconBtn square style={_style.iconButton} icon={<MenuIcon fill={theme.colors.grey1} />} onPress={() => setOpen(!open)} />
         </View>
-        <Modal animationType="slide" transparent visible={open} onRequestClose={() => setOpen(false)}>
+        {/* <Modal animationType="slide" transparent visible={open} onRequestClose={() => setOpen(false)}>
           <View style={{height: window.height, backgroundColor: "rgba(54, 54, 54, 0.6)"}}/>
           <View style={_style.modal}>
             <View style={{width: "100%", alignItems: "center", justifyContent: "center", height: theme.spacing.xl}}>
@@ -114,7 +129,7 @@ export default function Explore() {
             </View>
             <Text variant="labelSmall" style={{color: theme.colors.primary}}>test</Text>
           </View>         
-        </Modal>
+        </Modal> */}
       </>  
     </MainBody>
   );
