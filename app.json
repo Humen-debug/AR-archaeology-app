@@ -18,6 +18,10 @@
       "bundleIdentifier": "hk.hku.apsapapp",
       "config": {
         "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to AR path finding.",
+        "NSLocationWhenInUseUsageDescription": "This app uses your location for map."
       }
     },
     "android": {
