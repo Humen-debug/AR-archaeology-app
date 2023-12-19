@@ -28,7 +28,7 @@ const copyAssetToCacheAsync = async (assetModule: string | number, localFilename
   if (!fileInfo.exists) {
     const asset = Asset.fromModule(assetModule);
     await asset.downloadAsync();
-    alert(`copy asset to cache ${asset.localUri} -> ${localUri}`);
+    // alert(`copy asset to cache ${asset.localUri} -> ${localUri}`);
     await FileSystem.copyAsync({ from: asset.localUri || asset.uri, to: localUri });
   }
   return localUri;
@@ -63,10 +63,10 @@ export default function ModelView(props: ModelViewProps) {
         // if in release mode, build the image to android/android/src/main/assets.
         // cuz expo-gl cannot handel them :(
         if (!__DEV__) {
-          const uri = await copyAssetToCacheAsync(require("../assets/models/demo/texture.jpg"), "demo_texture");
+          const uri = await copyAssetToCacheAsync(require("../assets/models/demo/scan.jpg"), "demo_texture");
           texture = await loadTextureAsync({ asset: uri });
         } else {
-          texture = await loadTextureAsync({ asset: require("../assets/models/demo/texture.jpg") });
+          texture = await loadTextureAsync({ asset: require("../assets/models/demo/scan.jpg") });
         }
 
         break;
@@ -84,7 +84,7 @@ export default function ModelView(props: ModelViewProps) {
         await mtlAsset.downloadAsync();
         const { localUri: mtlLocalUri, uri: mtlUri } = mtlAsset;
 
-        const base = new TextureLoader(loadManager).load(require("../assets/models/demo/texture.jpg"));
+        const base = new TextureLoader(loadManager).load(require("../assets/models/demo/scan.jpg"));
         texture = base;
 
         const material = await new MTLLoader(loadManager).loadAsync(mtlLocalUri || mtlUri);
@@ -150,26 +150,22 @@ export default function ModelView(props: ModelViewProps) {
         scene.add(obj);
         camera.lookAt(obj.position);
       }
+      // dev
+      if (Platform.OS === "ios") {
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new MeshBasicMaterial({ color: "white" });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+      }
     } catch (error) {
       console.log(error);
       props.setError(error);
     } finally {
       props.setLoading(false);
     }
-    // // dev
-    // if (Platform.OS === "ios") {
-    //   try {
-    //     const geometry = new THREE.BoxGeometry(1, 1, 1);
-    //     const material = new MeshBasicMaterial({ color: "white" });
-    //     const cube = new THREE.Mesh(geometry, material);
-    //     scene.add(cube);
-    //   } catch (error) {
-    //     console.log(error);
-    //     props.setError(error);
-    //   }
-    // }
 
     // create render function
+    console.log("render");
     const render = () => {
       timeout = requestAnimationFrame(render);
       if (obj) {

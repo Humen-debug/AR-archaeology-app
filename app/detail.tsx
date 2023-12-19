@@ -24,6 +24,7 @@ import { useBookmarks } from "../providers/bookmark_provider";
 
 export default function DetailPage() {
   const theme = useAppTheme();
+  const { top } = useSafeAreaInsets();
   const params = useLocalSearchParams<{ id?: string }>();
   const [loading, setLoading] = useState(false);
   const [modelError, setModelError] = useState(null);
@@ -41,8 +42,6 @@ export default function DetailPage() {
   const bottomSheetScrollRef = useRef<BottomSheetScrollViewMethods | null>(null);
   // variables
   const snapPoints = useMemo(() => ["50%", "85%"], []);
-
-  const { top } = useSafeAreaInsets();
 
   return (
     <MainBody backgroundColor={theme.colors.gradientBackground} padding={{ right: 0, left: 0 }}>
@@ -114,10 +113,17 @@ export default function DetailPage() {
         <View
           style={[
             _style.rowLayout,
-            { justifyContent: "space-between", position: "absolute", top: top, left: 0, right: 0, paddingHorizontal: theme.spacing.md },
+            {
+              justifyContent: "space-between",
+              position: "absolute",
+              top: top + theme.spacing.xs,
+              left: 0,
+              right: 0,
+              paddingHorizontal: theme.spacing.md,
+            },
           ]}
         >
-          <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => (loading ? null : router.back())} />
+          <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} disabled={loading} />
           <View style={[_style.rowLayout, { gap: theme.spacing.sm }]}>
             <IconBtn icon={<ShareIcon fill={theme.colors.grey1} />} onPress={() => {}} />
             <IconBtn
@@ -126,7 +132,13 @@ export default function DetailPage() {
                 setBookmark(item?._id);
               }}
             />
-            <IconBtn icon={<CreateARIcon fill={theme.colors.grey1} />} onPress={() => {}} />
+            <IconBtn
+              icon={<CreateARIcon fill={theme.colors.grey1} />}
+              disabled={loading}
+              onPress={() => {
+                router.push("/ar_placement");
+              }}
+            />
           </View>
         </View>
       </>

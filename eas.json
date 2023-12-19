@@ -3,18 +3,14 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "ios": {
-        "simulator": true
-      }
+      "ios": {}
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk"
       },
-      "ios": {
-        "simulator": true
-      }
+      "ios": {}
     },
     "production": {}
   }

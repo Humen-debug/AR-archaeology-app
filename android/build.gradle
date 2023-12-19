@@ -3,7 +3,7 @@
 buildscript {
     ext {
         buildToolsVersion = findProperty('android.buildToolsVersion') ?: '33.0.0'
-        minSdkVersion = Integer.parseInt(findProperty('android.minSdkVersion') ?: '21')
+        minSdkVersion = Integer.parseInt(findProperty('android.minSdkVersion') ?: '24')
         compileSdkVersion = Integer.parseInt(findProperty('android.compileSdkVersion') ?: '33')
         targetSdkVersion = Integer.parseInt(findProperty('android.targetSdkVersion') ?: '33')
         kotlinVersion = findProperty('android.kotlinVersion') ?: '1.8.10'
@@ -15,6 +15,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath('com.android.tools.build:gradle:7.4.2')
@@ -35,6 +36,7 @@ allprojects {
 
         google()
         mavenCentral()
+        jcenter()
         maven { url 'https://www.jitpack.io' }
     }
 }

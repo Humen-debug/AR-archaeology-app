@@ -25,5 +25,8 @@ For better type annotation, typescript is recommended.
   
 ## Package versions
 
-NOTE: package: `expo-three-orbit-controls` on github is using outdated version of `three@0.108`. To solve the code conflict, an update is made by using `package-patch`.
+NOTE:
+
+- package: `expo-three-orbit-controls` on github is using outdated version of `three@0.108`. To solve the code conflict, an update is made by using `package-patch`.
+- package `@viro-community/react-viro` also has deprecation issue in 'ViroSurface'. An update is made by using `package-patch`.
 Please run `yarn postinstall` before you build.
