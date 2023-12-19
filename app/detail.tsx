@@ -136,7 +136,7 @@ export default function DetailPage() {
               icon={<CreateARIcon fill={theme.colors.grey1} />}
               disabled={loading}
               onPress={() => {
-                router.push("/ar_placement");
+                loading ? null : router.push("/ar_placement");
               }}
             />
           </View>
