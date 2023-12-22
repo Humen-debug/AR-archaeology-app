@@ -55,7 +55,7 @@ export default function Explore() {
   useEffect(() => {
     (async () => {
       let loc = await Location.getCurrentPositionAsync({});
-      console.log("userLocation:l", loc);
+      console.log("userLocation:", loc);
       setLocation(loc);
     })();
   }, []);
@@ -89,7 +89,13 @@ export default function Explore() {
         />
         <View style={_style.buttonsContainer}>
           <IconBtn style={_style.iconButton} icon={<LocateARIcon fill={theme.colors.grey1} />} onPress={() => {}} />
-          <IconBtn style={_style.iconButton} icon={<CreateARIcon fill={theme.colors.grey1} />} onPress={() => {}} />
+          <IconBtn
+            style={_style.iconButton}
+            icon={<CreateARIcon fill={theme.colors.grey1} />}
+            onPress={() => {
+              router.push("/ar_explore");
+            }}
+          />
           <IconBtn
             square
             style={_style.iconButton}
