@@ -1,15 +1,16 @@
-import { ViroARScene, ViroARSceneNavigator, ViroBox, ViroNode } from "@viro-community/react-viro";
+import { ViroARScene, ViroARSceneNavigator, ViroBox, ViroNode, ViroQuad } from "@viro-community/react-viro";
 import { useAppTheme } from "../styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
+import ArrowIcon from "../assets/icons/arrow-up.svg";
 import MainBody from "../components/main_body";
 import IconBtn from "../components/icon_btn";
 import * as Location from "expo-location";
 import { router } from "expo-router";
 import { useState, useEffect, createRef } from "react";
 import { View, StyleSheet, Platform } from "react-native";
-import _ from "lodash";
-import { Text } from "react-native-paper";
+import _, { transform } from "lodash";
+import { ActivityIndicator, Text } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import MapView, { Marker } from "react-native-maps";
 
@@ -35,30 +36,37 @@ const distanceBetweenPoints = (p1, p2) => {
   return d;
 };
 
+const latLongToMerc = (latDeg: number, longDeg: number) => {
+  // From: https://gist.github.com/scaraveos/5409402
+  const longRad = (longDeg / 180.0) * Math.PI;
+  const latRad = (latDeg / 180.0) * Math.PI;
+  const smA = 6378137.0;
+  const xmeters = smA * longRad;
+  const ymeters = smA * Math.log((Math.sin(latRad) + 1) / Math.cos(latRad));
+  return { x: xmeters, y: ymeters };
+};
+
+// Important to wrap the props with arSceneNavigator and viroAppProps, based on the
+// guidance of ViroReact
 interface ARExploreProps {
-  heading?: number | undefined;
-  location?: Location.LocationObjectCoords | undefined;
-  nearbyItems: Location.LocationObjectCoords[];
+  arSceneNavigator: {
+    viroAppProps: {
+      location?: Location.LocationObjectCoords | undefined;
+      nearbyItems: Location.LocationObjectCoords[];
+    };
+  };
 }
 
-function ARExplorePage({ heading, location, nearbyItems }: ARExploreProps) {
-  const latLongToMerc = (latDeg: number, longDeg: number) => {
-    // From: https://gist.github.com/scaraveos/5409402
-    const longRad = (longDeg / 180.0) * Math.PI;
-    const latRad = (latDeg / 180.0) * Math.PI;
-    const smA = 6378137.0;
-    const xmeters = smA * longRad;
-    const ymeters = smA * Math.log((Math.sin(latRad) + 1) / Math.cos(latRad));
-    return { x: xmeters, y: ymeters };
-  };
-
+function ARExplorePage(props?: ARExploreProps) {
   const transformGpsToAR = (lat, lng) => {
-    if (!location) return undefined;
+    if (!props?.arSceneNavigator.viroAppProps.location) return undefined;
     const isAndroid = Platform.OS === "android";
     const latObj = lat;
     const longObj = lng;
-    const latMobile = location?.latitude;
-    const longMobile = location?.longitude;
+    const latMobile = props?.arSceneNavigator.viroAppProps.location?.latitude;
+    const longMobile = props?.arSceneNavigator.viroAppProps.location?.longitude;
+
+    if (!longMobile || !latMobile) return undefined;
 
     const deviceObjPoint = latLongToMerc(latObj, longObj);
     const mobilePoint = latLongToMerc(latMobile, longMobile);
@@ -66,7 +74,7 @@ function ARExplorePage({ heading, location, nearbyItems }: ARExploreProps) {
     const objDeltaX = deviceObjPoint.x - mobilePoint.x;
 
     if (isAndroid) {
-      const degree = heading;
+      const degree = props?.arSceneNavigator.viroAppProps.location?.heading;
       if (!degree) return undefined;
       const angleRadian = (degree * Math.PI) / 180;
       const newObjX = objDeltaX * Math.cos(angleRadian) - objDeltaY * Math.sin(angleRadian);
@@ -78,30 +86,36 @@ function ARExplorePage({ heading, location, nearbyItems }: ARExploreProps) {
   };
 
   const placeARObjects = () => {
-    if (nearbyItems.length === 0) {
+    if (!props?.arSceneNavigator.viroAppProps.nearbyItems) {
       return undefined;
     }
-    const ARObjects = nearbyItems.map((item, index) => {
+
+    const ARObjects = props?.arSceneNavigator.viroAppProps.nearbyItems?.map((item, index) => {
       const coords = transformGpsToAR(item.latitude, item.longitude);
       if (!coords) return undefined;
+
       const scale = Math.abs(Math.round(coords.z / 15));
 
       return (
         <ViroNode key={index} scale={[scale, scale, scale]} rotation={[0, 0, 0]} position={[coords.x, 0, coords.z]}>
-          <ViroBox scale={[1, 1, 1]} />
+          <ViroBox />
         </ViroNode>
       );
     });
     return ARObjects;
   };
 
-  return <ViroARScene>{location && placeARObjects()}</ViroARScene>;
+  const placeNavigationPlane = () => {
+    return <ViroQuad position={[0, -1, -2]} height={2} width={0.5} rotation={[-45, 0, 0]} />;
+  };
+
+  return <ViroARScene>{props?.arSceneNavigator.viroAppProps.location && placeARObjects()}</ViroARScene>;
 }
 
 export default () => {
   const theme = useAppTheme();
   const { top } = useSafeAreaInsets();
-  const [nearestDistance, setNearestDistance] = useState<number>();
+  const [nearestItem, setNearestItem] = useState<Location.LocationObjectCoords>();
   const mapRef = createRef<MapView>();
   // demo
   const [initLocation, setInitLocation] = useState<Location.LocationObjectCoords>();
@@ -140,17 +154,16 @@ export default () => {
     let loc = await Location.getCurrentPositionAsync();
     setInitLocation(loc.coords);
 
-    const geoOpt = {
+    const geoOpt: Location.LocationOptions = {
       accuracy: Location.Accuracy.BestForNavigation,
-      enableHighAccuracy: true,
-      timeInterval: 2500,
-      // distanceInterval: 10,
+      distanceInterval: 10,
     };
+
     const geoCallback = async (result: Location.LocationObject) => {
       const coords = result.coords;
       if (coords.accuracy && coords.accuracy < 40) {
         setLocation(coords);
-        console.log(coords);
+
         // Moving map to center user's location
         mapRef?.current?.animateToRegion({ latitude: coords.latitude, longitude: coords.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 });
       }
@@ -160,9 +173,7 @@ export default () => {
     setLocationListener(listener);
 
     const headingListener = await Location.watchHeadingAsync((heading) => {
-      if (heading.accuracy > 0 && heading.trueHeading > 0) {
-        setHeading(heading.trueHeading);
-      }
+      if (heading.trueHeading >= 0) setHeading(heading.trueHeading);
     });
     setHeadingListener(headingListener);
   };
@@ -181,13 +192,13 @@ export default () => {
           longitude: lon,
         },
       ];
-      const distances = locations.map((item) => distanceBetweenPoints(location, item));
+      const distances = locations.map((item, index) => [distanceBetweenPoints(location, item), index]);
       if (distances.length !== 0) {
         const minDist = distances.reduce((previousValue, currentValue) => {
-          return previousValue < currentValue ? previousValue : currentValue;
+          return previousValue[0] < currentValue[0] ? previousValue : currentValue;
         });
 
-        setNearestDistance?.(minDist);
+        setNearestItem?.(locations[minDist[1]]);
       }
       setNearbyItems(locations);
     }
@@ -203,10 +214,47 @@ export default () => {
     return markers;
   };
 
+  const getCompassRotation = () => {
+    if (!nearestItem || !location) return 0;
+    const isAndroid = Platform.OS === "android";
+
+    const latObj = nearestItem.latitude;
+    const longObj = nearestItem.longitude;
+    const latMobile = location?.latitude;
+    const longMobile = location?.longitude;
+
+    const objPoint = latLongToMerc(latObj, longObj);
+    const mobilePoint = latLongToMerc(latMobile, longMobile);
+
+    let y = objPoint.y - mobilePoint.y;
+    let x = objPoint.x - mobilePoint.x;
+
+    if (isAndroid) {
+      console.log("current heading", heading, location.heading);
+      const degree = heading ?? 0;
+      const angleRadian = (degree * Math.PI) / 180;
+      x = x * Math.cos(angleRadian) - y * Math.sin(angleRadian);
+      y = x * Math.sin(angleRadian) + y * Math.cos(angleRadian);
+    }
+
+    // It is for rotating the icon from upward to right
+    // As the rotation is according to the Cartesian coordinate system,
+    // in which 0 deg points to the right, and deg is rotated in anticlockwise
+    const iconDegreeDelta = 90;
+    const res = -(Math.atan2(y, x) + iconDegreeDelta);
+    console.log(-res - iconDegreeDelta);
+    return -90;
+  };
+
+  const getNearestDistance = () => {
+    if (!nearestItem) return undefined;
+    return distanceBetweenPoints(location, nearestItem);
+  };
+
   return (
     <MainBody>
       <>
-        <ViroARSceneNavigator initialScene={{ scene: () => ARExplorePage({ heading, location, nearbyItems }) }}></ViroARSceneNavigator>
+        <ViroARSceneNavigator initialScene={{ scene: ARExplorePage }} viroAppProps={{ location, nearbyItems }}></ViroARSceneNavigator>
         <View
           style={[
             _style.rowLayout,
@@ -222,13 +270,14 @@ export default () => {
         >
           <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
         </View>
-        {nearestDistance && (
+        {getNearestDistance() && (
           <View style={[_style.distanceContainer, { top: top + theme.spacing.xs + 34 }]}>
             <LinearGradient colors={theme.colors.gradientBlack} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={_style.gradient}>
               <View style={[_style.rowLayout, { padding: theme.spacing.xs }]}>
+                <ArrowIcon fill={theme.colors.grey1} style={{ transform: [{ rotate: `${getCompassRotation()}deg` }], width: 24, height: 24 }} />
                 <View style={_style.columnLayout}>
                   <Text>Destination</Text>
-                  <Text>{Number(nearestDistance * 1000).toFixed(2)} m</Text>
+                  {<Text>{Number(getNearestDistance()! * 1000).toFixed(2)} m</Text>}
                 </View>
               </View>
             </LinearGradient>
@@ -251,6 +300,11 @@ export default () => {
             >
               {placeMarkers()}
             </MapView>
+          </View>
+        )}
+        {!(initLocation && location) && (
+          <View style={_style.centerContainer}>
+            <ActivityIndicator size={"large"} animating={true} />
           </View>
         )}
       </>
