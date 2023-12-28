@@ -55,7 +55,6 @@ export default function Explore() {
   useEffect(() => {
     (async () => {
       let loc = await Location.getCurrentPositionAsync({});
-      console.log("userLocation:", loc);
       setLocation(loc);
     })();
   }, []);

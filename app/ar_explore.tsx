@@ -1,4 +1,4 @@
-import { ViroARScene, ViroARSceneNavigator, ViroBox, ViroNode, ViroQuad } from "@viro-community/react-viro";
+import { Viro3DObject, ViroARScene, ViroARSceneNavigator, ViroBox, ViroNode, ViroQuad } from "@viro-community/react-viro";
 import { useAppTheme } from "../styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
@@ -20,7 +20,7 @@ import MapView, { Marker } from "react-native-maps";
  * https://github.com/ViroCommunity/geoar/blob/master/App.js for coding
  */
 
-const distanceBetweenPoints = (p1, p2) => {
+const distanceBetweenPoints = (p1: LatLong | undefined, p2: LatLong | undefined) => {
   if (!p1 || !p2) {
     return 0;
   }
@@ -46,21 +46,48 @@ const latLongToMerc = (latDeg: number, longDeg: number) => {
   return { x: xmeters, y: ymeters };
 };
 
-// Important to wrap the props with arSceneNavigator and viroAppProps, based on the
-// guidance of ViroReact
-interface ARExploreProps {
-  arSceneNavigator: {
-    viroAppProps: {
-      location?: Location.LocationObjectCoords | undefined;
-      nearbyItems: Location.LocationObjectCoords[];
-    };
-  };
-}
+/*
+ * From http://www.movable-type.co.uk/scripts/latlong.html?from=48.9613600,-122.0413400&to=48.965496,-122.072989
+ * Given two points, return the bearing degree from p1 to p2
+ */
+const bearingBetweenTwoPoints = (p1: LatLong | undefined, p2: LatLong | undefined) => {
+  if (!p1 || !p2) return 0;
+
+  const lat1 = p1.latitude - Math.PI / 180;
+  const lat2 = p2.latitude - Math.PI / 180;
+  const dLong = ((p2.longitude - p1.longitude) * Math.PI) / 180;
+
+  const y = Math.sin(dLong) * Math.cos(lat2);
+  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLong);
+
+  const theta = Math.atan2(y, x);
+  const bearing = ((theta * 180) / Math.PI + 360) % 360;
+  return bearing;
+};
+
+const degreeInAR = (location, obj) => {
+  if (!location || !obj) return 0;
+  const latObj = obj.latitude;
+  const longObj = obj.longitude;
+  const latMobile = location.latitude;
+  const longMobile = location.longitude;
+
+  if (!longMobile || !latMobile) return undefined;
+
+  const deviceObjPoint = latLongToMerc(latObj, longObj);
+  const mobilePoint = latLongToMerc(latMobile, longMobile);
+  const objDeltaY = deviceObjPoint.y - mobilePoint.y;
+  const objDeltaX = deviceObjPoint.x - mobilePoint.x;
+
+  // convert the degree from right side of x-axis to top of y-axis
+  const degree = ((Math.atan2(objDeltaY, objDeltaX) * 180) / Math.PI + 270) % 360;
+  return degree;
+};
 
 function ARExplorePage(props?: ARExploreProps) {
   const transformGpsToAR = (lat, lng) => {
     if (!props?.arSceneNavigator.viroAppProps.location) return undefined;
-    const isAndroid = Platform.OS === "android";
+
     const latObj = lat;
     const longObj = lng;
     const latMobile = props?.arSceneNavigator.viroAppProps.location?.latitude;
@@ -70,20 +97,15 @@ function ARExplorePage(props?: ARExploreProps) {
 
     const deviceObjPoint = latLongToMerc(latObj, longObj);
     const mobilePoint = latLongToMerc(latMobile, longMobile);
+    // accuracy need improvement
     const objDeltaY = deviceObjPoint.y - mobilePoint.y;
     const objDeltaX = deviceObjPoint.x - mobilePoint.x;
-
-    if (isAndroid) {
-      const degree = props?.arSceneNavigator.viroAppProps.location?.heading;
-      if (!degree) return undefined;
-      const angleRadian = (degree * Math.PI) / 180;
-      const newObjX = objDeltaX * Math.cos(angleRadian) - objDeltaY * Math.sin(angleRadian);
-      const newObjY = objDeltaX * Math.sin(angleRadian) + objDeltaY * Math.cos(angleRadian);
-      return { x: newObjX, z: -newObjY };
-    }
-
     return { x: objDeltaX, z: -objDeltaY };
   };
+
+  function handleError(event) {
+    console.log("OBJ loading failed with error: " + event.nativeEvent.error);
+  }
 
   const placeARObjects = () => {
     if (!props?.arSceneNavigator.viroAppProps.nearbyItems) {
@@ -94,10 +116,22 @@ function ARExplorePage(props?: ARExploreProps) {
       const coords = transformGpsToAR(item.latitude, item.longitude);
       if (!coords) return undefined;
 
-      const scale = Math.abs(Math.round(coords.z / 15));
+      const scale = Math.max(Math.abs(Math.round(coords.z / 15)), 0.5);
 
       return (
         <ViroNode key={index} scale={[scale, scale, scale]} rotation={[0, 0, 0]} position={[coords.x, 0, coords.z]}>
+          {/* <Viro3DObject
+            source={require("../assets/models/location_pin/object.obj")}
+            resources={[require("../assets/models/location_pin/material.mtl")]}
+            type="OBJ"
+            scale={[1, 1, 1]}
+            rotation={[0, 0, 0]}
+            position={[0, 0, 0]}
+            onLoadEnd={() => {
+              console.log("complete loading pin");
+            }}
+            onError={handleError}
+          /> */}
           <ViroBox />
         </ViroNode>
       );
@@ -124,6 +158,8 @@ export default () => {
   const [nearbyItems, setNearbyItems] = useState<Location.LocationObjectCoords[]>([]);
   const [locationListener, setLocationListener] = useState<Location.LocationSubscription>();
   const [headingListener, setHeadingListener] = useState<Location.LocationSubscription>();
+  // const
+  const distanceInterval: number = 10;
 
   useEffect(() => {
     (async () => {
@@ -156,7 +192,7 @@ export default () => {
 
     const geoOpt: Location.LocationOptions = {
       accuracy: Location.Accuracy.BestForNavigation,
-      distanceInterval: 10,
+      distanceInterval: distanceInterval, // update for each 10 meters
     };
 
     const geoCallback = async (result: Location.LocationObject) => {
@@ -173,7 +209,8 @@ export default () => {
     setLocationListener(listener);
 
     const headingListener = await Location.watchHeadingAsync((heading) => {
-      if (heading.trueHeading >= 0) setHeading(heading.trueHeading);
+      // for iOS devices
+      setHeading(heading.magHeading);
     });
     setHeadingListener(headingListener);
   };
@@ -192,6 +229,7 @@ export default () => {
           longitude: lon,
         },
       ];
+
       const distances = locations.map((item, index) => [distanceBetweenPoints(location, item), index]);
       if (distances.length !== 0) {
         const minDist = distances.reduce((previousValue, currentValue) => {
@@ -209,52 +247,50 @@ export default () => {
       return undefined;
     }
     const markers = nearbyItems.map((item, index) => {
+      // console.log("nearby item coordinate", item);
       return <Marker key={index} coordinate={{ longitude: item.longitude, latitude: item.latitude }} />;
     });
     return markers;
   };
 
-  const getCompassRotation = () => {
+  const getBearingDegree = () => {
+    // http://www.movable-type.co.uk/scripts/latlong.html?from=48.9613600,-122.0413400&to=48.965496,-122.072989
     if (!nearestItem || !location) return 0;
-    const isAndroid = Platform.OS === "android";
-
-    const latObj = nearestItem.latitude;
-    const longObj = nearestItem.longitude;
-    const latMobile = location?.latitude;
-    const longMobile = location?.longitude;
-
-    const objPoint = latLongToMerc(latObj, longObj);
-    const mobilePoint = latLongToMerc(latMobile, longMobile);
-
-    let y = objPoint.y - mobilePoint.y;
-    let x = objPoint.x - mobilePoint.x;
-
-    if (isAndroid) {
-      console.log("current heading", heading, location.heading);
-      const degree = heading ?? 0;
-      const angleRadian = (degree * Math.PI) / 180;
-      x = x * Math.cos(angleRadian) - y * Math.sin(angleRadian);
-      y = x * Math.sin(angleRadian) + y * Math.cos(angleRadian);
+    // Accurate bearing degree
+    const bearing = bearingBetweenTwoPoints(location, nearestItem);
+    // In case that GPS's accuracy is low, use the rending position to
+    // guide user to the destination instead.
+    const degree = degreeInAR(location, nearestItem);
+    if (heading && heading > -1) {
+      if (degree) return 360 - ((heading - degree + 360) % 360);
+      return 360 - ((heading - bearing + 360) % 360);
     }
-
-    // It is for rotating the icon from upward to right
-    // As the rotation is according to the Cartesian coordinate system,
-    // in which 0 deg points to the right, and deg is rotated in anticlockwise
-    const iconDegreeDelta = 90;
-    const res = -(Math.atan2(y, x) + iconDegreeDelta);
-    console.log(-res - iconDegreeDelta);
-    return -90;
+    return bearing;
   };
 
   const getNearestDistance = () => {
     if (!nearestItem) return undefined;
-    return distanceBetweenPoints(location, nearestItem);
+    // convert km to m
+    const distance = distanceBetweenPoints(location, nearestItem) * 1000;
+    if (distance > 99) {
+      return ">100m";
+    } else if (distance > 49) {
+      return ">50m";
+    } else if (distance > 19) {
+      return ">20m";
+    } else if (distance > 9) {
+      return ">10m";
+    } else if (distance > 5) {
+      return "~10m";
+    } else {
+      return "~5m";
+    }
   };
 
   return (
     <MainBody>
       <>
-        <ViroARSceneNavigator initialScene={{ scene: ARExplorePage }} viroAppProps={{ location, nearbyItems }}></ViroARSceneNavigator>
+        <ViroARSceneNavigator initialScene={{ scene: ARExplorePage }} viroAppProps={{ heading, location, nearbyItems }}></ViroARSceneNavigator>
         <View
           style={[
             _style.rowLayout,
@@ -273,11 +309,11 @@ export default () => {
         {getNearestDistance() && (
           <View style={[_style.distanceContainer, { top: top + theme.spacing.xs + 34 }]}>
             <LinearGradient colors={theme.colors.gradientBlack} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={_style.gradient}>
-              <View style={[_style.rowLayout, { padding: theme.spacing.xs }]}>
-                <ArrowIcon fill={theme.colors.grey1} style={{ transform: [{ rotate: `${getCompassRotation()}deg` }], width: 24, height: 24 }} />
+              <View style={[_style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
+                <ArrowIcon fill={theme.colors.grey1} style={{ transform: [{ rotate: `${getBearingDegree()}deg` }], width: 24, height: 24 }} />
                 <View style={_style.columnLayout}>
                   <Text>Destination</Text>
-                  {<Text>{Number(getNearestDistance()! * 1000).toFixed(2)} m</Text>}
+                  <Text>{getNearestDistance()}</Text>
                 </View>
               </View>
             </LinearGradient>
@@ -311,6 +347,27 @@ export default () => {
     </MainBody>
   );
 };
+
+/*
+ * Important to wrap the props with arSceneNavigator and viroAppProps, based on the
+ * guidance of ViroReact
+ */
+interface ARExploreProps {
+  arSceneNavigator: {
+    viroAppProps: {
+      heading?: number | undefined;
+      location?: Location.LocationObjectCoords | undefined;
+      nearbyItems: Location.LocationObjectCoords[];
+    };
+  };
+}
+
+interface LatLong {
+  latitude: number;
+  longitude: number;
+  [key: string]: any;
+}
+
 const _style = StyleSheet.create({
   rowLayout: {
     flexDirection: "row",
