@@ -102,19 +102,24 @@ index 0000000..9fd356f
 +int string __arcore_installing 0x00000000
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/jars/classes.jar b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/jars/classes.jar
 new file mode 100644
-index 0000000..e69de29
+index 0000000..3e8c019
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/jars/classes.jar differ
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/jni/arm64-v8a/libarcore_sdk_jni.so b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/jni/arm64-v8a/libarcore_sdk_jni.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..7819cd8
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/jni/arm64-v8a/libarcore_sdk_jni.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/jni/armeabi-v7a/libarcore_sdk_jni.so b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/jni/armeabi-v7a/libarcore_sdk_jni.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..14b0097
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/jni/armeabi-v7a/libarcore_sdk_jni.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/jni/x86/libarcore_sdk_jni.so b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/jni/x86/libarcore_sdk_jni.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..cd03c62
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/jni/x86/libarcore_sdk_jni.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/jni/x86_64/libarcore_sdk_jni.so b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/jni/x86_64/libarcore_sdk_jni.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..dffa7bb
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/jni/x86_64/libarcore_sdk_jni.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/proguard.txt b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/27b6b093275f963da2907be53303fb6c/transformed/jetified-core-1.26.0/proguard.txt
 new file mode 100644
 index 0000000..1065ee7
@@ -2195,10 +2200,12 @@ index 0000000..7950889
 +o/com.google.ar.core
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/41936012018eb1f4e3a58bd4cb64d88e/transformed/com.google.ar.core/layout___arcore_education.xml.flat b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/41936012018eb1f4e3a58bd4cb64d88e/transformed/com.google.ar.core/layout___arcore_education.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..eb2d87f
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/41936012018eb1f4e3a58bd4cb64d88e/transformed/com.google.ar.core/layout___arcore_education.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/41936012018eb1f4e3a58bd4cb64d88e/transformed/com.google.ar.core/raw_keep_arcore.xml.flat b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/41936012018eb1f4e3a58bd4cb64d88e/transformed/com.google.ar.core/raw_keep_arcore.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..7f1e0ca
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/41936012018eb1f4e3a58bd4cb64d88e/transformed/com.google.ar.core/raw_keep_arcore.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/444a505ce56211fc123c29a836fdfa77/results.bin b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/444a505ce56211fc123c29a836fdfa77/results.bin
 new file mode 100644
 index 0000000..e69de29
@@ -2211,7 +2218,8 @@ index 0000000..7f7ed4e
 +o/jetified-core-1.26.0.aar
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/4fc90b8d2054d1fda4f4f22be984eb24/transformed/jetified-core-1.26.0.aar b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/4fc90b8d2054d1fda4f4f22be984eb24/transformed/jetified-core-1.26.0.aar
 new file mode 100644
-index 0000000..e69de29
+index 0000000..1e321fb
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/4fc90b8d2054d1fda4f4f22be984eb24/transformed/jetified-core-1.26.0.aar differ
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/6e8460a84106378d0462ddc64c9960af/results.bin b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/6e8460a84106378d0462ddc64c9960af/results.bin
 new file mode 100644
 index 0000000..c626d1b
@@ -2238,7 +2246,8 @@ index 0000000..03a1e1d
 +o/jetified-core-1.26.0-runtime.jar
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/aa4076611c71f2dc15f21b8c0f557344/transformed/jetified-core-1.26.0-runtime.jar b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/aa4076611c71f2dc15f21b8c0f557344/transformed/jetified-core-1.26.0-runtime.jar
 new file mode 100644
-index 0000000..e69de29
+index 0000000..458cbb8
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/aa4076611c71f2dc15f21b8c0f557344/transformed/jetified-core-1.26.0-runtime.jar differ
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/aa5909dedce0410b218c347399adf3a8/results.bin b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/aa5909dedce0410b218c347399adf3a8/results.bin
 new file mode 100644
 index 0000000..63b496f
@@ -2248,7 +2257,8 @@ index 0000000..63b496f
 +o/jetified-core-1.26.0-runtime
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/aa5909dedce0410b218c347399adf3a8/transformed/jetified-core-1.26.0-runtime/classes.dex b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/aa5909dedce0410b218c347399adf3a8/transformed/jetified-core-1.26.0-runtime/classes.dex
 new file mode 100644
-index 0000000..e69de29
+index 0000000..acc187e
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/aa5909dedce0410b218c347399adf3a8/transformed/jetified-core-1.26.0-runtime/classes.dex differ
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/b748f706cfa41fa170d62571a1bf2e4f/results.bin b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/b748f706cfa41fa170d62571a1bf2e4f/results.bin
 new file mode 100644
 index 0000000..51d93a3
@@ -2289,7 +2299,8 @@ index 0000000..1143288
 +o/jetified-core-1.26.0-api.jar
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/e47d1fdacbc74f4ad17db8cbc530994e/transformed/jetified-core-1.26.0-api.jar b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/e47d1fdacbc74f4ad17db8cbc530994e/transformed/jetified-core-1.26.0-api.jar
 new file mode 100644
-index 0000000..e69de29
+index 0000000..964a8d0
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/e47d1fdacbc74f4ad17db8cbc530994e/transformed/jetified-core-1.26.0-api.jar differ
 diff --git a/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/f6ec9fd82b74961576e83ca22eaf9dc5/results.bin b/node_modules/@viro-community/react-viro/android/arcore_client/build/.transforms/f6ec9fd82b74961576e83ca22eaf9dc5/results.bin
 new file mode 100644
 index 0000000..e69de29
@@ -2302,7 +2313,8 @@ index 0000000..a408a12
 +o/jetified-sdk-common-1.180.0-runtime.jar
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/1adc1f2fd2c66e74d8dbd87f18b180d4/transformed/jetified-sdk-common-1.180.0-runtime.jar b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/1adc1f2fd2c66e74d8dbd87f18b180d4/transformed/jetified-sdk-common-1.180.0-runtime.jar
 new file mode 100644
-index 0000000..e69de29
+index 0000000..55e794a
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/1adc1f2fd2c66e74d8dbd87f18b180d4/transformed/jetified-sdk-common-1.180.0-runtime.jar differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/results.bin b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/results.bin
 new file mode 100644
 index 0000000..32d1635
@@ -2390,7 +2402,8 @@ index 0000000..3378b4a
 \ No newline at end of file
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/jars/classes.jar b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/jars/classes.jar
 new file mode 100644
-index 0000000..e69de29
+index 0000000..6ed4a7d
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/jars/classes.jar differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/proguard.txt b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/proguard.txt
 new file mode 100644
 index 0000000..b3b2e5d
@@ -2418,22 +2431,28 @@ index 0000000..b3b2e5d
 +
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-hdpi-v4/quantum_ic_close_white_24.png b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-hdpi-v4/quantum_ic_close_white_24.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..fd3edbd
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-hdpi-v4/quantum_ic_close_white_24.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-hdpi-v4/quantum_ic_settings_white_24.png b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-hdpi-v4/quantum_ic_settings_white_24.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..97ded33
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-hdpi-v4/quantum_ic_settings_white_24.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-hdpi-v4/transition.png b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-hdpi-v4/transition.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..36ee47d
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-hdpi-v4/transition.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-mdpi-v4/quantum_ic_close_white_24.png b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-mdpi-v4/quantum_ic_close_white_24.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..3f1f3f8
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-mdpi-v4/quantum_ic_close_white_24.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-mdpi-v4/quantum_ic_settings_white_24.png b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-mdpi-v4/quantum_ic_settings_white_24.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..8909c35
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-mdpi-v4/quantum_ic_settings_white_24.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-mdpi-v4/transition.png b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-mdpi-v4/transition.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..1934538
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-mdpi-v4/transition.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-v21/rippleable.xml b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-v21/rippleable.xml
 new file mode 100644
 index 0000000..0b63e47
@@ -2449,22 +2468,28 @@ index 0000000..0b63e47
 +</ripple>
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xhdpi-v4/quantum_ic_close_white_24.png b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xhdpi-v4/quantum_ic_close_white_24.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..59c2fae
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xhdpi-v4/quantum_ic_close_white_24.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xhdpi-v4/quantum_ic_settings_white_24.png b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xhdpi-v4/quantum_ic_settings_white_24.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..5caedc8
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xhdpi-v4/quantum_ic_settings_white_24.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xxhdpi-v4/quantum_ic_close_white_24.png b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xxhdpi-v4/quantum_ic_close_white_24.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..d5fd569
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xxhdpi-v4/quantum_ic_close_white_24.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xxhdpi-v4/quantum_ic_settings_white_24.png b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xxhdpi-v4/quantum_ic_settings_white_24.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..eabb0a2
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xxhdpi-v4/quantum_ic_settings_white_24.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xxxhdpi-v4/quantum_ic_close_white_24.png b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xxxhdpi-v4/quantum_ic_close_white_24.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..dac4e9c
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xxxhdpi-v4/quantum_ic_close_white_24.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xxxhdpi-v4/quantum_ic_settings_white_24.png b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xxxhdpi-v4/quantum_ic_settings_white_24.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..507c5ed
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable-xxxhdpi-v4/quantum_ic_settings_white_24.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable/rippleable.xml b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/202007a2ca6a19543d72f52391f1c744/transformed/jetified-sdk-common-1.180.0/res/drawable/rippleable.xml
 new file mode 100644
 index 0000000..f6b8773
@@ -4426,7 +4451,8 @@ index 0000000..cf70be8
 +o/jetified-sdk-common-1.180.0-runtime
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/23dbe2f22d93538c05b5a7d9d10e1a0e/transformed/jetified-sdk-common-1.180.0-runtime/classes.dex b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/23dbe2f22d93538c05b5a7d9d10e1a0e/transformed/jetified-sdk-common-1.180.0-runtime/classes.dex
 new file mode 100644
-index 0000000..e69de29
+index 0000000..998c96a
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/23dbe2f22d93538c05b5a7d9d10e1a0e/transformed/jetified-sdk-common-1.180.0-runtime/classes.dex differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/270f407f427fa0eb24097f56d6fee778/results.bin b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/270f407f427fa0eb24097f56d6fee778/results.bin
 new file mode 100644
 index 0000000..e69de29
@@ -4517,7 +4543,8 @@ index 0000000..cce788d
 +o/jetified-sdk-common-1.180.0.aar
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/62cce6d0538fdc9353e70a80ee9bd9ac/transformed/jetified-sdk-common-1.180.0.aar b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/62cce6d0538fdc9353e70a80ee9bd9ac/transformed/jetified-sdk-common-1.180.0.aar
 new file mode 100755
-index 0000000..e69de29
+index 0000000..7ba5cff
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/62cce6d0538fdc9353e70a80ee9bd9ac/transformed/jetified-sdk-common-1.180.0.aar differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/7c4b773b7d8d19b4e4887c4cd8a00b87/results.bin b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/7c4b773b7d8d19b4e4887c4cd8a00b87/results.bin
 new file mode 100644
 index 0000000..1ed65e0
@@ -4534,7 +4561,8 @@ index 0000000..25d9771
 +o/jetified-sdk-common-1.180.0-api.jar
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/837e2f89210f9a30d7cea8ec028d4216/transformed/jetified-sdk-common-1.180.0-api.jar b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/837e2f89210f9a30d7cea8ec028d4216/transformed/jetified-sdk-common-1.180.0-api.jar
 new file mode 100644
-index 0000000..e69de29
+index 0000000..74d7c50
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/837e2f89210f9a30d7cea8ec028d4216/transformed/jetified-sdk-common-1.180.0-api.jar differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/8ea72a67ad407805cd074f835d43c725/results.bin b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/8ea72a67ad407805cd074f835d43c725/results.bin
 new file mode 100644
 index 0000000..e69de29
@@ -4547,82 +4575,108 @@ index 0000000..72e1943
 +o/com.google.vr.cardboard
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-hdpi-v4_quantum_ic_close_white_24.png.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-hdpi-v4_quantum_ic_close_white_24.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..200405a
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-hdpi-v4_quantum_ic_close_white_24.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-hdpi-v4_quantum_ic_settings_white_24.png.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-hdpi-v4_quantum_ic_settings_white_24.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..7de6acf
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-hdpi-v4_quantum_ic_settings_white_24.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-hdpi-v4_transition.png.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-hdpi-v4_transition.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..a46fc2b
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-hdpi-v4_transition.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-mdpi-v4_quantum_ic_close_white_24.png.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-mdpi-v4_quantum_ic_close_white_24.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..c78cb36
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-mdpi-v4_quantum_ic_close_white_24.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-mdpi-v4_quantum_ic_settings_white_24.png.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-mdpi-v4_quantum_ic_settings_white_24.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..cd53532
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-mdpi-v4_quantum_ic_settings_white_24.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-mdpi-v4_transition.png.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-mdpi-v4_transition.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..ce55ffb
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-mdpi-v4_transition.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-v21_rippleable.xml.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-v21_rippleable.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..f823902
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-v21_rippleable.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xhdpi-v4_quantum_ic_close_white_24.png.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xhdpi-v4_quantum_ic_close_white_24.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..c0251d7
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xhdpi-v4_quantum_ic_close_white_24.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xhdpi-v4_quantum_ic_settings_white_24.png.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xhdpi-v4_quantum_ic_settings_white_24.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..c8f9d3c
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xhdpi-v4_quantum_ic_settings_white_24.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xxhdpi-v4_quantum_ic_close_white_24.png.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xxhdpi-v4_quantum_ic_close_white_24.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..14fe452
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xxhdpi-v4_quantum_ic_close_white_24.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xxhdpi-v4_quantum_ic_settings_white_24.png.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xxhdpi-v4_quantum_ic_settings_white_24.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..a66563a
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xxhdpi-v4_quantum_ic_settings_white_24.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xxxhdpi-v4_quantum_ic_close_white_24.png.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xxxhdpi-v4_quantum_ic_close_white_24.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..cea8c43
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xxxhdpi-v4_quantum_ic_close_white_24.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xxxhdpi-v4_quantum_ic_settings_white_24.png.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xxxhdpi-v4_quantum_ic_settings_white_24.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..e83e245
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable-xxxhdpi-v4_quantum_ic_settings_white_24.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable_rippleable.xml.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable_rippleable.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..bdb3b0d
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/drawable_rippleable.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-land_back_button.xml.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-land_back_button.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..dcd10b4
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-land_back_button.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-land_settings_button.xml.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-land_settings_button.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..24e515d
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-land_settings_button.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-land_ui_layer_with_portrait_support.xml.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-land_ui_layer_with_portrait_support.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..fbc6ceb
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-land_ui_layer_with_portrait_support.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-ldrtl-land-v17_back_button.xml.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-ldrtl-land-v17_back_button.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..ab2b61a
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-ldrtl-land-v17_back_button.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-ldrtl-land-v17_settings_button.xml.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-ldrtl-land-v17_settings_button.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..281a1ea
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-ldrtl-land-v17_settings_button.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-ldrtl-v17_back_button.xml.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-ldrtl-v17_back_button.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..0726c1d
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-ldrtl-v17_back_button.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-ldrtl-v17_settings_button.xml.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-ldrtl-v17_settings_button.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..1d732b0
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout-ldrtl-v17_settings_button.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout_back_button.xml.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout_back_button.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..6e164c5
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout_back_button.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout_settings_button.xml.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout_settings_button.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..bb8a455
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout_settings_button.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout_transition_view.xml.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout_transition_view.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..081c584
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout_transition_view.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout_ui_layer.xml.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout_ui_layer.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..354d0aa
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout_ui_layer.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout_ui_layer_with_portrait_support.xml.flat b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout_ui_layer_with_portrait_support.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..3e2389c
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/a881eb293dc1b38fe33cb53e7064a0cd/transformed/com.google.vr.cardboard/layout_ui_layer_with_portrait_support.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/c99e7f84ca40fa0a53dfc2808fe3207c/results.bin b/node_modules/@viro-community/react-viro/android/gvr_common/build/.transforms/c99e7f84ca40fa0a53dfc2808fe3207c/results.bin
 new file mode 100644
 index 0000000..fcbf8d4
@@ -8408,7 +8462,8 @@ index 0000000..36c3f21
 +int xml rn_dev_preferences 0x7f180001
 diff --git a/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/1ca157a65080d194dffc2727ad7491d3/transformed/jetified-react_viro-release/jars/classes.jar b/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/1ca157a65080d194dffc2727ad7491d3/transformed/jetified-react_viro-release/jars/classes.jar
 new file mode 100644
-index 0000000..e69de29
+index 0000000..19a4f3e
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/1ca157a65080d194dffc2727ad7491d3/transformed/jetified-react_viro-release/jars/classes.jar differ
 diff --git a/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/1ca157a65080d194dffc2727ad7491d3/transformed/jetified-react_viro-release/res/values/values.xml b/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/1ca157a65080d194dffc2727ad7491d3/transformed/jetified-react_viro-release/res/values/values.xml
 new file mode 100644
 index 0000000..9589fd4
@@ -8439,7 +8494,8 @@ index 0000000..a31b3f8
 +o/jetified-react_viro-release-runtime
 diff --git a/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/560ea71550a56f4d08b65884b633f68c/transformed/jetified-react_viro-release-runtime/classes.dex b/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/560ea71550a56f4d08b65884b633f68c/transformed/jetified-react_viro-release-runtime/classes.dex
 new file mode 100644
-index 0000000..e69de29
+index 0000000..b7dabe7
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/560ea71550a56f4d08b65884b633f68c/transformed/jetified-react_viro-release-runtime/classes.dex differ
 diff --git a/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/5e125b3ab5d356590d3d6023e2e67806/results.bin b/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/5e125b3ab5d356590d3d6023e2e67806/results.bin
 new file mode 100644
 index 0000000..4c86f86
@@ -8449,7 +8505,8 @@ index 0000000..4c86f86
 +o/jetified-react_viro-release.aar
 diff --git a/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/5e125b3ab5d356590d3d6023e2e67806/transformed/jetified-react_viro-release.aar b/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/5e125b3ab5d356590d3d6023e2e67806/transformed/jetified-react_viro-release.aar
 new file mode 100644
-index 0000000..e69de29
+index 0000000..44d20a0
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/5e125b3ab5d356590d3d6023e2e67806/transformed/jetified-react_viro-release.aar differ
 diff --git a/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/67cb894e5943dce5539925d09ae0c44a/results.bin b/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/67cb894e5943dce5539925d09ae0c44a/results.bin
 new file mode 100644
 index 0000000..e69de29
@@ -8472,7 +8529,8 @@ index 0000000..515e0bf
 +o/jetified-react_viro-release-runtime.jar
 diff --git a/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/8765c2a580529e893b35354b8ff9c4e7/transformed/jetified-react_viro-release-runtime.jar b/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/8765c2a580529e893b35354b8ff9c4e7/transformed/jetified-react_viro-release-runtime.jar
 new file mode 100644
-index 0000000..e69de29
+index 0000000..4319de0
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/8765c2a580529e893b35354b8ff9c4e7/transformed/jetified-react_viro-release-runtime.jar differ
 diff --git a/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/bc4490c738b89c46d70a206fb24ece4e/results.bin b/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/bc4490c738b89c46d70a206fb24ece4e/results.bin
 new file mode 100644
 index 0000000..e69de29
@@ -8485,7 +8543,8 @@ index 0000000..83c603a
 +o/jetified-react_viro-release-api.jar
 diff --git a/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/c717c8a502bd0e9c0b83ef21b9c5d05d/transformed/jetified-react_viro-release-api.jar b/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/c717c8a502bd0e9c0b83ef21b9c5d05d/transformed/jetified-react_viro-release-api.jar
 new file mode 100644
-index 0000000..e69de29
+index 0000000..84329c3
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/c717c8a502bd0e9c0b83ef21b9c5d05d/transformed/jetified-react_viro-release-api.jar differ
 diff --git a/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/d757b1644a9ce2eac3b75b69d650e031/results.bin b/node_modules/@viro-community/react-viro/android/react_viro/build/.transforms/d757b1644a9ce2eac3b75b69d650e031/results.bin
 new file mode 100644
 index 0000000..c626d1b
@@ -8519,7 +8578,8 @@ index 0000000..b4bda2a
 +o/jetified-viro_renderer-release-runtime.jar
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/0f596fb71c7e9419398f8840b29726f4/transformed/jetified-viro_renderer-release-runtime.jar b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/0f596fb71c7e9419398f8840b29726f4/transformed/jetified-viro_renderer-release-runtime.jar
 new file mode 100644
-index 0000000..e69de29
+index 0000000..0535599
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/0f596fb71c7e9419398f8840b29726f4/transformed/jetified-viro_renderer-release-runtime.jar differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/2822f2696861db358649137c935aff6b/results.bin b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/2822f2696861db358649137c935aff6b/results.bin
 new file mode 100644
 index 0000000..e69de29
@@ -8535,7 +8595,8 @@ index 0000000..46c43db
 +o/jetified-viro_renderer-release.aar
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/328388a78bf51bde884ee9b4bd082799/transformed/jetified-viro_renderer-release.aar b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/328388a78bf51bde884ee9b4bd082799/transformed/jetified-viro_renderer-release.aar
 new file mode 100644
-index 0000000..e69de29
+index 0000000..7288b1c
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/328388a78bf51bde884ee9b4bd082799/transformed/jetified-viro_renderer-release.aar differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/results.bin b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/results.bin
 new file mode 100644
 index 0000000..f54a307
@@ -10475,10 +10536,12 @@ index 0000000..afcb118
 +int styleable ViewStubCompat_android_layout 2
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/annotations.zip b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/annotations.zip
 new file mode 100644
-index 0000000..e69de29
+index 0000000..804edcf
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/annotations.zip differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/blank.png b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/blank.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..56bf64f
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/blank.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/brdf_fsh.glsl b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/brdf_fsh.glsl
 new file mode 100644
 index 0000000..6322477
@@ -14084,13 +14147,16 @@ index 0000000..4f5d8e3
 +f 708/38/708 605/276/605 344/362/344
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/daydream_diffuse.jpg b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/daydream_diffuse.jpg
 new file mode 100644
-index 0000000..e69de29
+index 0000000..aadf9be
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/daydream_diffuse.jpg differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddLaserTexture.jpg b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddLaserTexture.jpg
 new file mode 100644
-index 0000000..e69de29
+index 0000000..72b09a2
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddLaserTexture.jpg differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/dd_reticle_large.png b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/dd_reticle_large.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..5c56437
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/dd_reticle_large.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcontroller.obj b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcontroller.obj
 new file mode 100644
 index 0000000..10317ad
@@ -15636,19 +15702,24 @@ index 0000000..10317ad
 +f 18/213/874 71/214/875 20/212/876
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcontroller_app.jpg b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcontroller_app.jpg
 new file mode 100644
-index 0000000..e69de29
+index 0000000..634728c
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcontroller_app.jpg differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcontroller_idle.jpg b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcontroller_idle.jpg
 new file mode 100644
-index 0000000..e69de29
+index 0000000..87c31c8
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcontroller_idle.jpg differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcontroller_system.jpg b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcontroller_system.jpg
 new file mode 100644
-index 0000000..e69de29
+index 0000000..6c01c41
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcontroller_system.jpg differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcontroller_touchpad.jpg b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcontroller_touchpad.jpg
 new file mode 100644
-index 0000000..e69de29
+index 0000000..8cc83ff
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcontroller_touchpad.jpg differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcursor_pointer.jpg b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcursor_pointer.jpg
 new file mode 100644
-index 0000000..e69de29
+index 0000000..79aa9c5
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddcursor_pointer.jpg differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddlaser.obj b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/ddlaser.obj
 new file mode 100644
 index 0000000..52f3738
@@ -16089,7 +16160,8 @@ index 0000000..984ecbf
 +
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/point_cloud.png b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/point_cloud.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..6e2ac7d
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/point_cloud.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/prefilter_convolution_fsh.glsl b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/assets/prefilter_convolution_fsh.glsl
 new file mode 100644
 index 0000000..ee75cff
@@ -16575,76 +16647,100 @@ index 0000000..37bda5f
 \ No newline at end of file
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jars/classes.jar b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jars/classes.jar
 new file mode 100644
-index 0000000..e69de29
+index 0000000..5bdca05
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jars/classes.jar differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libBulletCollision.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libBulletCollision.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..fbec0e5
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libBulletCollision.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libBulletDynamics.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libBulletDynamics.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..6ceea8e
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libBulletDynamics.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libBulletSoftBody.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libBulletSoftBody.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..77f71b1
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libBulletSoftBody.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libLinearMath.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libLinearMath.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..bca7ba4
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libLinearMath.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libarcore_sdk_c.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libarcore_sdk_c.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..ebd7163
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libarcore_sdk_c.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libfreetyped.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libfreetyped.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..e57c0b7
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libfreetyped.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libgvr.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libgvr.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..9b28877
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libgvr.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libgvr_audio.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libgvr_audio.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..3dad591
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libgvr_audio.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libviro_arcore.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libviro_arcore.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..3efad84
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libviro_arcore.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libviro_renderer.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libviro_renderer.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..9b6d854
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libviro_renderer.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libvrapi.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libvrapi.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..e6fa46e
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/arm64-v8a/libvrapi.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libBulletCollision.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libBulletCollision.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..5cb2976
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libBulletCollision.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libBulletDynamics.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libBulletDynamics.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..3e37eda
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libBulletDynamics.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libBulletSoftBody.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libBulletSoftBody.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..5a60534
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libBulletSoftBody.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libLinearMath.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libLinearMath.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..d2a01e2
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libLinearMath.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libarcore_sdk_c.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libarcore_sdk_c.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..dcf18b8
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libarcore_sdk_c.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libfreetyped.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libfreetyped.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..318f164
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libfreetyped.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libgvr.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libgvr.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..cbb623d
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libgvr.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libgvr_audio.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libgvr_audio.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..9bde1e9
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libgvr_audio.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libviro_arcore.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libviro_arcore.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..8794783
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libviro_arcore.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libviro_renderer.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libviro_renderer.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..22828ca
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libviro_renderer.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libvrapi.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libvrapi.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..d3232b3
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/armeabi-v7a/libvrapi.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/x86_64/libarcore_sdk_c.so b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/x86_64/libarcore_sdk_c.so
 new file mode 100644
-index 0000000..e69de29
+index 0000000..7ac1537
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/jni/x86_64/libarcore_sdk_c.so differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/layout/activity_viro.xml b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/layout/activity_viro.xml
 new file mode 100644
 index 0000000..bfb83a0
@@ -16671,19 +16767,24 @@ index 0000000..bfb83a0
 +</RelativeLayout>
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/mipmap-hdpi-v4/ic_launcher.png b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/mipmap-hdpi-v4/ic_launcher.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..cde69bc
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/mipmap-hdpi-v4/ic_launcher.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/mipmap-mdpi-v4/ic_launcher.png b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/mipmap-mdpi-v4/ic_launcher.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..c133a0c
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/mipmap-mdpi-v4/ic_launcher.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/mipmap-xhdpi-v4/ic_launcher.png b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/mipmap-xhdpi-v4/ic_launcher.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..bfa42f0
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/mipmap-xhdpi-v4/ic_launcher.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/mipmap-xxhdpi-v4/ic_launcher.png b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/mipmap-xxhdpi-v4/ic_launcher.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..324e72c
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/mipmap-xxhdpi-v4/ic_launcher.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/mipmap-xxxhdpi-v4/ic_launcher.png b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/mipmap-xxxhdpi-v4/ic_launcher.png
 new file mode 100644
-index 0000000..e69de29
+index 0000000..aee44e1
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/mipmap-xxxhdpi-v4/ic_launcher.png differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/values-w820dp-v13/values-w820dp-v13.xml b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/35c5e0fc564a53ff9bdf35dcf0ff2286/transformed/jetified-viro_renderer-release/res/values-w820dp-v13/values-w820dp-v13.xml
 new file mode 100644
 index 0000000..3eda5f5
@@ -16754,22 +16855,28 @@ index 0000000..694de7a
 +o/com.viro.renderer
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/layout_activity_viro.xml.flat b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/layout_activity_viro.xml.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..6f23336
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/layout_activity_viro.xml.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/mipmap-hdpi-v4_ic_launcher.png.flat b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/mipmap-hdpi-v4_ic_launcher.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..fdd26e9
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/mipmap-hdpi-v4_ic_launcher.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/mipmap-mdpi-v4_ic_launcher.png.flat b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/mipmap-mdpi-v4_ic_launcher.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..01718b9
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/mipmap-mdpi-v4_ic_launcher.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/mipmap-xhdpi-v4_ic_launcher.png.flat b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/mipmap-xhdpi-v4_ic_launcher.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..249130c
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/mipmap-xhdpi-v4_ic_launcher.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/mipmap-xxhdpi-v4_ic_launcher.png.flat b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/mipmap-xxhdpi-v4_ic_launcher.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..5374000
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/mipmap-xxhdpi-v4_ic_launcher.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/mipmap-xxxhdpi-v4_ic_launcher.png.flat b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/mipmap-xxxhdpi-v4_ic_launcher.png.flat
 new file mode 100644
-index 0000000..e69de29
+index 0000000..637d802
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/97da09bad7b05d15c08774413c7468eb/transformed/com.viro.renderer/mipmap-xxxhdpi-v4_ic_launcher.png.flat differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/aa1fb7ad1d1f77253f76c86e77654d39/results.bin b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/aa1fb7ad1d1f77253f76c86e77654d39/results.bin
 new file mode 100644
 index 0000000..fcbf8d4
@@ -16786,7 +16893,8 @@ index 0000000..e1a6624
 +o/jetified-viro_renderer-release-runtime
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/b0f5e3efd867dcb03d60ab2f666b0631/transformed/jetified-viro_renderer-release-runtime/classes.dex b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/b0f5e3efd867dcb03d60ab2f666b0631/transformed/jetified-viro_renderer-release-runtime/classes.dex
 new file mode 100644
-index 0000000..e69de29
+index 0000000..ee415ec
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/b0f5e3efd867dcb03d60ab2f666b0631/transformed/jetified-viro_renderer-release-runtime/classes.dex differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/b42a3e350709f5c8ddc6562305be65f7/results.bin b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/b42a3e350709f5c8ddc6562305be65f7/results.bin
 new file mode 100644
 index 0000000..e69de29
@@ -16799,7 +16907,8 @@ index 0000000..dfcbbdf
 +o/jetified-viro_renderer-release-api.jar
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/c8f116e2205ad10a26863b034083e723/transformed/jetified-viro_renderer-release-api.jar b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/c8f116e2205ad10a26863b034083e723/transformed/jetified-viro_renderer-release-api.jar
 new file mode 100644
-index 0000000..e69de29
+index 0000000..b5dfe11
+Binary files /dev/null and b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/c8f116e2205ad10a26863b034083e723/transformed/jetified-viro_renderer-release-api.jar differ
 diff --git a/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/ddebd7cf884b0cf48d04071199276f09/results.bin b/node_modules/@viro-community/react-viro/android/viro_renderer/build/.transforms/ddebd7cf884b0cf48d04071199276f09/results.bin
 new file mode 100644
 index 0000000..199366a
@@ -18258,3 +18367,16 @@ index eb69913..0512a30 100644
    // @ts-ignore
    ViroSurface,
    {
+diff --git a/node_modules/@viro-community/react-viro/dist/components/Viro3DObject.js b/node_modules/@viro-community/react-viro/dist/components/Viro3DObject.js
+index 9349759..8a5fe9c 100644
+--- a/node_modules/@viro-community/react-viro/dist/components/Viro3DObject.js
++++ b/node_modules/@viro-community/react-viro/dist/components/Viro3DObject.js
+@@ -33,7 +33,7 @@ class Viro3DObject extends ViroBase_1.ViroBase {
+         (0, ViroProps_1.checkMisnamedProps)("Viro3DObject", this.props);
+         const modelsrc = resolveAssetSource(this.props.source);
+         const resources = this.props.resources?.map((resource) => resolveAssetSource(resource));
+-        console.log("RESOURCES", resources);
++        // console.log("RESOURCES", resources);
+         // Since materials and transformBehaviors can be either a string or an array, convert the string to a 1-element array.
+         const materials = typeof this.props.materials === "string"
+             ? [this.props.materials]
