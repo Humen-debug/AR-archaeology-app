@@ -1,4 +1,4 @@
-import { Viro3DObject, ViroARScene, ViroARSceneNavigator, ViroBox, ViroNode, ViroQuad } from "@viro-community/react-viro";
+import { ViroARScene, ViroARSceneNavigator, ViroBox, ViroMaterials, ViroNode, ViroPolyline, ViroQuad } from "@viro-community/react-viro";
 import { useAppTheme } from "../styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
@@ -8,11 +8,13 @@ import IconBtn from "../components/icon_btn";
 import * as Location from "expo-location";
 import { router } from "expo-router";
 import { useState, useEffect, createRef } from "react";
-import { View, StyleSheet, Platform } from "react-native";
-import _, { transform } from "lodash";
+import { View, StyleSheet } from "react-native";
+import _ from "lodash";
 import { ActivityIndicator, Text } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import MapView, { Marker } from "react-native-maps";
+import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
+import { Float } from "react-native/Libraries/Types/CodegenTypes";
 
 /*
  * stackoverflow.com/questions/47419496/augmented-reality-with-react-native-points-of-interest-over-the-camera
@@ -143,13 +145,41 @@ function ARExplorePage(props?: ARExploreProps) {
     return <ViroQuad position={[0, -1, -2]} height={2} width={0.5} rotation={[-45, 0, 0]} />;
   };
 
-  return <ViroARScene>{props?.arSceneNavigator.viroAppProps.location && placeARObjects()}</ViroARScene>;
+  const [position, setPosition] = useState<Viro3DPoint>([0, 0, 0]);
+  const degree = ((props?.arSceneNavigator.viroAppProps.degree || 0) * Math.PI) / 180;
+  const distance = props?.arSceneNavigator.viroAppProps.distance || 0;
+
+  ViroMaterials.createMaterials({
+    path: {
+      lightingModel: "Constant",
+      diffuseColor: "red",
+    },
+  });
+
+  return (
+    <ViroARScene
+      onCameraTransformUpdate={(cameraTransform) => {
+        setPosition([cameraTransform.position[0], cameraTransform.position[1] - 1, cameraTransform.position[2]]);
+      }}
+    >
+      {/* {props?.arSceneNavigator.viroAppProps.location && placeARObjects()} */}
+      <ViroPolyline
+        position={position}
+        points={[
+          [0, 0, 0],
+          [distance * Math.cos(degree), 0, distance * Math.sin(degree)],
+        ]}
+        thickness={0.2}
+        materials={"path"}
+      />
+    </ViroARScene>
+  );
 }
 
 export default () => {
   const theme = useAppTheme();
   const { top } = useSafeAreaInsets();
-  const [nearestItem, setNearestItem] = useState<Location.LocationObjectCoords>();
+  const [nearestPoint, setNearestPoint] = useState<Location.LocationObjectCoords>();
   const mapRef = createRef<MapView>();
   // demo
   const [initLocation, setInitLocation] = useState<Location.LocationObjectCoords>();
@@ -197,7 +227,7 @@ export default () => {
 
     const geoCallback = async (result: Location.LocationObject) => {
       const coords = result.coords;
-      if (coords.accuracy && coords.accuracy < 40) {
+      if (coords.accuracy && coords.accuracy < 50) {
         setLocation(coords);
 
         // Moving map to center user's location
@@ -236,7 +266,7 @@ export default () => {
           return previousValue[0] < currentValue[0] ? previousValue : currentValue;
         });
 
-        setNearestItem?.(locations[minDist[1]]);
+        setNearestPoint?.(locations[minDist[1]]);
       }
       setNearbyItems(locations);
     }
@@ -255,12 +285,12 @@ export default () => {
 
   const getBearingDegree = () => {
     // http://www.movable-type.co.uk/scripts/latlong.html?from=48.9613600,-122.0413400&to=48.965496,-122.072989
-    if (!nearestItem || !location) return 0;
+    if (!nearestPoint || !location) return 0;
     // Accurate bearing degree
-    const bearing = bearingBetweenTwoPoints(location, nearestItem);
+    const bearing = bearingBetweenTwoPoints(location, nearestPoint);
     // In case that GPS's accuracy is low, use the rending position to
     // guide user to the destination instead.
-    const degree = degreeInAR(location, nearestItem);
+    const degree = degreeInAR(location, nearestPoint);
     if (heading && heading > -1) {
       if (degree) return 360 - ((heading - degree + 360) % 360);
       return 360 - ((heading - bearing + 360) % 360);
@@ -269,9 +299,9 @@ export default () => {
   };
 
   const getNearestDistance = () => {
-    if (!nearestItem) return undefined;
+    if (!nearestPoint) return undefined;
     // convert km to m
-    const distance = distanceBetweenPoints(location, nearestItem) * 1000;
+    const distance = distanceBetweenPoints(location, nearestPoint) * 1000;
     if (distance > 99) {
       return ">100m";
     } else if (distance > 49) {
@@ -287,10 +317,16 @@ export default () => {
     }
   };
 
+  var degree = getBearingDegree();
+  var distance = getNearestDistance();
+
   return (
     <MainBody>
       <>
-        <ViroARSceneNavigator initialScene={{ scene: ARExplorePage }} viroAppProps={{ heading, location, nearbyItems }}></ViroARSceneNavigator>
+        <ViroARSceneNavigator
+          initialScene={{ scene: ARExplorePage }}
+          viroAppProps={{ heading, location, nearbyItems, degree, distance: distanceBetweenPoints(location, nearestPoint) * 1000 }}
+        ></ViroARSceneNavigator>
         <View
           style={[
             _style.rowLayout,
@@ -306,14 +342,14 @@ export default () => {
         >
           <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
         </View>
-        {getNearestDistance() && (
+        {distance && (
           <View style={[_style.distanceContainer, { top: top + theme.spacing.xs + 34 }]}>
             <LinearGradient colors={theme.colors.gradientBlack} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={_style.gradient}>
               <View style={[_style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
-                <ArrowIcon fill={theme.colors.grey1} style={{ transform: [{ rotate: `${getBearingDegree()}deg` }], width: 24, height: 24 }} />
+                <ArrowIcon fill={theme.colors.grey1} style={{ transform: [{ rotate: `${degree}deg` }], width: 24, height: 24 }} />
                 <View style={_style.columnLayout}>
                   <Text>Destination</Text>
-                  <Text>{getNearestDistance()}</Text>
+                  <Text>{distance}</Text>
                 </View>
               </View>
             </LinearGradient>
@@ -358,6 +394,8 @@ interface ARExploreProps {
       heading?: number | undefined;
       location?: Location.LocationObjectCoords | undefined;
       nearbyItems: Location.LocationObjectCoords[];
+      degree: Float;
+      distance: Float;
     };
   };
 }
