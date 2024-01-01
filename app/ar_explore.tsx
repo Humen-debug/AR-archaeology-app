@@ -126,7 +126,7 @@ function ARExplorePage(props?: ARExploreProps) {
     const ARObjects = props?.arSceneNavigator.viroAppProps.nearbyItems?.map((item, index) => {
       const coords = transformGpsToAR(item.latitude, item.longitude);
       if (!coords) return undefined;
-      const scale = Math.max(Math.abs(Math.round(coords.z / 15)), 0.5);
+      const scale = Math.min(Math.abs(Math.round(15 / coords.z)), 0.5);
 
       return (
         <ViroNode key={index} scale={[scale, scale, scale]} rotation={[0, 0, 0]} position={[coords.x, 0, coords.z]}>
