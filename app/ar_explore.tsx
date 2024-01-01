@@ -17,11 +17,13 @@ import IconBtn from "../components/icon_btn";
 import * as Location from "expo-location";
 import { router } from "expo-router";
 import { useState, useEffect, createRef } from "react";
-import { View, StyleSheet, Platform } from "react-native";
+import { View, StyleSheet, Platform, useWindowDimensions } from "react-native";
 import _, { transform } from "lodash";
 import { ActivityIndicator, Text } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import MapView, { Marker } from "react-native-maps";
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import { TouchableHighlight } from "react-native-gesture-handler";
 
 /*
  * stackoverflow.com/questions/47419496/augmented-reality-with-react-native-points-of-interest-over-the-camera
@@ -155,7 +157,6 @@ function ARExplorePage(props?: ARExploreProps) {
         scale={[0.1, 0.1, 0.1]}
         onError={handleError}
         shadowCastingBitMask={2}
-        animation={{ name: "rotate", run: true, loop: true, onStart: () => console.log("looping rotation"), delay: 1000 }}
       />
     </ViroARScene>
   );
@@ -164,6 +165,29 @@ function ARExplorePage(props?: ARExploreProps) {
 export default () => {
   const theme = useAppTheme();
   const { top } = useSafeAreaInsets();
+  const { height: screenHeight } = useWindowDimensions();
+  const animatedProps = { duration: 300, easing: Easing.inOut(Easing.quad) };
+  const [mapExpand, setMapExpand] = useState<boolean>(false);
+  const miniMapStyle = useAnimatedStyle(() => {
+    var pos = mapExpand
+      ? { bottom: 0, right: 0, left: 0, top: undefined }
+      : { top: top + theme.spacing.xs + _style.distanceContainer.height + 34 + theme.spacing.sm, right: 16, left: undefined, bottom: undefined };
+
+    return {
+      position: mapExpand ? "relative" : "absolute",
+      height: withTiming(mapExpand ? 200 : 134, animatedProps),
+      width: mapExpand ? "100%" : 134,
+      overflow: "hidden",
+      borderColor: "white",
+      borderRadius: mapExpand ? 0 : 12,
+      borderWidth: 2,
+      ...pos,
+    };
+  });
+  const ARsceneStyle = useAnimatedStyle(() => {
+    return { height: withTiming(mapExpand ? screenHeight - 200 : screenHeight, animatedProps) };
+  });
+
   const [nearestItem, setNearestItem] = useState<Location.LocationObjectCoords>();
   const mapRef = createRef<MapView>();
   // demo
@@ -199,6 +223,10 @@ export default () => {
       await getNearbyItems();
     })();
   }, [location]);
+
+  const handleMapPressed = () => {
+    setMapExpand((value) => !value);
+  };
 
   const getCurrentPosition = async () => {
     // demo setting static init location
@@ -262,7 +290,6 @@ export default () => {
       return undefined;
     }
     const markers = nearbyItems.map((item, index) => {
-      // console.log("nearby item coordinate", item);
       return <Marker key={index} coordinate={{ longitude: item.longitude, latitude: item.latitude }} />;
     });
     return markers;
@@ -304,38 +331,44 @@ export default () => {
 
   return (
     <MainBody>
-      <>
-        <ViroARSceneNavigator initialScene={{ scene: ARExplorePage }} viroAppProps={{ heading, location, nearbyItems }}></ViroARSceneNavigator>
-        <View
-          style={[
-            _style.rowLayout,
-            {
-              justifyContent: "space-between",
-              position: "absolute",
-              top: top + theme.spacing.xs,
-              left: 0,
-              right: 0,
-              paddingHorizontal: theme.spacing.md,
-            },
-          ]}
-        >
-          <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
-        </View>
-        {getNearestDistance() && (
-          <View style={[_style.distanceContainer, { top: top + theme.spacing.xs + 34 }]}>
-            <LinearGradient colors={theme.colors.gradientBlack} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={_style.gradient}>
-              <View style={[_style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
-                <ArrowIcon fill={theme.colors.grey1} style={{ transform: [{ rotate: `${getBearingDegree()}deg` }], width: 24, height: 24 }} />
-                <View style={_style.columnLayout}>
-                  <Text>Destination</Text>
-                  <Text>{getNearestDistance()}</Text>
-                </View>
+      <Animated.View style={ARsceneStyle}>
+        <ViroARSceneNavigator
+          style={{ width: "100%", height: "100%" }}
+          initialScene={{ scene: ARExplorePage }}
+          viroAppProps={{ heading, location, nearbyItems }}
+        />
+      </Animated.View>
+      <View
+        style={[
+          _style.rowLayout,
+          {
+            justifyContent: "space-between",
+            position: "absolute",
+            top: top + theme.spacing.xs,
+            left: 0,
+            right: 0,
+            paddingHorizontal: theme.spacing.md,
+          },
+        ]}
+      >
+        <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
+      </View>
+      {getNearestDistance() && (
+        <View style={[_style.distanceContainer, { top: top + theme.spacing.xs + 34 }]}>
+          <LinearGradient colors={theme.colors.gradientBlack} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={_style.gradient}>
+            <View style={[_style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
+              <ArrowIcon fill={theme.colors.grey1} style={{ transform: [{ rotate: `${getBearingDegree()}deg` }], width: 24, height: 24 }} />
+              <View style={_style.columnLayout}>
+                <Text>Destination</Text>
+                <Text>{getNearestDistance()}</Text>
               </View>
-            </LinearGradient>
-          </View>
-        )}
-        {location && (
-          <View style={[_style.miniMapContainer, { top: top + theme.spacing.xs + _style.distanceContainer.height + 34 + theme.spacing.sm }]}>
+            </View>
+          </LinearGradient>
+        </View>
+      )}
+      {location && (
+        <Animated.View style={miniMapStyle}>
+          <TouchableHighlight onPress={handleMapPressed} activeOpacity={1}>
             <MapView
               ref={mapRef}
               style={_style.miniMap}
@@ -351,14 +384,14 @@ export default () => {
             >
               {placeMarkers()}
             </MapView>
-          </View>
-        )}
-        {!(initLocation && location) && (
-          <View style={_style.centerContainer}>
-            <ActivityIndicator size={"large"} animating={true} />
-          </View>
-        )}
-      </>
+          </TouchableHighlight>
+        </Animated.View>
+      )}
+      {!(initLocation && location) && (
+        <View style={_style.centerContainer}>
+          <ActivityIndicator size={"large"} animating={true} />
+        </View>
+      )}
     </MainBody>
   );
 };
@@ -470,8 +503,8 @@ const _style = StyleSheet.create({
     width: 134,
     height: 134,
     borderRadius: 12,
-    borderColor: "white",
     borderWidth: 2,
+    borderColor: "white",
     overflow: "hidden",
   },
   miniMap: {

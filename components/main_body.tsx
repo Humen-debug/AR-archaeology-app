@@ -6,7 +6,7 @@ import { ReactElement, ReactNode } from "react";
 import _ from "lodash";
 
 interface MainBodyProps {
-  children?: ReactElement;
+  children?: JSX.Element | (JSX.Element | undefined | boolean)[] | undefined;
   padding?: Partial<EdgeInsets>;
   backgroundColor?: string | string[];
 }
