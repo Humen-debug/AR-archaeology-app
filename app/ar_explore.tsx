@@ -1,4 +1,13 @@
-import { Viro3DObject, ViroARScene, ViroARSceneNavigator, ViroBox, ViroNode, ViroQuad } from "@viro-community/react-viro";
+import {
+  Viro3DObject,
+  ViroARScene,
+  ViroARSceneNavigator,
+  ViroAmbientLight,
+  ViroAnimations,
+  ViroBox,
+  ViroNode,
+  ViroSpotLight,
+} from "@viro-community/react-viro";
 import { useAppTheme } from "../styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
@@ -115,35 +124,41 @@ function ARExplorePage(props?: ARExploreProps) {
     const ARObjects = props?.arSceneNavigator.viroAppProps.nearbyItems?.map((item, index) => {
       const coords = transformGpsToAR(item.latitude, item.longitude);
       if (!coords) return undefined;
-
       const scale = Math.max(Math.abs(Math.round(coords.z / 15)), 0.5);
 
       return (
         <ViroNode key={index} scale={[scale, scale, scale]} rotation={[0, 0, 0]} position={[coords.x, 0, coords.z]}>
-          {/* <Viro3DObject
-            source={require("../assets/models/location_pin/object.obj")}
-            resources={[require("../assets/models/location_pin/material.mtl")]}
+          <Viro3DObject
+            source={require("../assets/models/star/object.obj")}
+            resources={[require("../assets/models/star/material.mtl")]}
             type="OBJ"
-            scale={[1, 1, 1]}
-            rotation={[0, 0, 0]}
-            position={[0, 0, 0]}
-            onLoadEnd={() => {
-              console.log("complete loading pin");
-            }}
+            scale={[0.5, 0.5, 0.5]}
             onError={handleError}
-          /> */}
-          <ViroBox />
+            shadowCastingBitMask={2}
+          />
         </ViroNode>
       );
     });
     return ARObjects;
   };
 
-  const placeNavigationPlane = () => {
-    return <ViroQuad position={[0, -1, -2]} height={2} width={0.5} rotation={[-45, 0, 0]} />;
-  };
+  return (
+    <ViroARScene>
+      <ViroAmbientLight color="#FFFFFF" intensity={1000} />
 
-  return <ViroARScene>{props?.arSceneNavigator.viroAppProps.location && placeARObjects()}</ViroARScene>;
+      {props?.arSceneNavigator.viroAppProps.location && placeARObjects()}
+      <Viro3DObject
+        source={require("../assets/models/star/object.obj")}
+        resources={[require("../assets/models/star/material.mtl")]}
+        type="OBJ"
+        position={[0, 0, -2]}
+        scale={[0.1, 0.1, 0.1]}
+        onError={handleError}
+        shadowCastingBitMask={2}
+        animation={{ name: "rotate", run: true, loop: true, onStart: () => console.log("looping rotation"), delay: 1000 }}
+      />
+    </ViroARScene>
+  );
 }
 
 export default () => {
@@ -197,7 +212,7 @@ export default () => {
 
     const geoCallback = async (result: Location.LocationObject) => {
       const coords = result.coords;
-      if (coords.accuracy && coords.accuracy < 40) {
+      if (coords.accuracy && coords.accuracy < 50) {
         setLocation(coords);
 
         // Moving map to center user's location
@@ -367,6 +382,35 @@ interface LatLong {
   longitude: number;
   [key: string]: any;
 }
+
+ViroAnimations.registerAnimations({
+  rotation: {
+    properties: {
+      rotateX: "+=45",
+    },
+    duration: 300,
+  },
+  blinkForward: {
+    properties: {
+      scaleX: 0.6,
+      scaleY: 0.6,
+      scaleZ: 0.6,
+      opacity: 0.8,
+    },
+    easing: "Bounce",
+    duration: 1000,
+  },
+  blinkReverse: {
+    properties: {
+      scaleX: 1.0,
+      scaleY: 1.0,
+      scaleZ: 1.0,
+      opacity: 1.0,
+    },
+    easing: "Bounce",
+    duration: 3000,
+  },
+});
 
 const _style = StyleSheet.create({
   rowLayout: {
