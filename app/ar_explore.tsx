@@ -198,7 +198,7 @@ export default () => {
   const [locationListener, setLocationListener] = useState<Location.LocationSubscription>();
   const [headingListener, setHeadingListener] = useState<Location.LocationSubscription>();
   // const
-  const distanceInterval: number = 10;
+  const distanceInterval: number = 25;
 
   useEffect(() => {
     (async () => {
@@ -235,7 +235,7 @@ export default () => {
 
     const geoOpt: Location.LocationOptions = {
       accuracy: Location.Accuracy.BestForNavigation,
-      distanceInterval: distanceInterval, // update for each 10 meters
+      distanceInterval: distanceInterval, // update for each 25 meters
     };
 
     const geoCallback = async (result: Location.LocationObject) => {
