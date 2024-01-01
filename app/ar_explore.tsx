@@ -146,8 +146,14 @@ function ARExplorePage(props?: ARExploreProps) {
   };
 
   const [position, setPosition] = useState<Viro3DPoint>([0, 0, 0]);
-  const degree = ((props?.arSceneNavigator.viroAppProps.degree || 0) * Math.PI) / 180;
-  const distance = props?.arSceneNavigator.viroAppProps.distance || 0;
+  const [up, setUp] = useState<boolean>(true);
+
+  const point = props?.arSceneNavigator.viroAppProps.nearestPoint
+    ? transformGpsToAR(
+        props?.arSceneNavigator.viroAppProps.nearestPoint.latitude || 0,
+        props?.arSceneNavigator.viroAppProps.nearestPoint.longitude || 0
+      )
+    : { x: 0, z: 0 };
 
   ViroMaterials.createMaterials({
     path: {
@@ -162,16 +168,17 @@ function ARExplorePage(props?: ARExploreProps) {
         setPosition([cameraTransform.position[0], cameraTransform.position[1] - 1, cameraTransform.position[2]]);
       }}
     >
-      {/* {props?.arSceneNavigator.viroAppProps.location && placeARObjects()} */}
-      <ViroPolyline
-        position={position}
-        points={[
-          [0, 0, 0],
-          [distance * Math.cos(degree), 0, distance * Math.sin(degree)],
-        ]}
-        thickness={0.2}
-        materials={"path"}
-      />
+      {point?.x !== 0 && point?.z !== 0 && up && (
+        <ViroPolyline
+          position={position}
+          points={[
+            [0, 0, 0],
+            [point?.x || 0, 0, point?.z || 0],
+          ]}
+          thickness={0.2}
+          materials={"path"}
+        />
+      )}
     </ViroARScene>
   );
 }
@@ -266,7 +273,7 @@ export default () => {
           return previousValue[0] < currentValue[0] ? previousValue : currentValue;
         });
 
-        setNearestPoint?.(locations[minDist[1]]);
+        setNearestPoint(locations[minDist[1]]);
       }
       setNearbyItems(locations);
     }
@@ -325,7 +332,7 @@ export default () => {
       <>
         <ViroARSceneNavigator
           initialScene={{ scene: ARExplorePage }}
-          viroAppProps={{ heading, location, nearbyItems, degree, distance: distanceBetweenPoints(location, nearestPoint) * 1000 }}
+          viroAppProps={{ heading, location, nearbyItems, nearestPoint, degree, distance: distanceBetweenPoints(location, nearestPoint) * 1000 }}
         ></ViroARSceneNavigator>
         <View
           style={[
@@ -376,6 +383,9 @@ export default () => {
         )}
         {!(initLocation && location) && (
           <View style={_style.centerContainer}>
+            <Text variant="labelMedium" style={{ color: theme.colors?.primary, textAlign: "center", paddingBottom: theme.spacing.xs }}>
+              {"Getting\npath information"}
+            </Text>
             <ActivityIndicator size={"large"} animating={true} />
           </View>
         )}
@@ -394,6 +404,7 @@ interface ARExploreProps {
       heading?: number | undefined;
       location?: Location.LocationObjectCoords | undefined;
       nearbyItems: Location.LocationObjectCoords[];
+      nearestPoint: Location.LocationObjectCoords;
       degree: Float;
       distance: Float;
     };
