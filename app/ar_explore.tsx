@@ -4,9 +4,8 @@ import {
   ViroARSceneNavigator,
   ViroAmbientLight,
   ViroAnimations,
-  ViroBox,
+  ViroMaterials,
   ViroNode,
-  ViroSpotLight,
 } from "@viro-community/react-viro";
 import { useAppTheme } from "../styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -96,6 +95,24 @@ const degreeInAR = (location, obj) => {
 };
 
 function ARExplorePage(props?: ARExploreProps) {
+  ViroAnimations.registerAnimations({
+    rotation: {
+      properties: {
+        rotateY: "+=10",
+      },
+      duration: 3000 / 36,
+    },
+  });
+
+  ViroMaterials.createMaterials({
+    area: {
+      lightingModel: "Constant",
+      diffuseColor: "#DBF43E30",
+      colorWritesMask: "Green",
+      blendMode: "Alpha",
+    },
+  });
+
   const transformGpsToAR = (lat, lng) => {
     if (!props?.arSceneNavigator.viroAppProps.location) return undefined;
 
@@ -137,6 +154,17 @@ function ARExplorePage(props?: ARExploreProps) {
             scale={[0.5, 0.5, 0.5]}
             onError={handleError}
             shadowCastingBitMask={2}
+            animation={{ name: "rotation", run: true, loop: true }}
+          />
+          {/* Default 2.5m radius */}
+          <Viro3DObject
+            source={require("../assets/models/circle/object.obj")}
+            resources={[require("../assets/models/circle/circle.mtl")]}
+            type="OBJ"
+            onError={handleError}
+            rotation={[0, 0, 0]}
+            position={[0, -5, 0]}
+            materials={["area"]}
           />
         </ViroNode>
       );
@@ -147,17 +175,7 @@ function ARExplorePage(props?: ARExploreProps) {
   return (
     <ViroARScene>
       <ViroAmbientLight color="#FFFFFF" intensity={1000} />
-
       {props?.arSceneNavigator.viroAppProps.location && placeARObjects()}
-      <Viro3DObject
-        source={require("../assets/models/star/object.obj")}
-        resources={[require("../assets/models/star/material.mtl")]}
-        type="OBJ"
-        position={[0, 0, -2]}
-        scale={[0.1, 0.1, 0.1]}
-        onError={handleError}
-        shadowCastingBitMask={2}
-      />
     </ViroARScene>
   );
 }
@@ -415,35 +433,6 @@ interface LatLong {
   longitude: number;
   [key: string]: any;
 }
-
-ViroAnimations.registerAnimations({
-  rotation: {
-    properties: {
-      rotateX: "+=45",
-    },
-    duration: 300,
-  },
-  blinkForward: {
-    properties: {
-      scaleX: 0.6,
-      scaleY: 0.6,
-      scaleZ: 0.6,
-      opacity: 0.8,
-    },
-    easing: "Bounce",
-    duration: 1000,
-  },
-  blinkReverse: {
-    properties: {
-      scaleX: 1.0,
-      scaleY: 1.0,
-      scaleZ: 1.0,
-      opacity: 1.0,
-    },
-    easing: "Bounce",
-    duration: 3000,
-  },
-});
 
 const _style = StyleSheet.create({
   rowLayout: {

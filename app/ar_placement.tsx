@@ -99,6 +99,7 @@ function ARPlacementPage() {
           onPinch={onPinch}
           onRotate={onRotate}
         />
+        {/* <ViroQuad position={[0, 0, 0]} rotation={[-90, 0, 0]} width={4} height={4} arShadowReceiver/> */}
       </ViroARPlaneSelector>
     </ViroARScene>
   );
