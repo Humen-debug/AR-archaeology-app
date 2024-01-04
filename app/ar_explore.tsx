@@ -153,18 +153,18 @@ function ARExplorePage(props?: ARExploreProps) {
       }}
     >
       {/* <ViroBox height={1} length={1} width={1} position={[point.x, -1, point.z]} /> */}
-      {/* {point.x !== 0 && point.z !== 0 && ( */}
-      <ViroBox
-        height={0.001}
-        length={0.1}
-        width={0.6}
-        scalePivot={[0, 0, -0.05]}
-        scale={[1, 1, distance > 20 ? 20 * 10 : distance * 10]}
-        materials={"path"}
-        position={position}
-        rotation={[0, degree, 0]}
-      />
-      {/* )} */}
+      {point.x !== 0 && point.z !== 0 && (
+        <ViroBox
+          height={0.001}
+          length={0.1}
+          width={0.6}
+          scalePivot={[0, 0, -0.05]}
+          scale={[1, 1, distance > 20 ? 20 * 10 : distance * 10]}
+          materials={"path"}
+          position={position}
+          rotation={[0, degree, 0]}
+        />
+      )}
     </ViroARScene>
   );
 }
