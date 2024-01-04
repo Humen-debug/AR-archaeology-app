@@ -55,56 +55,33 @@ const latLongToMerc = (latDeg: number, longDeg: number) => {
 const bearingBetweenTwoPoints = (p1: LatLong | undefined, p2: LatLong | undefined) => {
   if (!p1 || !p2) return 0;
 
-  const lat1 = p1.latitude - Math.PI / 180;
-  const lat2 = p2.latitude - Math.PI / 180;
-  const dLong = ((p2.longitude - p1.longitude) * Math.PI) / 180;
-
-  const y = Math.sin(dLong) * Math.cos(lat2);
-  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLong);
-
+  const y = Math.sin(p2.longitude - p1.longitude) * Math.cos(p2.latitude);
+  const x = Math.cos(p1.latitude) * Math.sin(p2.latitude) - Math.sin(p1.latitude) * Math.cos(p2.latitude) * Math.cos(p2.longitude - p1.longitude);
   const theta = Math.atan2(y, x);
-  const bearing = ((theta * 180) / Math.PI + 360) % 360;
+  const bearing = ((theta * 180) / Math.PI + 360) % 360; // in degrees
+
   return bearing;
 };
 
-const degreeInAR = (location, obj) => {
-  if (!location || !obj) return 0;
-  const latObj = obj.latitude;
-  const longObj = obj.longitude;
-  const latMobile = location.latitude;
-  const longMobile = location.longitude;
+const transformGpsToAR = (deviceLoc, objLoc) => {
+  if (!deviceLoc || !objLoc) return undefined;
 
-  if (!longMobile || !latMobile) return undefined;
+  const objPoint = latLongToMerc(objLoc.latitude, objLoc.longitude);
+  const devicePoint = latLongToMerc(deviceLoc.latitude, deviceLoc.longitude);
+  // accuracy need improvement
+  return { x: objPoint.x - devicePoint.x, z: devicePoint.y - objPoint.y };
+};
 
-  const deviceObjPoint = latLongToMerc(latObj, longObj);
-  const mobilePoint = latLongToMerc(latMobile, longMobile);
-  const objDeltaY = deviceObjPoint.y - mobilePoint.y;
-  const objDeltaX = deviceObjPoint.x - mobilePoint.x;
+const degreeInAR = (deviceLoc, objLoc) => {
+  if (!deviceLoc || !objLoc) return 0;
+  const ARpoint = transformGpsToAR(deviceLoc, objLoc);
 
-  // convert the degree from right side of x-axis to top of y-axis
-  const degree = ((Math.atan2(objDeltaY, objDeltaX) * 180) / Math.PI + 270) % 360;
-  return degree;
+  if (!ARpoint) return 0;
+  return (Math.atan2(ARpoint.x, ARpoint.z) * 180) / Math.PI;
 };
 
 function ARExplorePage(props?: ARExploreProps) {
-  const transformGpsToAR = (lat, lng) => {
-    if (!props?.arSceneNavigator.viroAppProps.location) return undefined;
-
-    const latObj = lat;
-    const longObj = lng;
-    const latMobile = props?.arSceneNavigator.viroAppProps.location?.latitude;
-    const longMobile = props?.arSceneNavigator.viroAppProps.location?.longitude;
-
-    if (!longMobile || !latMobile) return undefined;
-
-    const deviceObjPoint = latLongToMerc(latObj, longObj);
-    const mobilePoint = latLongToMerc(latMobile, longMobile);
-    // accuracy need improvement
-    const objDeltaY = deviceObjPoint.y - mobilePoint.y;
-    const objDeltaX = deviceObjPoint.x - mobilePoint.x;
-    return { x: objDeltaX, z: -objDeltaY };
-  };
-
+  // TODO: my guess is when scene init, it should also set its facing(etc to always start as facing north )
   function handleError(event) {
     console.log("OBJ loading failed with error: " + event.nativeEvent.error);
   }
@@ -115,7 +92,7 @@ function ARExplorePage(props?: ARExploreProps) {
     }
 
     const ARObjects = props?.arSceneNavigator.viroAppProps.nearbyItems?.map((item, index) => {
-      const coords = transformGpsToAR(item.latitude, item.longitude);
+      const coords = transformGpsToAR(props?.arSceneNavigator.viroAppProps.location, item);
       if (!coords) return undefined;
 
       const scale = Math.max(Math.abs(Math.round(coords.z / 15)), 0.5);
@@ -146,19 +123,21 @@ function ARExplorePage(props?: ARExploreProps) {
   };
 
   const [position, setPosition] = useState<Viro3DPoint>([0, 0, 0]);
-  const [up, setUp] = useState<boolean>(true);
 
-  const point = props?.arSceneNavigator.viroAppProps.nearestPoint
-    ? transformGpsToAR(
-        props?.arSceneNavigator.viroAppProps.nearestPoint.latitude || 0,
-        props?.arSceneNavigator.viroAppProps.nearestPoint.longitude || 0
-      )
-    : { x: 0, z: 0 };
+  const calPoint =
+    props?.arSceneNavigator.viroAppProps.nearestPoint &&
+    transformGpsToAR(props?.arSceneNavigator.viroAppProps.location, props?.arSceneNavigator.viroAppProps.nearestPoint);
+  const point = { x: calPoint?.x || 0, z: calPoint?.z || 0 };
+
+  const degree = (Math.atan2(point.x - position[0], point.z - position[2]) * 180) / Math.PI;
+  const distance = Math.sqrt((point.z - position[2]) ** 2 + (point.x - position[0]) ** 2);
 
   ViroMaterials.createMaterials({
     path: {
       lightingModel: "Constant",
-      diffuseColor: "red",
+      diffuseColor: "#DBF43E",
+      diffuseTexture: require("../assets/images/diffuse.png"),
+      blendMode: "Add",
     },
   });
 
@@ -168,17 +147,19 @@ function ARExplorePage(props?: ARExploreProps) {
         setPosition([cameraTransform.position[0], cameraTransform.position[1] - 1, cameraTransform.position[2]]);
       }}
     >
-      {point?.x !== 0 && point?.z !== 0 && up && (
-        <ViroPolyline
-          position={position}
-          points={[
-            [0, 0, 0],
-            [point?.x || 0, 0, point?.z || 0],
-          ]}
-          thickness={0.2}
-          materials={"path"}
-        />
-      )}
+      {/* <ViroBox height={1} length={1} width={1} position={[point.x, -1, point.z]} /> */}
+      {/* {point.x !== 0 && point.z !== 0 && ( */}
+      <ViroBox
+        height={0.001}
+        length={0.1}
+        width={0.6}
+        scalePivot={[0, 0, -0.05]}
+        scale={[1, 1, distance > 20 ? 20 * 10 : distance * 10]}
+        materials={"path"}
+        position={position}
+        rotation={[0, degree, 0]}
+      />
+      {/* )} */}
     </ViroARScene>
   );
 }
@@ -299,7 +280,7 @@ export default () => {
     // guide user to the destination instead.
     const degree = degreeInAR(location, nearestPoint);
     if (heading && heading > -1) {
-      if (degree) return 360 - ((heading - degree + 360) % 360);
+      if (degree) return 360 - ((heading - degree + 360) % 360); // hmm
       return 360 - ((heading - bearing + 360) % 360);
     }
     return bearing;
