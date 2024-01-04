@@ -1,4 +1,4 @@
-import { ViroARScene, ViroARSceneNavigator, ViroBox, ViroMaterials, ViroNode, ViroPolyline, ViroQuad } from "@viro-community/react-viro";
+import { ViroARScene, ViroARSceneNavigator, ViroBox, ViroMaterials, ViroNode, ViroPolyline, ViroQuad, ViroText } from "@viro-community/react-viro";
 import { useAppTheme } from "../styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
@@ -112,6 +112,11 @@ function ARExplorePage(props?: ARExploreProps) {
             onError={handleError}
           /> */}
           <ViroBox />
+          <ViroText
+            text={`${item.latitude.toFixed(2)}, ${item.longitude.toFixed(2)}\n${coords.x.toFixed(2)},${coords.z.toFixed(2)}`}
+            width={2}
+            height={2}
+          />
         </ViroNode>
       );
     });
@@ -177,7 +182,7 @@ export default () => {
   const [locationListener, setLocationListener] = useState<Location.LocationSubscription>();
   const [headingListener, setHeadingListener] = useState<Location.LocationSubscription>();
   // const
-  const distanceInterval: number = 10;
+  const distanceInterval: number = 25;
 
   useEffect(() => {
     (async () => {
