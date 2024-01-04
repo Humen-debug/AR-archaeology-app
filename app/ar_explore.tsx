@@ -4,6 +4,7 @@ import {
   ViroARSceneNavigator,
   ViroAmbientLight,
   ViroAnimations,
+  ViroBox,
   ViroMaterials,
   ViroNode,
 } from "@viro-community/react-viro";
@@ -23,6 +24,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import MapView, { Marker } from "react-native-maps";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { TouchableHighlight } from "react-native-gesture-handler";
+import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
+import { Float } from "react-native/Libraries/Types/CodegenTypes";
 
 /*
  * stackoverflow.com/questions/47419496/augmented-reality-with-react-native-points-of-interest-over-the-camera
@@ -63,35 +66,29 @@ const latLongToMerc = (latDeg: number, longDeg: number) => {
 const bearingBetweenTwoPoints = (p1: LatLong | undefined, p2: LatLong | undefined) => {
   if (!p1 || !p2) return 0;
 
-  const lat1 = p1.latitude - Math.PI / 180;
-  const lat2 = p2.latitude - Math.PI / 180;
-  const dLong = ((p2.longitude - p1.longitude) * Math.PI) / 180;
-
-  const y = Math.sin(dLong) * Math.cos(lat2);
-  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLong);
-
+  const y = Math.sin(p2.longitude - p1.longitude) * Math.cos(p2.latitude);
+  const x = Math.cos(p1.latitude) * Math.sin(p2.latitude) - Math.sin(p1.latitude) * Math.cos(p2.latitude) * Math.cos(p2.longitude - p1.longitude);
   const theta = Math.atan2(y, x);
-  const bearing = ((theta * 180) / Math.PI + 360) % 360;
+  const bearing = ((theta * 180) / Math.PI + 360) % 360; // in degrees
+
   return bearing;
 };
 
-const degreeInAR = (location, obj) => {
-  if (!location || !obj) return 0;
-  const latObj = obj.latitude;
-  const longObj = obj.longitude;
-  const latMobile = location.latitude;
-  const longMobile = location.longitude;
+const transformGpsToAR = (deviceLoc, objLoc) => {
+  if (!deviceLoc || !objLoc) return undefined;
 
-  if (!longMobile || !latMobile) return undefined;
+  const objPoint = latLongToMerc(objLoc.latitude, objLoc.longitude);
+  const devicePoint = latLongToMerc(deviceLoc.latitude, deviceLoc.longitude);
+  // accuracy need improvement
+  return { x: objPoint.x - devicePoint.x, z: devicePoint.y - objPoint.y };
+};
 
-  const deviceObjPoint = latLongToMerc(latObj, longObj);
-  const mobilePoint = latLongToMerc(latMobile, longMobile);
-  const objDeltaY = deviceObjPoint.y - mobilePoint.y;
-  const objDeltaX = deviceObjPoint.x - mobilePoint.x;
+const degreeInAR = (deviceLoc, objLoc) => {
+  if (!deviceLoc || !objLoc) return 0;
+  const ARpoint = transformGpsToAR(deviceLoc, objLoc);
 
-  // convert the degree from right side of x-axis to top of y-axis
-  const degree = ((Math.atan2(objDeltaY, objDeltaX) * 180) / Math.PI + 270) % 360;
-  return degree;
+  if (!ARpoint) return 0;
+  return (Math.atan2(ARpoint.x, ARpoint.z) * 180) / Math.PI;
 };
 
 function ARExplorePage(props?: ARExploreProps) {
@@ -111,26 +108,15 @@ function ARExplorePage(props?: ARExploreProps) {
       colorWritesMask: "Green",
       blendMode: "Alpha",
     },
+    path: {
+      lightingModel: "Constant",
+      diffuseColor: "#DBF43E",
+      diffuseTexture: require("../assets/images/diffuse.png"),
+      blendMode: "Add",
+    },
   });
 
-  const transformGpsToAR = (lat, lng) => {
-    if (!props?.arSceneNavigator.viroAppProps.location) return undefined;
-
-    const latObj = lat;
-    const longObj = lng;
-    const latMobile = props?.arSceneNavigator.viroAppProps.location?.latitude;
-    const longMobile = props?.arSceneNavigator.viroAppProps.location?.longitude;
-
-    if (!longMobile || !latMobile) return undefined;
-
-    const deviceObjPoint = latLongToMerc(latObj, longObj);
-    const mobilePoint = latLongToMerc(latMobile, longMobile);
-    // accuracy need improvement
-    const objDeltaY = deviceObjPoint.y - mobilePoint.y;
-    const objDeltaX = deviceObjPoint.x - mobilePoint.x;
-    return { x: objDeltaX, z: -objDeltaY };
-  };
-
+  // TODO: my guess is when scene init, it should also set its facing(etc to always start as facing north )
   function handleError(event) {
     console.log("OBJ loading failed with error: " + event.nativeEvent.error);
   }
@@ -141,7 +127,7 @@ function ARExplorePage(props?: ARExploreProps) {
     }
 
     const ARObjects = props?.arSceneNavigator.viroAppProps.nearbyItems?.map((item, index) => {
-      const coords = transformGpsToAR(item.latitude, item.longitude);
+      const coords = transformGpsToAR(props?.arSceneNavigator.viroAppProps.location, item);
       if (!coords) return undefined;
       const scale = Math.min(Math.abs(Math.round(15 / coords.z)), 0.5);
 
@@ -172,10 +158,36 @@ function ARExplorePage(props?: ARExploreProps) {
     return ARObjects;
   };
 
+  const [position, setPosition] = useState<Viro3DPoint>([0, 0, 0]);
+
+  const calPoint =
+    props?.arSceneNavigator.viroAppProps.nearestPoint &&
+    transformGpsToAR(props?.arSceneNavigator.viroAppProps.location, props?.arSceneNavigator.viroAppProps.nearestPoint);
+  const point = { x: calPoint?.x || 0, z: calPoint?.z || 0 };
+
+  const degree = (Math.atan2(point.x - position[0], point.z - position[2]) * 180) / Math.PI;
+  const distance = Math.sqrt((point.z - position[2]) ** 2 + (point.x - position[0]) ** 2);
+
   return (
-    <ViroARScene>
-      <ViroAmbientLight color="#FFFFFF" intensity={1000} />
-      {props?.arSceneNavigator.viroAppProps.location && placeARObjects()}
+    <ViroARScene
+      onCameraTransformUpdate={(cameraTransform) => {
+        setPosition([cameraTransform.position[0], cameraTransform.position[1] - 1, cameraTransform.position[2]]);
+      }}
+    >
+      {/* <ViroBox height={1} length={1} width={1} position={[point.x, -1, point.z]} /> */}
+      {location && placeARObjects()}
+      {/* {point.x !== 0 && point.z !== 0 && ( */}
+      <ViroBox
+        height={0.001}
+        length={0.1}
+        width={0.6}
+        scalePivot={[0, 0, -0.05]}
+        scale={[1, 1, distance > 20 ? 20 * 10 : distance * 10]}
+        materials={"path"}
+        position={position}
+        rotation={[0, degree, 0]}
+      />
+      {/* )} */}
     </ViroARScene>
   );
 }
@@ -206,7 +218,7 @@ export default () => {
     return { height: withTiming(mapExpand ? screenHeight - 200 : screenHeight, animatedProps) };
   });
 
-  const [nearestItem, setNearestItem] = useState<Location.LocationObjectCoords>();
+  const [nearestPoint, setNearestPoint] = useState<Location.LocationObjectCoords>();
   const mapRef = createRef<MapView>();
   // demo
   const [initLocation, setInitLocation] = useState<Location.LocationObjectCoords>();
@@ -292,12 +304,13 @@ export default () => {
       ];
 
       const distances = locations.map((item, index) => [distanceBetweenPoints(location, item), index]);
+      console.log("test", distances.length);
       if (distances.length !== 0) {
         const minDist = distances.reduce((previousValue, currentValue) => {
           return previousValue[0] < currentValue[0] ? previousValue : currentValue;
         });
 
-        setNearestItem?.(locations[minDist[1]]);
+        setNearestPoint(locations[minDist[1]]);
       }
       setNearbyItems(locations);
     }
@@ -315,23 +328,23 @@ export default () => {
 
   const getBearingDegree = () => {
     // http://www.movable-type.co.uk/scripts/latlong.html?from=48.9613600,-122.0413400&to=48.965496,-122.072989
-    if (!nearestItem || !location) return 0;
+    if (!nearestPoint || !location) return 0;
     // Accurate bearing degree
-    const bearing = bearingBetweenTwoPoints(location, nearestItem);
+    const bearing = bearingBetweenTwoPoints(location, nearestPoint);
     // In case that GPS's accuracy is low, use the rending position to
     // guide user to the destination instead.
-    const degree = degreeInAR(location, nearestItem);
+    const degree = degreeInAR(location, nearestPoint);
     if (heading && heading > -1) {
-      if (degree) return 360 - ((heading - degree + 360) % 360);
+      if (degree) return 360 - ((heading - degree + 360) % 360); // hmm
       return 360 - ((heading - bearing + 360) % 360);
     }
     return bearing;
   };
 
   const getNearestDistance = () => {
-    if (!nearestItem) return undefined;
+    if (!nearestPoint) return undefined;
     // convert km to m
-    const distance = distanceBetweenPoints(location, nearestItem) * 1000;
+    const distance = distanceBetweenPoints(location, nearestPoint) * 1000;
     if (distance > 99) {
       return ">100m";
     } else if (distance > 49) {
@@ -353,7 +366,7 @@ export default () => {
         <ViroARSceneNavigator
           style={{ width: "100%", height: "100%" }}
           initialScene={{ scene: ARExplorePage }}
-          viroAppProps={{ heading, location, nearbyItems }}
+          viroAppProps={{ heading, location, nearbyItems, nearestPoint }}
         />
       </Animated.View>
       <View
@@ -407,6 +420,9 @@ export default () => {
       )}
       {!(initLocation && location) && (
         <View style={_style.centerContainer}>
+          <Text variant="labelMedium" style={{ color: theme.colors?.primary, textAlign: "center", paddingBottom: theme.spacing.xs }}>
+            {"Waiting\nGPS information"}
+          </Text>
           <ActivityIndicator size={"large"} animating={true} />
         </View>
       )}
@@ -424,6 +440,7 @@ interface ARExploreProps {
       heading?: number | undefined;
       location?: Location.LocationObjectCoords | undefined;
       nearbyItems: Location.LocationObjectCoords[];
+      nearestPoint: Location.LocationObjectCoords;
     };
   };
 }
