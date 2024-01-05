@@ -1,6 +1,6 @@
 # Blender 3.6.2
 # www.blender.org
-mtllib material.mtl
+mtllib star.mtl
 o Cube
 v -1.138765 -0.060962 1.612431
 v -1.154725 -0.278808 1.474669

@@ -1,13 +1,4 @@
-import {
-  Viro3DObject,
-  ViroARScene,
-  ViroARSceneNavigator,
-  ViroAmbientLight,
-  ViroAnimations,
-  ViroBox,
-  ViroMaterials,
-  ViroNode,
-} from "@viro-community/react-viro";
+import { Viro3DObject, ViroARScene, ViroARSceneNavigator, ViroAnimations, ViroBox, ViroMaterials, ViroNode } from "@viro-community/react-viro";
 import { useAppTheme } from "../styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
@@ -17,12 +8,12 @@ import IconBtn from "../components/icon_btn";
 import * as Location from "expo-location";
 import { router } from "expo-router";
 import { useState, useEffect, createRef } from "react";
-import { View, StyleSheet, Platform, useWindowDimensions } from "react-native";
-import _, { transform } from "lodash";
+import { View, StyleSheet, useWindowDimensions } from "react-native";
+import _ from "lodash";
 import { ActivityIndicator, Text } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import MapView, { Marker } from "react-native-maps";
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { Easing, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
@@ -129,15 +120,16 @@ function ARExplorePage(props?: ARExploreProps) {
     const ARObjects = props?.arSceneNavigator.viroAppProps.nearbyItems?.map((item, index) => {
       const coords = transformGpsToAR(props?.arSceneNavigator.viroAppProps.location, item);
       if (!coords) return undefined;
+
       const scale = Math.min(Math.abs(Math.round(15 / coords.z)), 0.5);
 
       return (
         <ViroNode key={index} scale={[scale, scale, scale]} rotation={[0, 0, 0]} position={[coords.x, 0, coords.z]}>
           <Viro3DObject
-            source={require("../assets/models/star/object.obj")}
-            resources={[require("../assets/models/star/material.mtl")]}
+            source={require("../assets/models/star/star.obj")}
+            resources={[require("../assets/models/star/starMat.mtl")]}
             type="OBJ"
-            scale={[0.5, 0.5, 0.5]}
+            // scale={[0.1, 0.1, 0.1]}
             onError={handleError}
             shadowCastingBitMask={2}
             animation={{ name: "rotation", run: true, loop: true }}
@@ -175,19 +167,19 @@ function ARExplorePage(props?: ARExploreProps) {
       }}
     >
       {/* <ViroBox height={1} length={1} width={1} position={[point.x, -1, point.z]} /> */}
-      {location && placeARObjects()}
-      {/* {point.x !== 0 && point.z !== 0 && ( */}
-      <ViroBox
-        height={0.001}
-        length={0.1}
-        width={0.6}
-        scalePivot={[0, 0, -0.05]}
-        scale={[1, 1, distance > 20 ? 20 * 10 : distance * 10]}
-        materials={"path"}
-        position={position}
-        rotation={[0, degree, 0]}
-      />
-      {/* )} */}
+      {props?.arSceneNavigator.viroAppProps.location && placeARObjects()}
+      {point.x !== 0 && point.z !== 0 && (
+        <ViroBox
+          height={0.001}
+          length={0.1}
+          width={0.6}
+          scalePivot={[0, 0, -0.05]}
+          scale={[1, 1, distance > 20 ? 20 * 10 : distance * 10]}
+          materials={"path"}
+          position={position}
+          rotation={[0, degree, 0]}
+        />
+      )}
     </ViroARScene>
   );
 }
@@ -301,10 +293,19 @@ export default () => {
           latitude: lat,
           longitude: lon,
         },
+        {
+          ...initLocation,
+          latitude: 22.282812,
+          longitude: 114.139614,
+        },
+        {
+          ...initLocation,
+          latitude: 22.282812,
+          longitude: 114.139634,
+        },
       ];
 
       const distances = locations.map((item, index) => [distanceBetweenPoints(location, item), index]);
-      console.log("test", distances.length);
       if (distances.length !== 0) {
         const minDist = distances.reduce((previousValue, currentValue) => {
           return previousValue[0] < currentValue[0] ? previousValue : currentValue;
@@ -360,13 +361,15 @@ export default () => {
     }
   };
 
+  var degree = getBearingDegree();
+  var distance = getNearestDistance();
+
   return (
     <MainBody>
       <Animated.View style={ARsceneStyle}>
         <ViroARSceneNavigator
-          style={{ width: "100%", height: "100%" }}
           initialScene={{ scene: ARExplorePage }}
-          viroAppProps={{ heading, location, nearbyItems, nearestPoint }}
+          viroAppProps={{ heading, location, nearbyItems, nearestPoint, degree, distance: distanceBetweenPoints(location, nearestPoint) * 1000 }}
         />
       </Animated.View>
       <View
@@ -384,14 +387,14 @@ export default () => {
       >
         <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
       </View>
-      {getNearestDistance() && (
+      {!!distance && (
         <View style={[_style.distanceContainer, { top: top + theme.spacing.xs + 34 }]}>
           <LinearGradient colors={theme.colors.gradientBlack} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={_style.gradient}>
             <View style={[_style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
-              <ArrowIcon fill={theme.colors.grey1} style={{ transform: [{ rotate: `${getBearingDegree()}deg` }], width: 24, height: 24 }} />
+              <ArrowIcon fill={theme.colors.grey1} style={{ transform: [{ rotate: `${degree}deg` }], width: 24, height: 24 }} />
               <View style={_style.columnLayout}>
                 <Text>Destination</Text>
-                <Text>{getNearestDistance()}</Text>
+                <Text>{distance}</Text>
               </View>
             </View>
           </LinearGradient>
@@ -441,6 +444,8 @@ interface ARExploreProps {
       location?: Location.LocationObjectCoords | undefined;
       nearbyItems: Location.LocationObjectCoords[];
       nearestPoint: Location.LocationObjectCoords;
+      degree: Float;
+      distance: Float;
     };
   };
 }
@@ -509,8 +514,8 @@ const _style = StyleSheet.create({
     width: 134,
     height: 134,
     borderRadius: 12,
-    borderWidth: 2,
     borderColor: "white",
+    borderWidth: 2,
     overflow: "hidden",
   },
   miniMap: {
