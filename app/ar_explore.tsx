@@ -74,16 +74,25 @@ const bearingBetweenTwoPoints = (p1: LatLong | undefined, p2: LatLong | undefine
   return bearing;
 };
 
-const transformGpsToAR = (deviceLoc, objLoc) => {
+const transformGpsToAR = (deviceLoc: LatLong | undefined, objLoc: LatLong | undefined) => {
   if (!deviceLoc || !objLoc) return undefined;
 
   const objPoint = latLongToMerc(objLoc.latitude, objLoc.longitude);
   const devicePoint = latLongToMerc(deviceLoc.latitude, deviceLoc.longitude);
+  var objDeltaX = objPoint.x - devicePoint.x;
+  var objDeltaY = devicePoint.y - objPoint.y;
+  // testing the render with heading
+  // if (deviceLoc.heading) {
+  //   const angleRadian = (deviceLoc.heading * Math.PI) / 180;
+  //   objDeltaX = objDeltaX * Math.cos(angleRadian) - objDeltaY * Math.sin(angleRadian);
+  //   objDeltaY = objDeltaX * Math.sin(angleRadian) + objDeltaY * Math.cos(angleRadian);
+  // }
+
   // accuracy need improvement
-  return { x: objPoint.x - devicePoint.x, z: devicePoint.y - objPoint.y };
+  return { x: objDeltaX, z: objDeltaY };
 };
 
-const degreeInAR = (deviceLoc, objLoc) => {
+const degreeInAR = (deviceLoc: LatLong | undefined, objLoc: LatLong | undefined) => {
   if (!deviceLoc || !objLoc) return 0;
   const ARpoint = transformGpsToAR(deviceLoc, objLoc);
 
@@ -138,7 +147,6 @@ function ARExplorePage(props?: ARExploreProps) {
           <Viro3DObject
             source={require("../assets/models/star/star.obj")}
             resources={[require("../assets/models/star/starMat.mtl")]}
-            // materials={["star"]}
             type="OBJ"
             onError={handleError}
             shadowCastingBitMask={2}
@@ -227,28 +235,45 @@ export default () => {
   const [location, setLocation] = useState<Location.LocationObjectCoords>();
   const [heading, setHeading] = useState<number>();
   const [nearbyItems, setNearbyItems] = useState<Location.LocationObjectCoords[]>([]);
-  const [locationListener, setLocationListener] = useState<Location.LocationSubscription>();
-  const [headingListener, setHeadingListener] = useState<Location.LocationSubscription>();
+
   // const
   const distanceInterval: number = 25;
 
   useEffect(() => {
-    (async () => {
-      await getCurrentPosition();
-    })();
-  }, []);
+    let headingListener: Location.LocationSubscription | undefined;
+    let locationListener: Location.LocationSubscription | undefined;
+    const getCurrentLocation = async () => {
+      // demo setting static init location
+      let loc = await Location.getCurrentPositionAsync();
+      setInitLocation(loc.coords);
 
-  useEffect(() => {
+      const geoOpt: Location.LocationOptions = {
+        accuracy: Location.Accuracy.High,
+        distanceInterval: distanceInterval, // update for each 25 meters
+      };
+
+      const geoCallback = async (result: Location.LocationObject) => {
+        const coords = result.coords;
+        if (coords.accuracy && coords.accuracy < 50) {
+          setLocation(coords);
+
+          // Moving map to center user's location
+          mapRef?.current?.animateToRegion({ latitude: coords.latitude, longitude: coords.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 });
+        }
+      };
+
+      locationListener = await Location.watchPositionAsync(geoOpt, geoCallback);
+
+      headingListener = await Location.watchHeadingAsync((heading) => {
+        setHeading(heading.trueHeading);
+      });
+    };
+    getCurrentLocation();
     return () => {
       locationListener?.remove();
-    };
-  }, [locationListener]);
-
-  useEffect(() => {
-    return () => {
       headingListener?.remove();
     };
-  }, [headingListener]);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -258,36 +283,6 @@ export default () => {
 
   const handleMapPressed = () => {
     setMapExpand((value) => !value);
-  };
-
-  const getCurrentPosition = async () => {
-    // demo setting static init location
-    let loc = await Location.getCurrentPositionAsync();
-    setInitLocation(loc.coords);
-
-    const geoOpt: Location.LocationOptions = {
-      accuracy: Location.Accuracy.BestForNavigation,
-      distanceInterval: distanceInterval, // update for each 25 meters
-    };
-
-    const geoCallback = async (result: Location.LocationObject) => {
-      const coords = result.coords;
-      if (coords.accuracy && coords.accuracy < 50) {
-        setLocation(coords);
-
-        // Moving map to center user's location
-        mapRef?.current?.animateToRegion({ latitude: coords.latitude, longitude: coords.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 });
-      }
-    };
-
-    const listener = await Location.watchPositionAsync(geoOpt, geoCallback);
-    setLocationListener(listener);
-
-    const headingListener = await Location.watchHeadingAsync((heading) => {
-      // for iOS devices
-      setHeading(heading.magHeading);
-    });
-    setHeadingListener(headingListener);
   };
 
   const getNearbyItems = async () => {
@@ -373,6 +368,7 @@ export default () => {
 
   var degree = getBearingDegree();
   var distance = getNearestDistance();
+  const loading: boolean = !(location && heading);
 
   return (
     <MainBody>
@@ -431,7 +427,7 @@ export default () => {
           </TouchableHighlight>
         </Animated.View>
       )}
-      {!(initLocation && location) && (
+      {loading && (
         <View style={_style.centerContainer}>
           <Text variant="labelMedium" style={{ color: theme.colors?.primary, textAlign: "center", paddingBottom: theme.spacing.xs }}>
             {"Waiting\nGPS information"}
@@ -463,6 +459,7 @@ interface ARExploreProps {
 interface LatLong {
   latitude: number;
   longitude: number;
+  heading?: number | null;
   [key: string]: any;
 }
 
