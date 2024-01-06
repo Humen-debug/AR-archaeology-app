@@ -1,4 +1,13 @@
-import { Viro3DObject, ViroARScene, ViroARSceneNavigator, ViroAnimations, ViroBox, ViroMaterials, ViroNode } from "@viro-community/react-viro";
+import {
+  Viro3DObject,
+  ViroARScene,
+  ViroARSceneNavigator,
+  ViroAmbientLight,
+  ViroAnimations,
+  ViroBox,
+  ViroMaterials,
+  ViroNode,
+} from "@viro-community/react-viro";
 import { useAppTheme } from "../styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
@@ -125,11 +134,12 @@ function ARExplorePage(props?: ARExploreProps) {
 
       return (
         <ViroNode key={index} scale={[scale, scale, scale]} rotation={[0, 0, 0]} position={[coords.x, 0, coords.z]}>
+          <ViroAmbientLight intensity={2000} color={"white"} />
           <Viro3DObject
             source={require("../assets/models/star/star.obj")}
             resources={[require("../assets/models/star/starMat.mtl")]}
+            // materials={["star"]}
             type="OBJ"
-            // scale={[0.1, 0.1, 0.1]}
             onError={handleError}
             shadowCastingBitMask={2}
             animation={{ name: "rotation", run: true, loop: true }}
