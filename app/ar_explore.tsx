@@ -26,7 +26,7 @@ import Animated, { Easing, useAnimatedStyle, withTiming } from "react-native-rea
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
-
+import { THREE } from "expo-three";
 /*
  * stackoverflow.com/questions/47419496/augmented-reality-with-react-native-points-of-interest-over-the-camera
  * Solution to convert latitude and longitude to device's local coordinates and vice versa
@@ -81,14 +81,6 @@ const transformGpsToAR = (deviceLoc, objLoc) => {
   const devicePoint = latLongToMerc(deviceLoc.latitude, deviceLoc.longitude);
   // accuracy need improvement
   return { x: objPoint.x - devicePoint.x, z: devicePoint.y - objPoint.y };
-};
-
-const degreeInAR = (deviceLoc, objLoc) => {
-  if (!deviceLoc || !objLoc) return 0;
-  const ARpoint = transformGpsToAR(deviceLoc, objLoc);
-
-  if (!ARpoint) return 0;
-  return (Math.atan2(ARpoint.x, ARpoint.z) * 180) / Math.PI;
 };
 
 function ARExplorePage(props?: ARExploreProps) {
@@ -161,18 +153,36 @@ function ARExplorePage(props?: ARExploreProps) {
   };
 
   const [position, setPosition] = useState<Viro3DPoint>([0, 0, 0]);
-
   const calPoint =
     props?.arSceneNavigator.viroAppProps.nearestPoint &&
     transformGpsToAR(props?.arSceneNavigator.viroAppProps.location, props?.arSceneNavigator.viroAppProps.nearestPoint);
   const point = { x: calPoint?.x || 0, z: calPoint?.z || 0 };
 
+  const bearingDegree = props?.arSceneNavigator.viroAppProps.degree;
+  const initAngle = props?.arSceneNavigator.viroAppProps.initAngle;
   const degree = (Math.atan2(point.x - position[0], point.z - position[2]) * 180) / Math.PI;
   const distance = Math.sqrt((point.z - position[2]) ** 2 + (point.x - position[0]) ** 2);
 
   return (
     <ViroARScene
       onCameraTransformUpdate={(cameraTransform) => {
+        if (initAngle == -1 && bearingDegree && bearingDegree !== -1) {
+          // Convert Euler angle from cameraTransform with order XYZ to quaternion to avoid gimbal lock
+          const q = new THREE.Quaternion().setFromEuler(
+            new THREE.Euler(
+              cameraTransform.rotation[0] * (Math.PI / 180),
+              cameraTransform.rotation[1] * (Math.PI / 180),
+              cameraTransform.rotation[2] * (Math.PI / 180)
+            )
+          );
+
+          // Calculate compass heading in radians and convert to degrees
+          const headingDegrees = Math.atan2(1 - 2 * (q.y * q.y + q.z * q.z), 2 * (q.x * q.y + q.z * q.w)) * (180 / Math.PI);
+
+          // need better cal but my brain no longer function anymore, will update tmr
+          const angleDiff = (360 + bearingDegree - headingDegrees) % 360;
+          props?.arSceneNavigator.viroAppProps.setInitAngle(angleDiff);
+        }
         setPosition([cameraTransform.position[0], cameraTransform.position[1] - 1, cameraTransform.position[2]]);
       }}
     >
@@ -200,6 +210,7 @@ export default () => {
   const { height: screenHeight } = useWindowDimensions();
   const animatedProps = { duration: 300, easing: Easing.inOut(Easing.quad) };
   const [mapExpand, setMapExpand] = useState<boolean>(false);
+  const [initAngle, setInitAngle] = useState<number>(-1);
   const miniMapStyle = useAnimatedStyle(() => {
     var pos = mapExpand
       ? { bottom: 0, right: 0, left: 0, top: undefined }
@@ -339,14 +350,10 @@ export default () => {
 
   const getBearingDegree = () => {
     // http://www.movable-type.co.uk/scripts/latlong.html?from=48.9613600,-122.0413400&to=48.965496,-122.072989
-    if (!nearestPoint || !location) return 0;
+    if (!nearestPoint || !location) return -1;
     // Accurate bearing degree
     const bearing = bearingBetweenTwoPoints(location, nearestPoint);
-    // In case that GPS's accuracy is low, use the rending position to
-    // guide user to the destination instead.
-    const degree = degreeInAR(location, nearestPoint);
     if (heading && heading > -1) {
-      if (degree) return 360 - ((heading - degree + 360) % 360); // hmm
       return 360 - ((heading - bearing + 360) % 360);
     }
     return bearing;
@@ -379,7 +386,14 @@ export default () => {
       <Animated.View style={ARsceneStyle}>
         <ViroARSceneNavigator
           initialScene={{ scene: ARExplorePage }}
-          viroAppProps={{ heading, location, nearbyItems, nearestPoint, degree, distance: distanceBetweenPoints(location, nearestPoint) * 1000 }}
+          viroAppProps={{
+            location,
+            nearbyItems,
+            nearestPoint,
+            degree,
+            setInitAngle,
+            initAngle,
+          }}
         />
       </Animated.View>
       <View
@@ -401,7 +415,7 @@ export default () => {
         <View style={[_style.distanceContainer, { top: top + theme.spacing.xs + 34 }]}>
           <LinearGradient colors={theme.colors.gradientBlack} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={_style.gradient}>
             <View style={[_style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
-              <ArrowIcon fill={theme.colors.grey1} style={{ transform: [{ rotate: `${degree}deg` }], width: 24, height: 24 }} />
+              <ArrowIcon fill={theme.colors.grey1} style={{ transform: [{ rotate: `${degree == -1 ? 0 : degree}deg` }], width: 24, height: 24 }} />
               <View style={_style.columnLayout}>
                 <Text>Destination</Text>
                 <Text>{distance}</Text>
@@ -450,12 +464,12 @@ export default () => {
 interface ARExploreProps {
   arSceneNavigator: {
     viroAppProps: {
-      heading?: number | undefined;
       location?: Location.LocationObjectCoords | undefined;
       nearbyItems: Location.LocationObjectCoords[];
       nearestPoint: Location.LocationObjectCoords;
       degree: Float;
-      distance: Float;
+      setInitAngle: Function;
+      initAngle: Number;
     };
   };
 }
