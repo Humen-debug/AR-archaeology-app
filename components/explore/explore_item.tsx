@@ -15,14 +15,10 @@ export default function ExploreItem(item: ItemProps) {
   const { title, length, isSaved, images } = item;
   const theme = useAppTheme();
 
-  const itemWidth = 270;
-  const window = { height: Dimensions.get("window").height, width: Dimensions.get("window").width };
   const _style = useStyle({
     backgroundColor: theme.colors.grey4 + "e9",
     labelGrey: theme.colors.label,
     spacing: theme.spacing,
-    itemWidth,
-    window,
     withImage: !!images,
   });
 
@@ -30,22 +26,17 @@ export default function ExploreItem(item: ItemProps) {
     <View style={_style.item}>
       <>
         <Text variant="labelMedium">{title}</Text>
-        <Text variant="labelSmall" style={_style.lengthText}>
-          {length} km
-        </Text>
+        {length && (
+          <Text variant="labelSmall" style={_style.lengthText}>
+            {length} km
+          </Text>
+        )}
         {images && (
           <FlatList
             horizontal
             ItemSeparatorComponent={() => <View style={{ width: theme.spacing.sm }} />}
             data={images}
-            renderItem={({ item }) => (
-              <Image
-                style={_style.image}
-                source={{
-                  uri: item,
-                }}
-              />
-            )}
+            renderItem={({ item }) => <Image style={_style.image} source={{ uri: item }} />}
           />
         )}
       </>
@@ -81,7 +72,7 @@ export default function ExploreItem(item: ItemProps) {
   );
 }
 
-const useStyle = ({ backgroundColor, spacing, itemWidth, labelGrey, window, withImage }: any) =>
+const useStyle = ({ backgroundColor, spacing, labelGrey, withImage }: any) =>
   StyleSheet.create({
     image: {
       height: 100,

@@ -101,6 +101,7 @@ export default function Home() {
               minZoomLevel={15}
               rotateEnabled={false}
               userInterfaceStyle="dark"
+              onPress={() => router.replace({ pathname: "/explore" })}
             >
               {POINTS.map((point) => (
                 <Marker

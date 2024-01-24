@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, View, FlatList } from "react-native";
-import MapView, { LatLng, Marker, Polyline, Callout } from "react-native-maps";
+import MapView, { LatLng, Marker, Polyline } from "react-native-maps";
 import { Dimensions } from "react-native";
 import { useAppTheme } from "@styles";
 import MainBody from "@components/main_body";
@@ -8,8 +8,10 @@ import IconBtn from "@components/icon_btn";
 import { createRef, useEffect, useMemo, useState } from "react";
 import ExploreListModal from "@components/explore/explore_list_modal";
 import ExploreItem from "@components/explore/explore_item";
+import ExploreModal from "@/components/explore/explore_modal";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import MarkerCallout from "@components/marker_callout";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 const DATA = [
   {
@@ -88,18 +90,25 @@ export default function Explore() {
   const { id } = useLocalSearchParams<{ id?: string }>();
   const itemWidth = 270;
   const itemSpacing = 10;
-  const window = { height: Dimensions.get("window").height, width: Dimensions.get("window").width };
+  const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
   const _style = useStyle({
     spacing: theme.spacing,
     itemWidth,
-    window,
+    screenWidth,
   });
 
-  const [open, setOpen] = useState(false);
+  const [listOpen, setListOpen] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
   const [focusPoint, setFocusPoint] = useState<string | undefined>(id);
   const focusIndex = useMemo(() => POINTS.findIndex((point) => point._id === focusPoint), [focusPoint]);
   const mapRef = createRef<MapView>();
   const routeListRef = createRef<FlatList>();
+  const cardListStyle = useAnimatedStyle(() => {
+    return {
+      position: "absolute",
+      bottom: withTiming(detailOpen || listOpen ? -screenHeight : 86 + theme.spacing.md),
+    };
+  });
 
   useEffect(() => {
     if (mapRef.current) {
@@ -126,6 +135,12 @@ export default function Explore() {
     }
   }, [focusPoint]);
 
+  const onMapPress = () => {
+    // close all bottom sheets
+    setDetailOpen(false);
+    setListOpen(false);
+  };
+
   return (
     <MainBody padding={{ right: 0, left: 0 }}>
       <>
@@ -141,42 +156,50 @@ export default function Explore() {
           mapType="satellite"
           userInterfaceStyle="dark"
           minZoomLevel={10}
+          onPress={onMapPress}
         >
           {POINTS.map((point) => (
             <Marker key={point._id} coordinate={{ latitude: point.latitude, longitude: point.longitude }} onPress={() => setFocusPoint(point._id)}>
-              <MarkerCallout {...point} />
+              <MarkerCallout
+                {...point}
+                onPress={() => {
+                  setDetailOpen(true);
+                }}
+              />
             </Marker>
           ))}
           <Polyline coordinates={POINTS.map((point) => point as LatLng)} strokeWidth={6} strokeColor={theme.colors.secondary} />
         </MapView>
         {/* Point pickers */}
-        <FlatList
-          ref={routeListRef}
-          snapToInterval={270 + itemSpacing}
-          pagingEnabled={true}
-          decelerationRate={"fast"}
-          horizontal
-          ItemSeparatorComponent={() => <View style={{ width: itemSpacing }} />}
-          style={_style.list}
-          data={POINTS}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item }) => (
-            <TouchableHighlight onPress={() => setFocusPoint(item._id)} style={{ overflow: "hidden", borderRadius: 8 }}>
-              <ExploreItem title={item.title} />
-            </TouchableHighlight>
-          )}
-          contentContainerStyle={_style.listContainer}
-          onScrollToIndexFailed={(info) => {
-            const wait = new Promise((resolve) => setTimeout(resolve, 500));
-            wait.then(() => {
-              routeListRef.current?.scrollToIndex({
-                index: info.index,
-                animated: false,
+        <Animated.View style={cardListStyle}>
+          <FlatList
+            ref={routeListRef}
+            snapToInterval={itemWidth + itemSpacing}
+            pagingEnabled={true}
+            decelerationRate={"fast"}
+            horizontal
+            ItemSeparatorComponent={() => <View style={{ width: itemSpacing }} />}
+            data={POINTS}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+              <TouchableHighlight onPress={() => setFocusPoint(item._id)} style={{ overflow: "hidden", borderRadius: 8 }}>
+                <ExploreItem title={item.title} />
+              </TouchableHighlight>
+            )}
+            contentContainerStyle={_style.listContainer}
+            onScrollToIndexFailed={(info) => {
+              const wait = new Promise((resolve) => setTimeout(resolve, 500));
+              wait.then(() => {
+                routeListRef.current?.scrollToIndex({
+                  index: info.index,
+                  animated: false,
+                });
               });
-            });
-          }}
-          showsHorizontalScrollIndicator={false}
-        />
+            }}
+            showsHorizontalScrollIndicator={false}
+          />
+        </Animated.View>
+
         {/* Path pickers */}
         {/* <FlatList
           snapToInterval={270 + itemSpacing}
@@ -205,17 +228,18 @@ export default function Explore() {
             icon="menu"
             iconProps={{ fill: theme.colors.grey1 }}
             onPress={() => {
-              setOpen((prev) => !prev);
+              setListOpen((prev) => !prev);
             }}
           />
         </View>
-        <ExploreListModal open={open} setOpen={setOpen} data={POINTS} />
+        <ExploreListModal open={listOpen} setOpen={setListOpen} data={POINTS} />
+        <ExploreModal open={detailOpen} setOpen={setDetailOpen} data={POINTS[focusIndex]} />
       </>
     </MainBody>
   );
 }
 
-const useStyle = ({ spacing, itemWidth, window }: any) =>
+const useStyle = ({ spacing, itemWidth, screenWidth }: any) =>
   StyleSheet.create({
     map: {
       height: "100%",
@@ -226,7 +250,7 @@ const useStyle = ({ spacing, itemWidth, window }: any) =>
       bottom: 86 + spacing.md,
     },
     listContainer: {
-      paddingHorizontal: (window.width - itemWidth) / 2,
+      paddingHorizontal: (screenWidth - itemWidth) / 2,
     },
     buttonsContainer: {
       position: "absolute",
