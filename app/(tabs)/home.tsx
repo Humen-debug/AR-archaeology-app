@@ -2,23 +2,26 @@ import { Searchbar, Text, TouchableRipple, Button } from "react-native-paper";
 import { useAppTheme } from "../../styles";
 import MainBody from "../../components/main_body";
 import { View, ScrollView, GestureResponderEvent, Image, StyleSheet, ImageBackground } from "react-native";
-import { useEffect, useState } from "react";
+import { createRef, useEffect, useState } from "react";
 import SearchIcon from "../../assets/icons/search.svg";
 import BookMarkOutlineIcon from "../../assets/icons/bookmark-outline.svg";
 import * as Linking from "expo-linking";
 import { LinearGradient } from "expo-linear-gradient";
 import { FlatList } from "react-native-gesture-handler";
 import IconBtn from "../../components/icon_btn";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import { useQuery, useRealm } from "../../models";
 import { Artifact } from "../../models/artifact";
 import { useUser } from "@realm/react";
+import MapView, { Marker } from "react-native-maps";
+import { POINTS, getBoundaries } from "./explore";
 
 export default function Home() {
   const theme = useAppTheme();
   const realm = useRealm();
   const user = useUser();
+  const router = useRouter();
 
   const [searchText, setSearchText] = useState("");
 
@@ -35,6 +38,15 @@ export default function Home() {
       Linking.openURL(url);
     }
   };
+
+  const mapRef = createRef<MapView>();
+
+  useEffect(() => {
+    if (mapRef.current) {
+      const bound = getBoundaries(POINTS);
+      mapRef.current.setMapBoundaries(bound.northEast, bound.southWest);
+    }
+  }, []);
 
   return (
     <MainBody>
@@ -56,6 +68,7 @@ export default function Home() {
           />
           <IconBtn icon={<BookMarkOutlineIcon fill="white" />} onPress={() => router.push("/category?cat=bookmarks")} />
         </View>
+        {/* Website */}
         <View>
           <Text variant="titleMedium" style={{ paddingHorizontal: 20 }}>
             Digital Site Visit
@@ -74,7 +87,37 @@ export default function Home() {
             </ImageBackground>
           </TouchableOpacity>
         </View>
-        <>
+        <View style={{ paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.xs, width: "100%", height: "80%", maxHeight: 400 }}>
+          <View style={[_style.mapContainer, _style.fill]}>
+            <MapView
+              ref={mapRef}
+              style={_style.fill}
+              initialRegion={{
+                latitude: 39.92634215565024,
+                longitude: 44.74058628178656,
+                latitudeDelta: 0.009,
+                longitudeDelta: 0.009,
+              }}
+              mapType="satellite"
+              minZoomLevel={15}
+              rotateEnabled={false}
+              userInterfaceStyle="dark"
+            >
+              {POINTS.map((point) => (
+                <Marker
+                  key={point._id}
+                  coordinate={{ latitude: point.latitude, longitude: point.longitude }}
+                  onPress={() => {
+                    router.replace({ pathname: "/explore", params: { id: point._id } });
+                  }}
+                />
+              ))}
+            </MapView>
+          </View>
+        </View>
+
+        {/* Items */}
+        <View style={{ display: "flex", flexDirection: "column" }}>
           {categories.map((cat, index) => (
             <View style={{ paddingBottom: 24 }} key={index}>
               <View style={_style.titleBar}>
@@ -101,7 +144,7 @@ export default function Home() {
               />
             </View>
           ))}
-        </>
+        </View>
       </ScrollView>
     </MainBody>
   );
@@ -175,5 +218,13 @@ const _style = StyleSheet.create({
     height: 205,
     width: "auto",
     overflow: "hidden",
+  },
+  mapContainer: {
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  fill: {
+    width: "100%",
+    height: "100%",
   },
 });

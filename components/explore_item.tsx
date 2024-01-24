@@ -8,8 +8,8 @@ import BookMarkIcon from "../assets/icons/bookmark.svg";
 
 interface ItemProps {
   title: string;
-  length: number; // in km
-  isSaved: boolean;
+  length?: number; // in km
+  isSaved?: boolean;
   images?: string[] | null;
 }
 
@@ -20,7 +20,7 @@ export default function ExploreItem(item: ItemProps) {
   const itemWidth = 270;
   const window = { height: Dimensions.get("window").height, width: Dimensions.get("window").width };
   const _style = useStyle({
-    backgroundColor: theme.colors.grey4,
+    backgroundColor: theme.colors.grey4 + "e9",
     labelGrey: theme.colors.label,
     spacing: theme.spacing,
     itemWidth,

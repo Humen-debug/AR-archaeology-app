@@ -1,6 +1,6 @@
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, View, FlatList } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { LatLng, Marker, Polyline, Callout } from "react-native-maps";
 import { Dimensions } from "react-native";
 import { useAppTheme } from "../../styles";
 import MainBody from "../../components/main_body";
@@ -8,10 +8,12 @@ import IconBtn from "../../components/icon_btn";
 import CreateARIcon from "../../assets/icons/create-ar.svg";
 import LocateARIcon from "../../assets/icons/locate.svg";
 import MenuIcon from "../../assets/icons/menu.svg";
-import { useEffect, useState } from "react";
-import * as Location from "expo-location";
+import { createRef, useEffect, useMemo, useState } from "react";
 import ExploreModal from "../../components/explore_modal";
 import ExploreItem from "../../components/explore_item";
+import { TouchableHighlight } from "react-native-gesture-handler";
+import { Text } from "react-native-paper";
+import MarkerCallout from "../../components/marker_callout";
 
 const DATA = [
   {
@@ -36,10 +38,58 @@ const DATA = [
   },
 ];
 
+export const POINTS = [
+  {
+    _id: "0",
+    title: "Starting point",
+    latitude: 39.926781353240344,
+    longitude: 44.737506336440376,
+  },
+  {
+    _id: "1",
+    title: "Lower Trench",
+    latitude: 39.925769,
+    longitude: 44.74278,
+    desc: "The lower trench explores the area between the site’s main fortification walls. Archaeologists found a series of rough rectangular structures built near the surface sitting within the local drainage channel here. Archaeologists speculate that the structures at the top might be built during the late Medieval period for capturing water or for animal pens. Below the top layer, there are at least four wash layers. The bottom layer sits directly above natural bedrock and archaeologists found pottery dating back to the Late Bronze Age-Iron Age 1 here.",
+  },
+  {
+    _id: "2",
+    title: "Top Trench",
+    latitude: 39.92469,
+    longitude: 44.744071,
+    desc: "The top trench sits at the top of the site and has the deepest stratigraphy down to insitu Late Bronze Age-Iron Age 1 (ca. 1550 B.C.E. to 800 B.C.E.) layers. A portion of the site’s upper fortification wall runs along the western side of the entire trench. Archaeologists hypothesize that people in Early Medieval period rebuilt the wall on the remains of the Late Bronze Age-Iron Age 1 wall with some sections eroded away and others covered with dirt. Archaeologists also found a hard-pack layer throughout the southern part of the trench. The ashy soil with chunks of burnt wood indicates that the fortress was burned around 800 B.C.E., which may be due to the attack by the Urartians. ",
+  },
+  {
+    _id: "3",
+    title: "East shelf trench",
+    latitude: 39.924963,
+    longitude: 44.74524,
+    desc: "In the east shelf trench, archaeologists found a bell-shaped burial pit dug into the natural bedrock. This pit contained ashy soil with several minimally fragmented pottery vessels and other interesting finds. However, there were almost no bones, so the archaeologists proposed that this may be a cremation burial. They also found a pottery jar directly above the pit, which may have been a marker for the burial. A carbon sample collected here dates to the Early Medieval period (416-545 C.E.). ",
+  },
+];
+
+export const getBoundaries = (points: { latitude: number; longitude: number }[]) => {
+  let north = -Infinity,
+    east = -Infinity;
+  let west = Infinity,
+    south = Infinity;
+  for (const point of points) {
+    const { latitude, longitude } = point;
+    if (latitude > north) north = latitude;
+    if (latitude < south) south = latitude;
+    if (longitude > east) east = longitude;
+    if (longitude < west) west = longitude;
+  }
+  return {
+    northEast: { latitude: north, longitude: east },
+    southWest: { latitude: south, longitude: west },
+  };
+};
+
 export default function Explore() {
   const theme = useAppTheme();
   const router = useRouter();
-
+  const { id } = useLocalSearchParams<{ id?: string }>();
   const itemWidth = 270;
   const itemSpacing = 10;
   const window = { height: Dimensions.get("window").height, width: Dimensions.get("window").width };
@@ -50,32 +100,89 @@ export default function Explore() {
   });
 
   const [open, setOpen] = useState(false);
-  const [location, setLocation] = useState<Location.LocationObject>();
+  const [focusPoint, setFocusPoint] = useState<string | undefined>(id);
+  const focusIndex = useMemo(() => POINTS.findIndex((point) => point._id === focusPoint), [focusPoint]);
+  const mapRef = createRef<MapView>();
+  const routeListRef = createRef<FlatList>();
 
   useEffect(() => {
-    (async () => {
-      let loc = await Location.getCurrentPositionAsync({});
-      setLocation(loc);
-    })();
+    if (mapRef.current) {
+      const bound = getBoundaries(POINTS);
+      mapRef.current.setMapBoundaries(bound.northEast, bound.southWest);
+    }
   }, []);
+
+  // Watch focusPoint
+  useEffect(() => {
+    if (mapRef.current && focusPoint) {
+      if (focusIndex !== -1) {
+        const focus = POINTS[focusIndex];
+        mapRef.current.animateToRegion({
+          latitude: focus?.latitude,
+          longitude: focus?.longitude,
+          latitudeDelta: 0.004,
+          longitudeDelta: 0.004,
+        });
+      }
+    }
+    if (routeListRef.current && focusPoint) {
+      routeListRef.current.scrollToIndex({ animated: true, index: focusIndex, viewPosition: 0.5 });
+    }
+  }, [focusPoint]);
 
   return (
     <MainBody padding={{ right: 0, left: 0 }}>
       <>
         <MapView
+          ref={mapRef}
           style={_style.map}
           initialRegion={{
-            latitude: 22.2831,
-            longitude: 114.1366,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
+            latitude: 39.92634215565024,
+            longitude: 44.74058628178656,
+            latitudeDelta: 0.009,
+            longitudeDelta: 0.009,
           }}
+          mapType="satellite"
+          userInterfaceStyle="dark"
+          minZoomLevel={10}
         >
-          {/* location is not correct therefore the marker is in San Francisco for iphone simulator */}
-          {location && <Marker coordinate={{ longitude: location.coords.longitude, latitude: location.coords.latitude }} />}
-          <Marker coordinate={{ longitude: 114.1366, latitude: 22.2831 }} />
+          {POINTS.map((point) => (
+            <Marker key={point._id} coordinate={{ latitude: point.latitude, longitude: point.longitude }} onPress={() => setFocusPoint(point._id)}>
+              <MarkerCallout {...point} />
+            </Marker>
+          ))}
+          <Polyline coordinates={POINTS.map((point) => point as LatLng)} strokeWidth={6} strokeColor={theme.colors.secondary} />
         </MapView>
+        {/* Point pickers */}
         <FlatList
+          ref={routeListRef}
+          snapToInterval={270 + itemSpacing}
+          pagingEnabled={true}
+          decelerationRate={"fast"}
+          horizontal
+          ItemSeparatorComponent={() => <View style={{ width: itemSpacing }} />}
+          style={_style.list}
+          data={POINTS}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => (
+            <TouchableHighlight onPress={() => setFocusPoint(item._id)} style={{ overflow: "hidden", borderRadius: 8 }}>
+              <ExploreItem title={item.title} />
+            </TouchableHighlight>
+          )}
+          contentContainerStyle={_style.listContainer}
+          onScrollToIndexFailed={(info) => {
+            const wait = new Promise((resolve) => setTimeout(resolve, 500));
+            wait.then(() => {
+              routeListRef.current?.scrollToIndex({
+                index: info.index,
+                animated: false,
+              });
+            });
+          }}
+          showsHorizontalScrollIndicator={false}
+        />
+        {/* Path pickers */}
+        {/* <FlatList
           snapToInterval={270 + itemSpacing}
           pagingEnabled={true}
           decelerationRate={"fast"}
@@ -85,7 +192,7 @@ export default function Explore() {
           data={DATA}
           renderItem={({ item }) => <ExploreItem title={item.title} length={item.length} isSaved={item.save} />}
           contentContainerStyle={_style.listContainer}
-        />
+        /> */}
         <View style={_style.buttonsContainer}>
           <IconBtn style={_style.iconButton} icon={<LocateARIcon fill={theme.colors.grey1} />} onPress={() => {}} />
           <IconBtn
@@ -104,7 +211,7 @@ export default function Explore() {
             }}
           />
         </View>
-        <ExploreModal open={open} setOpen={setOpen} data={DATA} />
+        <ExploreModal open={open} setOpen={setOpen} data={POINTS} />
       </>
     </MainBody>
   );

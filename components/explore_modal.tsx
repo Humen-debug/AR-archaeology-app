@@ -6,7 +6,7 @@ import { BottomSheetModal, BottomSheetScrollView, BottomSheetScrollViewMethods }
 import SearchIcon from "../assets/icons/search.svg";
 import ExploreItem from "./explore_item";
 
-export default function ExploreModal({ open, setOpen, data }: any) {
+export default function ExploreModal({ open, setOpen, data }: { open: boolean; setOpen: (open: boolean) => void; data: any[] }) {
   const theme = useAppTheme();
   const _style = useStyle({
     spacing: theme.spacing,
@@ -75,11 +75,11 @@ export default function ExploreModal({ open, setOpen, data }: any) {
         </View>
         <BottomSheetScrollView contentContainerStyle={{ flex: 1 }} showsVerticalScrollIndicator={false}>
           <View style={_style.list}>
-            {data.map(({ title, length, save, images }) => (
-              <>
+            {data.map(({ title, length, save, images }, index) => (
+              <View key={index}>
                 <ExploreItem title={title} length={length} isSaved={save} images={images} />
                 <Divider style={{ backgroundColor: "black", marginHorizontal: -theme.spacing.lg }} />
-              </>
+              </View>
             ))}
           </View>
         </BottomSheetScrollView>
