@@ -1,4 +1,4 @@
-import { customFonts, theme } from "../styles";
+import { customFonts, theme } from "@styles";
 import { Stack } from "expo-router";
 
 import { PaperProvider } from "react-native-paper";
@@ -7,9 +7,9 @@ import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { AppWrapperSync } from "../providers/db_sync_provider";
+import { AppWrapperSync } from "@providers/db_sync_provider";
 import { SYNC_CONFIG } from "../sync.config";
-import { BookmarkProvider } from "../providers/bookmark_provider";
+import { BookmarkProvider } from "@providers/bookmark_provider";
 
 export default function RootLayout() {
   const [loadedFont, error] = useFonts(customFonts);

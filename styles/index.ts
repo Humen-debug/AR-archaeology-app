@@ -1,16 +1,16 @@
 import { MD3DarkTheme, useTheme, configureFonts } from "react-native-paper";
 
 export const customFonts = {
-  "LibreCaslonText-Bold": require("../assets/fonts/LibreCaslonText-Bold.ttf"),
-  "LibreCaslonText-Regular": require("../assets/fonts/LibreCaslonText-Regular.ttf"),
-  "Lexend-Black": require("../assets/fonts/Lexend-Black.ttf"),
-  "Lexend-Bold": require("../assets/fonts/Lexend-Bold.ttf"),
-  "Lexend-ExtraBold": require("../assets/fonts/Lexend-ExtraBold.ttf"),
-  "Lexend-ExtraLight": require("../assets/fonts/Lexend-ExtraLight.ttf"),
-  "Lexend-Light": require("../assets/fonts/Lexend-Light.ttf"),
-  "Lexend-Medium": require("../assets/fonts/Lexend-Medium.ttf"),
-  "Lexend-Regular": require("../assets/fonts/Lexend-Regular.ttf"),
-  "Lexend-Thin": require("../assets/fonts/Lexend-Thin.ttf"),
+  "LibreCaslonText-Bold": require("@assets/fonts/LibreCaslonText-Bold.ttf"),
+  "LibreCaslonText-Regular": require("@assets/fonts/LibreCaslonText-Regular.ttf"),
+  "Lexend-Black": require("@assets/fonts/Lexend-Black.ttf"),
+  "Lexend-Bold": require("@assets/fonts/Lexend-Bold.ttf"),
+  "Lexend-ExtraBold": require("@assets/fonts/Lexend-ExtraBold.ttf"),
+  "Lexend-ExtraLight": require("@assets/fonts/Lexend-ExtraLight.ttf"),
+  "Lexend-Light": require("@assets/fonts/Lexend-Light.ttf"),
+  "Lexend-Medium": require("@assets/fonts/Lexend-Medium.ttf"),
+  "Lexend-Regular": require("@assets/fonts/Lexend-Regular.ttf"),
+  "Lexend-Thin": require("@assets/fonts/Lexend-Thin.ttf"),
 };
 
 const _baseFontConfig = {
@@ -36,7 +36,7 @@ const fontConfig = {
   titleSmall: { ..._titleFontVar.titleSmall, fontSize: 12 },
   // labelLarge: {},
   labelMedium: { ..._baseFontVar.labelMedium, fontSize: 16, fontWeight: "600", lineHeight: 20 },
-  labelSmall: { ..._baseFontVar.labelSmall, fontSize: 12},
+  labelSmall: { ..._baseFontVar.labelSmall, fontSize: 12 },
   bodySmall: {
     ..._baseFontVar.bodySmall,
     fontSize: 8,

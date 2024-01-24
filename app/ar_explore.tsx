@@ -8,12 +8,12 @@ import {
   ViroMaterials,
   ViroNode,
 } from "@viro-community/react-viro";
-import { useAppTheme } from "../styles";
+import { useAppTheme } from "@styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import ArrowIcon from "../assets/icons/arrow-up.svg";
-import MainBody from "../components/main_body";
-import IconBtn from "../components/icon_btn";
+import ChevronLeftIcon from "@assets/icons/chevron-left.svg";
+import ArrowIcon from "@assets/icons/arrow-up.svg";
+import MainBody from "@components/main_body";
+import IconBtn from "@components/icon_btn";
 import * as Location from "expo-location";
 import { router } from "expo-router";
 import { useState, useEffect, createRef } from "react";
@@ -112,7 +112,7 @@ function ARExplorePage(props?: ARExploreProps) {
     path: {
       lightingModel: "Constant",
       diffuseColor: "#DBF43E",
-      diffuseTexture: require("../assets/images/diffuse.png"),
+      diffuseTexture: require("@assets/images/diffuse.png"),
       blendMode: "Add",
     },
   });
@@ -137,8 +137,8 @@ function ARExplorePage(props?: ARExploreProps) {
         <ViroNode key={index} scale={[scale, scale, scale]} rotation={[0, 0, 0]} position={[coords.x, 0, coords.z]}>
           <ViroAmbientLight intensity={2000} color={"white"} />
           <Viro3DObject
-            source={require("../assets/models/star/star.obj")}
-            resources={[require("../assets/models/star/starMat.mtl")]}
+            source={require("@assets/models/star/star.obj")}
+            resources={[require("@assets/models/star/starMat.mtl")]}
             type="OBJ"
             onError={handleError}
             shadowCastingBitMask={2}
@@ -146,8 +146,8 @@ function ARExplorePage(props?: ARExploreProps) {
           />
           {/* Default 2.5m radius */}
           <Viro3DObject
-            source={require("../assets/models/circle/object.obj")}
-            resources={[require("../assets/models/circle/circle.mtl")]}
+            source={require("@assets/models/circle/object.obj")}
+            resources={[require("@assets/models/circle/circle.mtl")]}
             type="OBJ"
             onError={handleError}
             rotation={[0, 0, 0]}

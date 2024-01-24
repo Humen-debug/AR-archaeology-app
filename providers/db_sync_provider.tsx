@@ -1,5 +1,5 @@
 import { AppProvider, UserProvider, useApp } from "@realm/react";
-import { RealmProvider } from "../models";
+import { RealmProvider } from "@models";
 import { OpenRealmBehaviorType, OpenRealmTimeOutBehavior, CompensatingWriteError } from "realm";
 import Realm from "realm";
 import { useEffect } from "react";

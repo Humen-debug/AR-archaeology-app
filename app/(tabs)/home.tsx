@@ -1,18 +1,18 @@
 import { Searchbar, Text, TouchableRipple, Button } from "react-native-paper";
-import { useAppTheme } from "../../styles";
-import MainBody from "../../components/main_body";
+import { useAppTheme } from "@styles";
+import MainBody from "@components/main_body";
 import { View, ScrollView, GestureResponderEvent, Image, StyleSheet, ImageBackground } from "react-native";
 import { createRef, useEffect, useState } from "react";
-import SearchIcon from "../../assets/icons/search.svg";
-import BookMarkOutlineIcon from "../../assets/icons/bookmark-outline.svg";
+import SearchIcon from "@assets/icons/search.svg";
+import BookMarkOutlineIcon from "@assets/icons/bookmark-outline.svg";
 import * as Linking from "expo-linking";
 import { LinearGradient } from "expo-linear-gradient";
 import { FlatList } from "react-native-gesture-handler";
-import IconBtn from "../../components/icon_btn";
+import IconBtn from "@components/icon_btn";
 import { router, useRouter } from "expo-router";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
-import { useQuery, useRealm } from "../../models";
-import { Artifact } from "../../models/artifact";
+import { useQuery, useRealm } from "@models";
+import { Artifact } from "@models/artifact";
 import { useUser } from "@realm/react";
 import MapView, { Marker } from "react-native-maps";
 import { POINTS, getBoundaries } from "./explore";
@@ -75,7 +75,7 @@ export default function Home() {
           </Text>
           <TouchableOpacity activeOpacity={1} onPress={openAPSAP}>
             <ImageBackground
-              source={require("../../assets/images/thumbnail.png")}
+              source={require("@assets/images/thumbnail.png")}
               style={[_style.thumbnail, { borderRadius: theme.spacing.lg, marginHorizontal: 14, marginVertical: 10 }]}
             >
               <LinearGradient colors={["transparent", theme.colors.grey4]} style={{ flex: 1, padding: theme.spacing.lg }}>
@@ -162,7 +162,7 @@ const ItemCard = (props: ItemCardProps) => {
   return (
     <View style={_style.itemCard}>
       <TouchableRipple onPress={onPress ?? (() => router.push(`/detail?id=${item._id.toString()}`))}>
-        <ImageBackground resizeMode="cover" style={_style.itemImg} source={item.image || require("../../assets/images/demo_item.png")}>
+        <ImageBackground resizeMode="cover" style={_style.itemImg} source={item.image || require("@assets/images/demo_item.png")}>
           <LinearGradient colors={["#0000006B", "#00000000"]} start={{ x: 0.5, y: 1 }} end={{ x: 0.5, y: 0 }} style={_style.gradient} />
           <Text variant="titleSmall" style={_style.itemText} numberOfLines={2}>
             {item.name}

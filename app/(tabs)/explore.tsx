@@ -2,18 +2,17 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, View, FlatList } from "react-native";
 import MapView, { LatLng, Marker, Polyline, Callout } from "react-native-maps";
 import { Dimensions } from "react-native";
-import { useAppTheme } from "../../styles";
-import MainBody from "../../components/main_body";
-import IconBtn from "../../components/icon_btn";
-import CreateARIcon from "../../assets/icons/create-ar.svg";
-import LocateARIcon from "../../assets/icons/locate.svg";
-import MenuIcon from "../../assets/icons/menu.svg";
+import { useAppTheme } from "@styles";
+import MainBody from "@components/main_body";
+import IconBtn from "@components/icon_btn";
+import CreateARIcon from "@assets/icons/create-ar.svg";
+import LocateARIcon from "@assets/icons/locate.svg";
+import MenuIcon from "@assets/icons/menu.svg";
 import { createRef, useEffect, useMemo, useState } from "react";
-import ExploreModal from "../../components/explore_modal";
-import ExploreItem from "../../components/explore_item";
+import ExploreListModal from "@components/explore/explore_list_modal";
+import ExploreItem from "@components/explore/explore_item";
 import { TouchableHighlight } from "react-native-gesture-handler";
-import { Text } from "react-native-paper";
-import MarkerCallout from "../../components/marker_callout";
+import MarkerCallout from "@components/marker_callout";
 
 const DATA = [
   {
@@ -211,7 +210,7 @@ export default function Explore() {
             }}
           />
         </View>
-        <ExploreModal open={open} setOpen={setOpen} data={POINTS} />
+        <ExploreListModal open={open} setOpen={setOpen} data={POINTS} />
       </>
     </MainBody>
   );

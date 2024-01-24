@@ -55,7 +55,7 @@
     "owner": "catpotato"
   },
   "experiments": {
-    "tsconfigPaths": true
+    "tsconfigPaths": false
   },
   "packagerOpts": {
     "config": "metro.config.js",

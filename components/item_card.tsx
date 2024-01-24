@@ -1,8 +1,8 @@
 import { Text, Card } from "react-native-paper";
-import { theme } from "../styles";
+import { theme } from "@styles";
 import { View, GestureResponderEvent, StyleSheet, ViewStyle } from "react-native";
-import TimeIcon from "../assets/icons/time.svg";
-import LocationIcon from "../assets/icons/location.svg";
+import TimeIcon from "@assets/icons/time.svg";
+import LocationIcon from "@assets/icons/location.svg";
 import { Artifact } from "models/artifact";
 import { LinearGradient } from "expo-linear-gradient";
 import moment from "moment";
@@ -16,7 +16,7 @@ interface ItemCardProps {
 }
 export const ItemCard = (props: ItemCardProps) => {
   const { item, onPress, onLongPress, style } = props;
-  const imageUri = item.image ?? require("../assets/images/demo_item.png");
+  const imageUri = item.image ?? require("@assets/images/demo_item.png");
 
   return (
     <Card

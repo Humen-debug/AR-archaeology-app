@@ -1,6 +1,6 @@
 import React from "react";
 import { useSegments, useRouter, useRootNavigation } from "expo-router";
-import { AuthState } from "../models/auth";
+import { AuthState } from "@models/auth";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type AuthType = {

@@ -8,12 +8,12 @@ import {
   ViroSpinner,
   ViroSpotLight,
 } from "@viro-community/react-viro";
-import MainBody from "../components/main_body";
+import MainBody from "@components/main_body";
 import { ImageSourcePropType, StyleSheet, View } from "react-native";
-import { useAppTheme } from "../styles";
+import { useAppTheme } from "@styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import IconBtn from "../components/icon_btn";
-import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
+import IconBtn from "@components/icon_btn";
+import ChevronLeftIcon from "@assets/icons/chevron-left.svg";
 import { router } from "expo-router";
 import { useState } from "react";
 import { ViroPinchState, ViroRotateState } from "@viro-community/react-viro/dist/components/Types/ViroEvents";
@@ -85,8 +85,8 @@ function ARPlacementPage() {
         />
         {loading && <ViroSpinner position={[0, 2, 0]} scale={[2, 2, 2]} />}
         <Viro3DObject
-          source={require("../assets/models/demo/object.obj")}
-          resources={[require("../assets/models/demo/material.mtl"), require("../assets/models/demo/scan.jpg")]}
+          source={require("@assets/models/demo/object.obj")}
+          resources={[require("@assets/models/demo/material.mtl"), require("@assets/models/demo/scan.jpg")]}
           highAccuracyEvents={true}
           position={[0, 0, 0]}
           rotation={rotation}

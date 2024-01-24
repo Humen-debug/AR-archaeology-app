@@ -1,5 +1,5 @@
 import { Dimensions, View } from "react-native";
-import { useAppTheme } from "../styles";
+import { useAppTheme } from "@styles";
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { ReactElement, ReactNode } from "react";

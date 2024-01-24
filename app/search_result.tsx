@@ -1,19 +1,19 @@
 import { Checkbox, List, RadioButton, Searchbar, Text } from "react-native-paper";
-import { useAppTheme } from "../styles";
-import MainBody from "../components/main_body";
+import { useAppTheme } from "@styles";
+import MainBody from "@components/main_body";
 import { View, StyleSheet } from "react-native";
 import { ForwardedRef, forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import SearchIcon from "../assets/icons/search.svg";
-import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
+import SearchIcon from "@assets/icons/search.svg";
+import ChevronLeftIcon from "@assets/icons/chevron-left.svg";
 
-import SortIcon from "../assets/icons/sort.svg";
-import { Artifact } from "../models/artifact";
+import SortIcon from "@assets/icons/sort.svg";
+import { Artifact } from "@models/artifact";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ItemCard } from "../components/item_card";
+import { ItemCard } from "@components/item_card";
 import { BottomSheetModal, BottomSheetModalProvider, BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { useQuery } from "../models";
+import { useQuery } from "@models";
 
 export default function SearchResultPage() {
   const theme = useAppTheme();

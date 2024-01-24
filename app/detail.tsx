@@ -1,26 +1,26 @@
 import { Text } from "react-native-paper";
-import { useAppTheme } from "../styles";
-import MainBody from "../components/main_body";
+import { useAppTheme } from "@styles";
+import MainBody from "@components/main_body";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { useMemo, useRef, useState } from "react";
-import BookmarkOutlineIcon from "../assets/icons/bookmark-outline.svg";
-import BookmarkIcon from "../assets/icons/bookmark.svg";
-import ChevronLeftIcon from "../assets/icons/chevron-left.svg";
-import ShareIcon from "../assets/icons/share.svg";
-import CreateARIcon from "../assets/icons/create-ar.svg";
-import { Artifact } from "../models/artifact";
+import BookmarkOutlineIcon from "@assets/icons/bookmark-outline.svg";
+import BookmarkIcon from "@assets/icons/bookmark.svg";
+import ChevronLeftIcon from "@assets/icons/chevron-left.svg";
+import ShareIcon from "@assets/icons/share.svg";
+import CreateARIcon from "@assets/icons/create-ar.svg";
+import { Artifact } from "@models/artifact";
 import { router, useLocalSearchParams } from "expo-router";
-import IconBtn from "../components/icon_btn";
+import IconBtn from "@components/icon_btn";
 import { ActivityIndicator } from "react-native";
-import ModelView from "../components/model_view";
+import ModelView from "@components/model_view";
 import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods, BottomSheetView } from "@gorhom/bottom-sheet";
-import AudioPlayer from "../components/audio_player";
-import ErrorIcon from "../assets/icons/error-outline.svg";
+import AudioPlayer from "@components/audio_player";
+import ErrorIcon from "@assets/icons/error-outline.svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import moment from "moment";
-import { useObject } from "../models";
+import { useObject } from "@models";
 import { Realm } from "@realm/react";
-import { useBookmarks } from "../providers/bookmark_provider";
+import { useBookmarks } from "@providers/bookmark_provider";
 
 export default function DetailPage() {
   const theme = useAppTheme();
@@ -81,7 +81,7 @@ export default function DetailPage() {
                 }
               </View>
 
-              <AudioPlayer soundUri={require("../assets/audio/arrowhead.mp3")} />
+              <AudioPlayer soundUri={require("@assets/audio/arrowhead.mp3")} />
             </View>
           )}
 

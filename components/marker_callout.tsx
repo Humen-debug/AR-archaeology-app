@@ -1,7 +1,7 @@
 import { Image, StyleSheet, View, Dimensions } from "react-native";
 import { Callout } from "react-native-maps";
 import { Text } from "react-native-paper";
-import { AppTheme, useAppTheme } from "../styles";
+import { AppTheme, useAppTheme } from "@styles";
 
 interface MarkerCalloutProps {
   title: string;

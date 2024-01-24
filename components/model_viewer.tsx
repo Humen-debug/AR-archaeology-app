@@ -34,7 +34,7 @@ function Model(props: ModelViewProps & ModelProps & MeshProps) {
   useLayoutEffect(() => {
     props.setLoading(obj === null);
     const loadAsset = async () => {
-      const textureAsset = Asset.fromModule(require("../assets/models/demo/texture.jpg"));
+      const textureAsset = Asset.fromModule(require("@assets/models/demo/texture.jpg"));
       await textureAsset.downloadAsync();
       const { localUri: textureLocalUri, uri: textureUri } = textureAsset;
 
@@ -43,11 +43,11 @@ function Model(props: ModelViewProps & ModelProps & MeshProps) {
       switch (Platform.OS) {
         case "android":
           object = await loadObjAsync({
-            asset: require("../assets/models/demo/object.obj"),
-            mtlAsset: require("../assets/models/demo/material.mtl"),
+            asset: require("@assets/models/demo/object.obj"),
+            mtlAsset: require("@assets/models/demo/material.mtl"),
           });
 
-          const texture = await loadTextureAsync({ asset: require("../assets/models/demo/texture.jpg") });
+          const texture = await loadTextureAsync({ asset: require("@assets/models/demo/texture.jpg") });
           setTexture(texture);
           setObj(object);
           break;
@@ -61,7 +61,7 @@ function Model(props: ModelViewProps & ModelProps & MeshProps) {
             console.log(`An error on "${url}"`);
           };
 
-          const mtlAsset = Asset.fromModule(require("../assets/models/demo/material.mtl"));
+          const mtlAsset = Asset.fromModule(require("@assets/models/demo/material.mtl"));
           await mtlAsset.downloadAsync();
           const { localUri: mtlLocalUri, uri: mtlUri } = mtlAsset;
           try {
@@ -75,7 +75,7 @@ function Model(props: ModelViewProps & ModelProps & MeshProps) {
           const material = await new MTLLoader(loadManager).loadAsync(mtlAsset.localUri || mtlAsset.uri);
           material.preload();
 
-          const objAsset = Asset.fromModule(require("../assets/models/demo/object.obj"));
+          const objAsset = Asset.fromModule(require("@assets/models/demo/object.obj"));
           await objAsset.downloadAsync();
           const { localUri: objLocalUri, uri: objUri } = objAsset;
 

@@ -1,10 +1,10 @@
 import { Text, Button } from "react-native-paper";
 import { StyleSheet, View, FlatList, Image } from "react-native";
 import { Dimensions } from "react-native";
-import { useAppTheme } from "../styles";
-import GPSIcon from "../assets/icons/gps.svg";
-import BookMarkOutlineIcon from "../assets/icons/bookmark-outline.svg";
-import BookMarkIcon from "../assets/icons/bookmark.svg";
+import { useAppTheme } from "@styles";
+import GPSIcon from "@assets/icons/gps.svg";
+import BookMarkOutlineIcon from "@assets/icons/bookmark-outline.svg";
+import BookMarkIcon from "@assets/icons/bookmark.svg";
 
 interface ItemProps {
   title: string;

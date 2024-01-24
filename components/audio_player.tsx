@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { TouchableOpacity, PanResponder, View, LayoutRectangle, StyleSheet, ImageBackground } from "react-native";
 import { Audio } from "expo-av";
-import { useAppTheme } from "../styles";
+import { useAppTheme } from "@styles";
 import { LinearGradient } from "expo-linear-gradient";
-import PlayIcon from "../assets/icons/play-dark.svg";
-import PauseIcon from "../assets/icons/pause-dark.svg";
-import ForwardIcon from "../assets/icons/forward.svg";
-import ReplayIcon from "../assets/icons/replay.svg";
+import PlayIcon from "@assets/icons/play-dark.svg";
+import PauseIcon from "@assets/icons/pause-dark.svg";
+import ForwardIcon from "@assets/icons/forward.svg";
+import ReplayIcon from "@assets/icons/replay.svg";
 import { Text } from "react-native-paper";
 import Animated, {
   useSharedValue,

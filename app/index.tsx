@@ -1,15 +1,10 @@
-import MainBody from "../components/main_body";
-import {
-  useRootNavigationState,
-  Redirect,
-  useRootNavigation,
-  router,
-} from "expo-router";
+import MainBody from "@components/main_body";
+import { useRootNavigationState, Redirect, useRootNavigation, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Text } from "react-native-paper";
 import * as Location from "expo-location";
-import { Alert, Linking, Platform } from 'react-native';
-import * as IntentLauncher from 'expo-intent-launcher';
+import { Alert, Linking, Platform } from "react-native";
+import * as IntentLauncher from "expo-intent-launcher";
 
 export default function App() {
   const rootNav = useRootNavigation();
@@ -34,25 +29,20 @@ export default function App() {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert(
-          'Permission to access location was denied',
-          'The path explorer will not be able to start. Map also cannot show user location', [
-            {
-              text: "Open setting",
-              onPress: () =>{
-                if(Platform.OS=='ios'){
-                  Linking.openURL('app-settings:')
-                }
-                else{
-                  IntentLauncher.startActivityAsync(
-                    IntentLauncher.ActivityAction.LOCATION_SOURCE_SETTINGS
-                  );
-                }
-              },
-              style: 'cancel',
+        Alert.alert("Permission to access location was denied", "The path explorer will not be able to start. Map also cannot show user location", [
+          {
+            text: "Open setting",
+            onPress: () => {
+              if (Platform.OS == "ios") {
+                Linking.openURL("app-settings:");
+              } else {
+                IntentLauncher.startActivityAsync(IntentLauncher.ActivityAction.LOCATION_SOURCE_SETTINGS);
+              }
             },
-            {text: 'Cancel', onPress: () => console.log('Cancel')},
-          ]);
+            style: "cancel",
+          },
+          { text: "Cancel", onPress: () => console.log("Cancel") },
+        ]);
       }
     })();
   }, []);

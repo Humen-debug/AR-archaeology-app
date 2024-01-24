@@ -7,10 +7,20 @@
     "noImplicitAny": false,
     "noImplicitThis": true,
     "strictNullChecks": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*": ["./*"],
+      "@assets/*": ["./assets/*"],
+      "@components/*": ["./components/*"],
+      "@app/*": ["./app/*"],
+      "@styles": ["./styles"],
+      "@styles/*": ["./styles/*"],
+      "@providers":["./providers"],
+      "@providers/*": ["./providers/*"],
+      "@models": ["./models"],
+      "@models/*": ["./models/*"],
+    }
   },
-  "paths":{
-    "@/*":["./**/*"]
-  },
-  "include":["./**/*","./types/custom.d.ts"]
+
+  "include": ["./**/*", "./types/custom.d.ts", "**/*.ts", "**/*.tsx"]
 }

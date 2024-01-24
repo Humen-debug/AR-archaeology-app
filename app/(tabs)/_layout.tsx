@@ -1,7 +1,7 @@
-import NavBar from "../../components/nav_bar";
+import NavBar from "@components/nav_bar";
 import { Tabs } from "expo-router/tabs";
-import HomeIcon from "../../assets/icons/home.svg";
-import ExploreIcon from "../../assets/icons/explore.svg";
+import HomeIcon from "@assets/icons/home.svg";
+import ExploreIcon from "@assets/icons/explore.svg";
 import { View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
