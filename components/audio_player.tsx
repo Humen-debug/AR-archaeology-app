@@ -3,10 +3,7 @@ import { TouchableOpacity, PanResponder, View, LayoutRectangle, StyleSheet, Imag
 import { Audio } from "expo-av";
 import { useAppTheme } from "@styles";
 import { LinearGradient } from "expo-linear-gradient";
-import PlayIcon from "@assets/icons/play-dark.svg";
-import PauseIcon from "@assets/icons/pause-dark.svg";
-import ForwardIcon from "@assets/icons/forward.svg";
-import ReplayIcon from "@assets/icons/replay.svg";
+import { PlayDarkIcon as PlayIcon, PauseDarkIcon as PauseIcon, ForwardIcon, ReplayIcon } from "@/components/icons";
 import { Text } from "react-native-paper";
 import Animated, {
   useSharedValue,

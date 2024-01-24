@@ -3,19 +3,14 @@ import { useAppTheme } from "@styles";
 import MainBody from "@components/main_body";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { useMemo, useRef, useState } from "react";
-import BookmarkOutlineIcon from "@assets/icons/bookmark-outline.svg";
-import BookmarkIcon from "@assets/icons/bookmark.svg";
-import ChevronLeftIcon from "@assets/icons/chevron-left.svg";
-import ShareIcon from "@assets/icons/share.svg";
-import CreateARIcon from "@assets/icons/create-ar.svg";
 import { Artifact } from "@models/artifact";
 import { router, useLocalSearchParams } from "expo-router";
 import IconBtn from "@components/icon_btn";
 import { ActivityIndicator } from "react-native";
 import ModelView from "@components/model_view";
-import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods, BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods } from "@gorhom/bottom-sheet";
 import AudioPlayer from "@components/audio_player";
-import ErrorIcon from "@assets/icons/error-outline.svg";
+import { BookmarkIcon, BookmarkOutlineIcon, CreateARIcon, ChevronLeftIcon, ErrorOutlineIcon, ShareIcon } from "@/components/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import moment from "moment";
 import { useObject } from "@models";
@@ -55,7 +50,7 @@ export default function DetailPage() {
           )}
           {modelError && (
             <View style={_style.centerContainer}>
-              <ErrorIcon fill="white" />
+              <ErrorOutlineIcon fill="white" />
             </View>
           )}
         </View>

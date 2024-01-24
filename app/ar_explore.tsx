@@ -10,9 +10,8 @@ import {
 } from "@viro-community/react-viro";
 import { useAppTheme } from "@styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ChevronLeftIcon from "@assets/icons/chevron-left.svg";
-import ArrowIcon from "@assets/icons/arrow-up.svg";
 import MainBody from "@components/main_body";
+import { ChevronLeftIcon, ArrowUpIcon } from "@/components/icons";
 import IconBtn from "@components/icon_btn";
 import * as Location from "expo-location";
 import { router } from "expo-router";
@@ -411,7 +410,7 @@ export default () => {
         <View style={[_style.distanceContainer, { top: top + theme.spacing.xs + 34 }]}>
           <LinearGradient colors={theme.colors.gradientBlack} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={_style.gradient}>
             <View style={[_style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
-              <ArrowIcon fill={theme.colors.grey1} style={{ transform: [{ rotate: `${degree == -1 ? 0 : degree}deg` }], width: 24, height: 24 }} />
+              <ArrowUpIcon fill={theme.colors.grey1} style={{ transform: [{ rotate: `${degree == -1 ? 0 : degree}deg` }], width: 24, height: 24 }} />
               <View style={_style.columnLayout}>
                 <Text>Destination</Text>
                 <Text>{distance}</Text>

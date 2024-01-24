@@ -3,10 +3,7 @@ import { useAppTheme } from "@styles";
 import MainBody from "@components/main_body";
 import { View, StyleSheet } from "react-native";
 import { ForwardedRef, forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import SearchIcon from "@assets/icons/search.svg";
-import ChevronLeftIcon from "@assets/icons/chevron-left.svg";
-
-import SortIcon from "@assets/icons/sort.svg";
+import { ChevronLeftIcon, SearchIcon, SortIcon } from "@/components/icons";
 import { Artifact } from "@models/artifact";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { router, useLocalSearchParams } from "expo-router";

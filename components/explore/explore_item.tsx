@@ -2,9 +2,7 @@ import { Text, Button } from "react-native-paper";
 import { StyleSheet, View, FlatList, Image } from "react-native";
 import { Dimensions } from "react-native";
 import { useAppTheme } from "@styles";
-import GPSIcon from "@assets/icons/gps.svg";
-import BookMarkOutlineIcon from "@assets/icons/bookmark-outline.svg";
-import BookMarkIcon from "@assets/icons/bookmark.svg";
+import { GPSIcon, BookmarkIcon, BookmarkOutlineIcon } from "@/components/icons";
 
 interface ItemProps {
   title: string;
@@ -67,9 +65,9 @@ export default function ExploreItem(item: ItemProps) {
           mode="outlined"
           icon={() =>
             isSaved ? (
-              <BookMarkIcon style={_style.icon} fill={theme.colors.primary} />
+              <BookmarkIcon style={_style.icon} fill={theme.colors.primary} />
             ) : (
-              <BookMarkOutlineIcon style={_style.icon} fill={theme.colors.primary} />
+              <BookmarkOutlineIcon style={_style.icon} fill={theme.colors.primary} />
             )
           }
           style={{ marginLeft: 8, borderColor: theme.colors.primary }}

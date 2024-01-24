@@ -3,7 +3,7 @@ import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { useAppTheme } from "@styles";
 import { useRef, useMemo, useCallback, useState, useEffect } from "react";
 import { BottomSheetModal, BottomSheetScrollView, BottomSheetScrollViewMethods } from "@gorhom/bottom-sheet";
-import SearchIcon from "@assets/icons/search.svg";
+import { SearchIcon } from "@/components/icons";
 import ExploreItem from "./explore_item";
 
 export default function ExploreModal({ open, setOpen, data }: { open: boolean; setOpen: (open: boolean) => void; data: any[] }) {

@@ -13,7 +13,7 @@ import { ImageSourcePropType, StyleSheet, View } from "react-native";
 import { useAppTheme } from "@styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import IconBtn from "@components/icon_btn";
-import ChevronLeftIcon from "@assets/icons/chevron-left.svg";
+import { ChevronLeftIcon } from "@/components/icons";
 import { router } from "expo-router";
 import { useState } from "react";
 import { ViroPinchState, ViroRotateState } from "@viro-community/react-viro/dist/components/Types/ViroEvents";

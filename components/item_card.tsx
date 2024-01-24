@@ -1,8 +1,7 @@
 import { Text, Card } from "react-native-paper";
 import { theme } from "@styles";
 import { View, GestureResponderEvent, StyleSheet, ViewStyle } from "react-native";
-import TimeIcon from "@assets/icons/time.svg";
-import LocationIcon from "@assets/icons/location.svg";
+import { TimeIcon, LocationIcon } from "@/components/icons";
 import { Artifact } from "models/artifact";
 import { LinearGradient } from "expo-linear-gradient";
 import moment from "moment";

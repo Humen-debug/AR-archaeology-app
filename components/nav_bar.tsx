@@ -1,10 +1,9 @@
 import { View, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAppTheme } from "@styles";
-import { FAB, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { EdgeInsets } from "react-native-safe-area-context";
-import ExploreIcon from "@assets/icons/explore.svg";
+import { ExploreIcon } from "@/components/icons";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 
 type FabProps = {

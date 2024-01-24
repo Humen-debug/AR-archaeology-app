@@ -3,8 +3,7 @@ import { useAppTheme } from "@styles";
 import MainBody from "@components/main_body";
 import { View, ScrollView, GestureResponderEvent, Image, StyleSheet, ImageBackground } from "react-native";
 import { createRef, useEffect, useState } from "react";
-import SearchIcon from "@assets/icons/search.svg";
-import BookMarkOutlineIcon from "@assets/icons/bookmark-outline.svg";
+import { SearchIcon } from "@components/icons";
 import * as Linking from "expo-linking";
 import { LinearGradient } from "expo-linear-gradient";
 import { FlatList } from "react-native-gesture-handler";
@@ -66,7 +65,7 @@ export default function Home() {
             traileringIconColor={theme.colors.grey1}
             traileringIcon={({ color }) => <SearchIcon fill={color} />}
           />
-          <IconBtn icon={<BookMarkOutlineIcon fill="white" />} onPress={() => router.push("/category?cat=bookmarks")} />
+          <IconBtn icon="bookmarkOutline" iconProps={{ fill: "white" }} onPress={() => router.push("/category?cat=bookmarks")} />
         </View>
         {/* Website */}
         <View>

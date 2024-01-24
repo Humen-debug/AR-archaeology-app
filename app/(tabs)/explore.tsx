@@ -5,9 +5,6 @@ import { Dimensions } from "react-native";
 import { useAppTheme } from "@styles";
 import MainBody from "@components/main_body";
 import IconBtn from "@components/icon_btn";
-import CreateARIcon from "@assets/icons/create-ar.svg";
-import LocateARIcon from "@assets/icons/locate.svg";
-import MenuIcon from "@assets/icons/menu.svg";
 import { createRef, useEffect, useMemo, useState } from "react";
 import ExploreListModal from "@components/explore/explore_list_modal";
 import ExploreItem from "@components/explore/explore_item";
@@ -193,10 +190,11 @@ export default function Explore() {
           contentContainerStyle={_style.listContainer}
         /> */}
         <View style={_style.buttonsContainer}>
-          <IconBtn style={_style.iconButton} icon={<LocateARIcon fill={theme.colors.grey1} />} onPress={() => {}} />
+          <IconBtn style={_style.iconButton} icon="locate" iconProps={{ fill: theme.colors.grey1 }} onPress={() => {}} />
           <IconBtn
             style={_style.iconButton}
-            icon={<CreateARIcon fill={theme.colors.grey1} />}
+            icon="createAR"
+            iconProps={{ fill: theme.colors.grey1 }}
             onPress={() => {
               router.push("/ar_explore");
             }}
@@ -204,7 +202,8 @@ export default function Explore() {
           <IconBtn
             square
             style={_style.iconButton}
-            icon={<MenuIcon fill={theme.colors.grey1} />}
+            icon="menu"
+            iconProps={{ fill: theme.colors.grey1 }}
             onPress={() => {
               setOpen((prev) => !prev);
             }}
