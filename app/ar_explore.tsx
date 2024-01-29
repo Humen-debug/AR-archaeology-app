@@ -195,7 +195,7 @@ function ARExplorePage(props?: ARExploreProps) {
     >
       {/* <ViroBox height={1} length={1} width={1} position={[point.x, -1, point.z]} /> */}
       {props?.arSceneNavigator.viroAppProps.location && placeARObjects()}
-      {point.x !== 0 && point.z !== 0 && (
+      {(point.x !== 0 || point.z !== 0) && (
         <ViroBox
           height={0.001}
           length={0.1}
@@ -348,7 +348,7 @@ export default () => {
     // Accurate bearing degree
     const bearing = bearingBetweenTwoPoints(location, nearestPoint);
     if (heading && heading > -1) {
-      return 360 - ((heading - bearing + 360) % 360);
+      return (360 - heading - bearing) % 360;
     }
     return bearing;
   };
@@ -380,6 +380,7 @@ export default () => {
     <MainBody>
       <Animated.View style={ARsceneStyle}>
         <ViroARSceneNavigator
+          worldAlignment="GravityAndHeading"
           initialScene={{ scene: ARExplorePage }}
           viroAppProps={{
             location,
