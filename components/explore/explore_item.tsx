@@ -1,18 +1,22 @@
 import { Text, Button } from "react-native-paper";
 import { StyleSheet, View, FlatList, Image } from "react-native";
-import { Dimensions } from "react-native";
 import { useAppTheme } from "@styles";
 import { GPSIcon, BookmarkIcon, BookmarkOutlineIcon } from "@/components/icons";
+import { useRouter } from "expo-router";
 
 interface ItemProps {
   title: string;
   length?: number; // in km
   isSaved?: boolean;
   images?: string[] | null;
+  POINTS: any[];
+  id: number;
+  onFocus?: Function;
 }
 
 export default function ExploreItem(item: ItemProps) {
-  const { title, length, isSaved, images } = item;
+  const { title, length = 10, isSaved, images } = item;
+  const router = useRouter();
   const theme = useAppTheme();
 
   const _style = useStyle({
@@ -22,12 +26,16 @@ export default function ExploreItem(item: ItemProps) {
     withImage: !!images,
   });
 
+  const fetchNextPoints = () => {
+    router.push({ pathname: "/ar_explore", params: { POINTS: item.POINTS, id: item.id } });
+  };
+
   return (
     <View style={_style.item}>
       <>
-        <Text variant="labelMedium">{title}</Text>
+        <Text variant="labelLarge">{title}</Text>
         {length && (
-          <Text variant="labelSmall" style={_style.lengthText}>
+          <Text variant="labelMedium" style={_style.lengthText}>
             {length} km
           </Text>
         )}
@@ -43,16 +51,17 @@ export default function ExploreItem(item: ItemProps) {
       <View style={{ display: "flex", flexDirection: "row" }}>
         <Button
           compact
-          labelStyle={_style.button}
+          contentStyle={_style.button}
           textColor={theme.colors.grey1}
           mode="contained"
           icon={() => <GPSIcon fill="white" style={_style.icon} />}
+          onPress={fetchNextPoints}
         >
-          <Text variant="labelSmall">Start</Text>
+          <Text variant="labelLarge">Start</Text>
         </Button>
         <Button
           compact
-          labelStyle={_style.button}
+          contentStyle={_style.button}
           mode="outlined"
           icon={() =>
             isSaved ? (
@@ -63,7 +72,7 @@ export default function ExploreItem(item: ItemProps) {
           }
           style={{ marginLeft: 8, borderColor: theme.colors.primary }}
         >
-          <Text variant="labelSmall" style={{ color: theme.colors.primary }}>
+          <Text variant="labelLarge" style={{ color: theme.colors.primary }}>
             {isSaved ? "Saved" : "Save"}
           </Text>
         </Button>
@@ -83,22 +92,21 @@ const useStyle = ({ backgroundColor, spacing, labelGrey, withImage }: any) =>
     },
     item: {
       backgroundColor: backgroundColor,
-      height: withImage ? undefined : 96,
+      height: withImage ? undefined : 120,
       borderRadius: spacing.xs,
       paddingHorizontal: spacing.lg,
       paddingVertical: spacing.sm,
       justifyContent: "space-between",
     },
     button: {
-      marginVertical: 4,
-      fontSize: 8,
+      marginHorizontal: 16,
     },
     icon: {
-      maxHeight: 16,
-      marginHorizontal: -6,
+      // maxHeight: 16,
+      // marginHorizontal: -6,
     },
     lengthText: {
       color: labelGrey,
-      marginTop: withImage ? 0 : -9,
+      marginTop: withImage ? 8 : -8,
     },
   });

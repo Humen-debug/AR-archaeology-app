@@ -113,7 +113,7 @@ export default function Explore() {
   useEffect(() => {
     if (mapRef.current) {
       const bound = getBoundaries(POINTS);
-      mapRef.current.setMapBoundaries(bound.northEast, bound.southWest);
+      mapRef.current.setMapBoundaries?.(bound.northEast, bound.southWest);
     }
   }, []);
 
