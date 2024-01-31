@@ -22,7 +22,8 @@ export default function RootLayout() {
             <AppWrapperSync appId={SYNC_CONFIG.appId}>
               <BookmarkProvider>
                 <Stack initialRouteName="(tabs)" screenOptions={{ headerShown: false }}>
-                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen name="(tabs)" />
+                  {/* <Stack.Screen name="(auth)" /> */}
                   <Stack.Screen name="search_result" options={{}} />
                   <Stack.Screen name="category" options={{}} />
                   <Stack.Screen name="detail" options={{}} />

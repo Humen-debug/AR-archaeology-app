@@ -21,7 +21,7 @@
     "@realm/react": "^0.6.0",
     "@types/lodash": "^4.14.199",
     "@use-gesture/react": "^10.3.0",
-    "@viro-community/react-viro": "^2.23.0",
+    "@viro-community/react-viro": "^2.23.1",
     "base64-arraybuffer": "^1.0.2",
     "expo": "^49.0.0",
     "expo-av": "~13.4.1",

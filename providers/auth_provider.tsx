@@ -1,18 +1,18 @@
-import React from "react";
 import { useSegments, useRouter, useRootNavigation } from "expo-router";
-import { AuthState } from "@models/auth";
 import { createContext, useContext, useEffect, useState } from "react";
 
-type AuthType = {
-  authState: AuthState | null;
-  setAuthState: (state: AuthState | null) => void;
-};
+interface AuthState {
+  token?: string;
+}
 
-const AuthContext = createContext<AuthType>({ authState: null, setAuthState: () => {} });
+interface AuthContext {
+  state: AuthState;
+  setState: (state: AuthState) => void;
+}
 
-export const useAuth = () => useContext(AuthContext);
+const AuthContext = createContext<AuthContext | null>(null);
 
-function useAuthRoute(authState: any) {
+function useAuthRoute(authState: AuthState) {
   const segments = useSegments();
   const router = useRouter();
   const rootNav = useRootNavigation();
@@ -29,9 +29,15 @@ function useAuthRoute(authState: any) {
 }
 
 export function AuthProvider({ children }: { children: JSX.Element }): JSX.Element {
-  const [authState, setAuthState] = useState<AuthState | null>(null);
+  const [authState, setAuthState] = useState<AuthState>({});
 
   useAuthRoute(authState);
-  const authContext: AuthType = { authState: authState, setAuthState };
-  return <AuthContext.Provider value={authContext}>{children}</AuthContext.Provider>;
+
+  return <AuthContext.Provider value={{ state: authState, setState: setAuthState }}>{children}</AuthContext.Provider>;
 }
+
+export const useAuth = () => {
+  const auth = useContext(AuthContext);
+  if (!auth) throw new Error("useAuth must be used inside AuthProvider");
+  return auth as AuthContext;
+};

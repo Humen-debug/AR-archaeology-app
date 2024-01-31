@@ -1,4 +1,4 @@
-import { Searchbar, Text, TouchableRipple, Button } from "react-native-paper";
+import { Searchbar, Text, TouchableRipple, Button, Appbar } from "react-native-paper";
 import { useAppTheme } from "@styles";
 import MainBody from "@components/main_body";
 import { View, ScrollView, GestureResponderEvent, Image, StyleSheet, ImageBackground } from "react-native";
@@ -10,16 +10,16 @@ import { FlatList } from "react-native-gesture-handler";
 import IconBtn from "@components/icon_btn";
 import { router, useRouter } from "expo-router";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
-import { useQuery, useRealm } from "@models";
+import { useQuery } from "@models";
 import { Artifact } from "@models/artifact";
-import { useUser } from "@realm/react";
+
 import MapView, { Marker } from "react-native-maps";
 import { POINTS, getBoundaries } from "./explore";
+import { AppBar } from "@/components/app_bar";
 
 export default function Home() {
   const theme = useAppTheme();
-  const realm = useRealm();
-  const user = useUser();
+
   const router = useRouter();
 
   const [searchText, setSearchText] = useState("");
@@ -48,7 +48,8 @@ export default function Home() {
   }, []);
 
   return (
-    <MainBody>
+    <MainBody padding={{ top: 0 }}>
+      <AppBar title="Home" showDrawer />
       <ScrollView style={_style.scrollView} contentContainerStyle={_style.contentContainer}>
         {/* header */}
         <View style={{ flexDirection: "row", padding: theme.spacing.md, alignItems: "center", gap: theme.spacing.sm, width: "100%" }}>
