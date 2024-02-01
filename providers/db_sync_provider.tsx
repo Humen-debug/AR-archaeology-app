@@ -1,15 +1,21 @@
-import { AppProvider, UserProvider, useApp } from "@realm/react";
-import { RealmProvider } from "@models";
+import { AppProvider, UserProvider, useApp, Realm, createRealmContext, RealmProvider } from "@realm/react";
+import { AppUser, Artifact, Tag, File, Location } from "@models";
 import { OpenRealmBehaviorType, OpenRealmTimeOutBehavior, CompensatingWriteError } from "realm";
-import Realm from "realm";
-
 import { useEffect } from "react";
+
+const schemas = [Artifact, File, Tag, Location, AppUser];
+const behaviorConfiguration = {
+  type: OpenRealmBehaviorType.DownloadBeforeOpen,
+  timeOut: 30 * 1000,
+  timeOutBehavior: OpenRealmTimeOutBehavior.OpenLocalRealm,
+};
 
 export const AppWrapperSync: React.FC<{ appId: string; children: JSX.Element | JSX.Element[] }> = ({ appId, children }) => {
   return (
     <AppProvider id={appId}>
       <UserProvider fallback={LoginAnonymous}>
         <RealmProvider
+          schema={schemas}
           sync={{
             flexible: true,
             onError: (_session, error) => {
@@ -27,16 +33,14 @@ export const AppWrapperSync: React.FC<{ appId: string; children: JSX.Element | J
                 console.error(error);
               }
             },
-            existingRealmFileBehavior: {
-              type: OpenRealmBehaviorType.DownloadBeforeOpen,
-              timeOut: 30 * 1000,
-              timeOutBehavior: OpenRealmTimeOutBehavior.OpenLocalRealm ?? "openLocalRealm",
-            },
+            newRealmFileBehavior: behaviorConfiguration,
+            existingRealmFileBehavior: behaviorConfiguration,
             initialSubscriptions: {
               update: (subs, realm) => {
-                subs.add(realm.objects("Artifact"));
-                subs.add(realm.objects("Tag"));
-                subs.add(realm.objects("Location"));
+                console.log(`init subscriptions`);
+                subs.add(realm.objects(Artifact));
+                subs.add(realm.objects(Tag));
+                subs.add(realm.objects(Location));
               },
               rerunOnOpen: true,
             },

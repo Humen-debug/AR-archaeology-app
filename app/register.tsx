@@ -1,9 +1,6 @@
-import { AppBar } from "@/components/app_bar";
-import { AuthForm } from "@/components/auth_form";
-import MainBody from "@/components/main_body";
-import Realm from "realm";
+import { AppBar, AuthForm, MainBody } from "@components";
 import { useAppTheme } from "@/styles";
-import { useApp } from "@realm/react";
+import { useApp, Realm } from "@realm/react";
 import _ from "lodash";
 import { useState } from "react";
 import { View } from "react-native";
@@ -26,8 +23,20 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await app.emailPasswordAuth.registerUser({ email, password });
+      const credentials = Realm.Credentials.emailPassword({ email, password });
+      if (app.currentUser?.customData) {
+        const providers = app.currentUser.customData.providers || [];
+        const isAnonymous = (providers as Array<string>).indexOf("anon-user") !== -1;
+        if (isAnonymous) {
+          try {
+            await app.currentUser.linkCredentials(credentials);
+          } catch (error) {
+            console.log(`Fail to link credentials`);
+          }
+        }
+      }
       // the app will re-open once the user login, and hence no need to run `router.replace`
-      await app.logIn(Realm.Credentials.emailPassword({ email, password }));
+      await app.logIn(credentials);
     } catch (error) {
       console.log(error);
       setErrorMsg(error.message);

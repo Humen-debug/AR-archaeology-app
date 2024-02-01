@@ -1,20 +1,20 @@
-import Realm, { BSON } from "realm";
+import { Realm } from "@realm/react";
 
 export class Location extends Realm.Object<Location> {
-  _id: BSON.ObjectId = new BSON.ObjectID();
+  _id: Realm.BSON.ObjectId = new Realm.BSON.ObjectID();
   name!: string;
   desc?: string;
   latitude!: number;
   longitude!: number;
   images?: Realm.List<string>;
-  order: number;
+  order: number = 0;
 
   createdAt: Date = new Date();
 
   static schema: Realm.ObjectSchema = {
     name: "Location",
     properties: {
-      _id: { type: "objectId", default: () => new BSON.ObjectId() },
+      _id: { type: "objectId", default: () => new Realm.BSON.ObjectID() },
       name: { type: "string", indexed: true },
       desc: "string?",
       latitude: { type: "decimal128" },

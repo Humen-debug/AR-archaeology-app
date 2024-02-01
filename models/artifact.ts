@@ -1,4 +1,4 @@
-import Realm, { BSON } from "realm";
+import { Realm } from "@realm/react";
 import { Tag } from "./tag";
 
 export class File extends Realm.Object<File> {
@@ -17,7 +17,7 @@ export class File extends Realm.Object<File> {
 }
 
 export class Artifact extends Realm.Object<Artifact> {
-  _id: BSON.ObjectId = new BSON.ObjectId();
+  _id: Realm.BSON.ObjectId = new Realm.BSON.ObjectID();
   name!: string;
   image?: string;
   desc?: string;
@@ -37,7 +37,7 @@ export class Artifact extends Realm.Object<Artifact> {
   static schema: Realm.ObjectSchema = {
     name: "Artifact",
     properties: {
-      _id: { type: "objectId", default: () => new BSON.ObjectId() },
+      _id: { type: "objectId", default: () => new Realm.BSON.ObjectID() },
       name: { type: "string", indexed: true },
       image: "string?",
       desc: "string?",

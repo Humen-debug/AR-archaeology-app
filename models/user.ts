@@ -1,10 +1,10 @@
-import Realm, { BSON, User } from "realm";
+import { Realm } from "@realm/react";
 import { Artifact } from "./artifact";
 
 export class AppUser extends Realm.Object<AppUser> {
-  _id: BSON.ObjectId = new BSON.ObjectId();
-  userId: BSON.ObjectId;
-  name: String;
+  _id: Realm.BSON.ObjectId = new Realm.BSON.ObjectID();
+  userId!: Realm.BSON.ObjectId;
+  name?: String;
   email?: String;
   createdAt: Date = new Date();
   bookmarks?: Realm.List<Artifact>;
@@ -14,9 +14,9 @@ export class AppUser extends Realm.Object<AppUser> {
   static schema: Realm.ObjectSchema = {
     name: "AppUser",
     properties: {
-      _id: { type: "objectId", default: () => new BSON.ObjectId() },
+      _id: { type: "objectId", default: () => new Realm.BSON.ObjectID() },
       userId: { type: "objectId" },
-      name: { type: "string" },
+      name: { type: "string", optional: true },
       email: { type: "string", optional: true },
       createdAt: { type: "date", default: () => new Date() },
       bookmarks: { type: "list", objectType: "Artifact", default: [] },

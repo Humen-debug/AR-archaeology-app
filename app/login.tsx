@@ -4,8 +4,7 @@ import { MainBody, AuthForm, AppBar } from "@components";
 import { useState } from "react";
 import { Link, router } from "expo-router";
 import { View } from "react-native";
-import { useApp } from "@realm/react";
-import Realm from "realm";
+import { useApp, Realm } from "@realm/react";
 import _ from "lodash";
 
 export default function LoginPage() {

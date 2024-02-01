@@ -8,7 +8,8 @@ import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { useQuery, Artifact } from "@models";
+import { Artifact } from "@models";
+import { useQuery } from "@realm/react";
 
 export default function SearchResultPage() {
   const theme = useAppTheme();

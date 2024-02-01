@@ -8,8 +8,8 @@ import { ActivityIndicator } from "react-native";
 import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods } from "@gorhom/bottom-sheet";
 import { BookmarkIcon, BookmarkOutlineIcon, CreateARIcon, ChevronLeftIcon, ErrorOutlineIcon, ShareIcon } from "@/components/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useObject, Artifact } from "@models";
-import { Realm } from "@realm/react";
+import { Artifact } from "@models";
+import { Realm, useObject } from "@realm/react";
 import { useBookmarks } from "@providers/bookmark_provider";
 
 export default function DetailPage() {

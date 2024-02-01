@@ -5,9 +5,9 @@ import { ChevronLeftIcon, SortIcon } from "@/components/icons";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { router, useLocalSearchParams } from "expo-router";
 import { ItemCard, MainBody } from "@components";
-import { useQuery, Artifact } from "@models";
+import { Artifact } from "@models";
 import { useBookmarks } from "@providers/bookmark_provider";
-import { BSON } from "realm";
+import { useQuery, Realm } from "@realm/react";
 
 export default function CategoryPage() {
   const theme = useAppTheme();
@@ -16,7 +16,9 @@ export default function CategoryPage() {
   const items = useQuery(
     Artifact,
     (collection) =>
-      params.cat === "bookmarks" ? collection.filtered("_id IN $0", bookmarks?.artifacts?.map((it) => new BSON.ObjectId(it)) ?? []) : collection,
+      params.cat === "bookmarks"
+        ? collection.filtered("_id IN $0", bookmarks?.artifacts?.map((it) => new Realm.BSON.ObjectId(it)) ?? [])
+        : collection,
     [params.cat]
   );
   return (

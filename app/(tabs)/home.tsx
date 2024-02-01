@@ -4,15 +4,16 @@ import { MainBody, AppBar } from "@components";
 import { View, ScrollView, GestureResponderEvent, StyleSheet, ImageBackground } from "react-native";
 import { createRef, useEffect, useState } from "react";
 import { SearchIcon } from "@components/icons";
-import * as Linking from "expo-linking";
 import { LinearGradient } from "expo-linear-gradient";
 import { FlatList } from "react-native-gesture-handler";
 import { IconBtn } from "@components";
 import { router, useRouter } from "expo-router";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
-import { useQuery, Artifact } from "@models";
+import { Artifact } from "@models";
 import MapView, { Marker } from "react-native-maps";
+import * as Linking from "expo-linking";
 import { POINTS, getBoundaries } from "./explore";
+import { useObject, useQuery, useRealm, Realm } from "@realm/react";
 
 export default function Home() {
   const theme = useAppTheme();
@@ -25,14 +26,16 @@ export default function Home() {
 
   // for dev use
   const categories: String[] = ["Daily Features", "Antiquities", "Artifacts"];
-
+  const realm = useRealm();
   const items = useQuery(Artifact);
 
   const openAPSAP = async () => {
-    const url = "http://openarchaeology.org/home/index";
-    if (await Linking.canOpenURL(url)) {
-      Linking.openURL(url);
-    }
+    // const url = "http://openarchaeology.org/home/index";
+    // if (await Linking.canOpenURL(url)) {
+    //   Linking.openURL(url);
+    // }
+    console.log(realm.syncSession);
+    console.log(realm.subscriptions);
   };
 
   const mapRef = createRef<MapView>();

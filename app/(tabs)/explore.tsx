@@ -181,7 +181,7 @@ export default function Explore() {
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
               <TouchableHighlight onPress={() => setFocusPoint(item._id)} style={{ overflow: "hidden", borderRadius: 8 }}>
-                <ExploreItem title={item.title} />
+                <ExploreItem title={item.title} POINTS={POINTS} id={item._id} />
               </TouchableHighlight>
             )}
             contentContainerStyle={_style.listContainer}
