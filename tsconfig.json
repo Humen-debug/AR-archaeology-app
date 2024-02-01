@@ -11,14 +11,15 @@
     "paths": {
       "@/*": ["./*"],
       "@assets/*": ["./assets/*"],
+      "@components": ["./components"],
       "@components/*": ["./components/*"],
       "@app/*": ["./app/*"],
       "@styles": ["./styles"],
       "@styles/*": ["./styles/*"],
-      "@providers":["./providers"],
+      "@providers": ["./providers"],
       "@providers/*": ["./providers/*"],
       "@models": ["./models"],
-      "@models/*": ["./models/*"],
+      "@models/*": ["./models/*"]
     }
   },
 

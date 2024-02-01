@@ -6,7 +6,7 @@ import { GenericTouchableProps } from "react-native-gesture-handler/lib/typescri
 import * as Icons from "@components/icons";
 import { SvgProps } from "react-native-svg";
 
-export interface IconProps extends SvgProps {
+interface IconProps extends SvgProps {
   fill?: string;
 }
 
@@ -16,7 +16,9 @@ interface IconBtnProps {
   iconProps?: IconProps;
   icon: string | ((props?: IconProps) => JSX.Element) | JSX.Element;
 }
-export default function IconBtn(props: IconBtnProps & GenericTouchableProps & TouchableOpacityProps) {
+export type Props = IconBtnProps & GenericTouchableProps & TouchableOpacityProps;
+
+export default function IconBtn(props: Props) {
   const theme = useAppTheme();
   const _style = useStyle({ square: props.square });
   let IconComponent;

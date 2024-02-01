@@ -3,14 +3,12 @@ import { StyleSheet, View, FlatList } from "react-native";
 import MapView, { LatLng, Marker, Polyline } from "react-native-maps";
 import { Dimensions } from "react-native";
 import { useAppTheme } from "@styles";
-import MainBody from "@components/main_body";
-import IconBtn from "@components/icon_btn";
+import { MainBody, IconBtn, MarkerCallout } from "@components";
 import { createRef, useEffect, useMemo, useState } from "react";
 import ExploreListModal from "@components/explore/explore_list_modal";
 import ExploreItem from "@components/explore/explore_item";
 import ExploreModal from "@/components/explore/explore_modal";
 import { TouchableHighlight } from "react-native-gesture-handler";
-import MarkerCallout from "@components/marker_callout";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 const DATA = [

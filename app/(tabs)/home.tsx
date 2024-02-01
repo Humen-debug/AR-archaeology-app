@@ -1,21 +1,18 @@
-import { Searchbar, Text, TouchableRipple, Button, Appbar } from "react-native-paper";
+import { Searchbar, Text, TouchableRipple, Button } from "react-native-paper";
 import { useAppTheme } from "@styles";
-import MainBody from "@components/main_body";
-import { View, ScrollView, GestureResponderEvent, Image, StyleSheet, ImageBackground } from "react-native";
+import { MainBody, AppBar } from "@components";
+import { View, ScrollView, GestureResponderEvent, StyleSheet, ImageBackground } from "react-native";
 import { createRef, useEffect, useState } from "react";
 import { SearchIcon } from "@components/icons";
 import * as Linking from "expo-linking";
 import { LinearGradient } from "expo-linear-gradient";
 import { FlatList } from "react-native-gesture-handler";
-import IconBtn from "@components/icon_btn";
+import { IconBtn } from "@components";
 import { router, useRouter } from "expo-router";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
-import { useQuery } from "@models";
-import { Artifact } from "@models/artifact";
-
+import { useQuery, Artifact } from "@models";
 import MapView, { Marker } from "react-native-maps";
 import { POINTS, getBoundaries } from "./explore";
-import { AppBar } from "@/components/app_bar";
 
 export default function Home() {
   const theme = useAppTheme();

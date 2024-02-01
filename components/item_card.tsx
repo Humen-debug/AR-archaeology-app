@@ -2,18 +2,18 @@ import { Text, Card } from "react-native-paper";
 import { theme } from "@styles";
 import { View, GestureResponderEvent, StyleSheet, ViewStyle } from "react-native";
 import { TimeIcon, LocationIcon } from "@/components/icons";
-import { Artifact } from "models/artifact";
+import { Artifact } from "@models";
 import { LinearGradient } from "expo-linear-gradient";
-import moment from "moment";
 import { router } from "expo-router";
-interface ItemCardProps {
+
+export interface Props {
   onPress?: (e: GestureResponderEvent) => void;
   onLongPress?: () => void;
   loading?: boolean;
   item: Artifact;
   style?: ViewStyle;
 }
-export const ItemCard = (props: ItemCardProps) => {
+export default (props: Props) => {
   const { item, onPress, onLongPress, style } = props;
   const imageUri = item.image ?? require("@assets/images/demo_item.png");
 
@@ -54,11 +54,7 @@ export const ItemCard = (props: ItemCardProps) => {
               <View style={_style.labelContainer}>
                 <TimeIcon fill={theme.colors.tertiary} width={12} />
                 <Text variant="titleSmall" style={{ fontSize: 10 }}>
-                  {item.getPropertyType("date") === "string"
-                    ? item.date?.toString()
-                    : item.getPropertyType("date") === "date"
-                    ? moment(item.date as Date).format("YYYY-MM-DD")
-                    : ""}
+                  {item.date?.toString() ?? ""}
                 </Text>
               </View>
             )}

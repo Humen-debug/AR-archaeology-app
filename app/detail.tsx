@@ -1,18 +1,14 @@
 import { Text } from "react-native-paper";
 import { useAppTheme } from "@styles";
-import MainBody from "@components/main_body";
+import { MainBody, IconBtn, AudioPlayer, ModelView } from "@components";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { useMemo, useRef, useState } from "react";
-import { Artifact } from "@models/artifact";
 import { router, useLocalSearchParams } from "expo-router";
-import IconBtn from "@components/icon_btn";
 import { ActivityIndicator } from "react-native";
-import ModelView from "@components/model_view";
 import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods } from "@gorhom/bottom-sheet";
-import AudioPlayer from "@components/audio_player";
 import { BookmarkIcon, BookmarkOutlineIcon, CreateARIcon, ChevronLeftIcon, ErrorOutlineIcon, ShareIcon } from "@/components/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useObject } from "@models";
+import { useObject, Artifact } from "@models";
 import { Realm } from "@realm/react";
 import { useBookmarks } from "@providers/bookmark_provider";
 

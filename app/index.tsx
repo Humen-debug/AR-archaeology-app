@@ -1,5 +1,5 @@
-import MainBody from "@components/main_body";
-import { useRootNavigationState, Redirect, useRootNavigation, router } from "expo-router";
+import { MainBody } from "@components";
+import { Redirect, useRootNavigation, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Text } from "react-native-paper";
 import * as Location from "expo-location";

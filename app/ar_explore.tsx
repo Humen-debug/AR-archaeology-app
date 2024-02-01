@@ -10,9 +10,8 @@ import {
 } from "@viro-community/react-viro";
 import { useAppTheme } from "@styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import MainBody from "@components/main_body";
+import { MainBody, IconBtn } from "@components";
 import { ChevronLeftIcon, ArrowUpIcon } from "@/components/icons";
-import IconBtn from "@components/icon_btn";
 import * as Location from "expo-location";
 import { router } from "expo-router";
 import { useState, useEffect, createRef } from "react";

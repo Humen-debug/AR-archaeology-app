@@ -14,3 +14,4 @@ export const realmConfig: Realm.Configuration = {
 };
 
 export const { RealmProvider, useRealm, useObject, useQuery } = createRealmContext(realmConfig);
+export { Artifact, File, Tag, AppUser, Location };

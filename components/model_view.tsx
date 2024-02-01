@@ -12,7 +12,7 @@ import * as FileSystem from "expo-file-system";
 import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
 import OrbitControlsView from "expo-three-orbit-controls";
 
-interface ModelViewProps {
+export interface Props {
   animatedSensor?: AnimatedSensor<any>;
   objURL?: string[] | string;
   materialURL?: string[] | string;
@@ -34,7 +34,7 @@ const copyAssetToCacheAsync = async (assetModule: string | number, localFilename
   return localUri;
 };
 
-export default function ModelView(props: ModelViewProps) {
+export default function ModelView(props: Props) {
   const [camera, setCamera] = useState<Camera | null>(null);
 
   let timeout;

@@ -1,13 +1,11 @@
 import { Text } from "react-native-paper";
 import { useAppTheme } from "@styles";
-import MainBody from "@components/main_body";
 import { View, ScrollView, StyleSheet } from "react-native";
 import { ChevronLeftIcon, SortIcon } from "@/components/icons";
-import { Artifact } from "@models/artifact";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { router, useLocalSearchParams } from "expo-router";
-import { ItemCard } from "@components/item_card";
-import { useQuery } from "@models";
+import { ItemCard, MainBody } from "@components";
+import { useQuery, Artifact } from "@models";
 import { useBookmarks } from "@providers/bookmark_provider";
 import { BSON } from "realm";
 

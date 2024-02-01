@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { TouchableOpacity, PanResponder, View, LayoutRectangle, StyleSheet, ImageBackground } from "react-native";
+import { useEffect, useState } from "react";
+import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { Audio } from "expo-av";
 import { useAppTheme } from "@styles";
 import { LinearGradient } from "expo-linear-gradient";
@@ -18,11 +18,11 @@ import Animated, {
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import moment from "moment";
 
-interface AudioPlayerProps {
+export interface Props {
   soundUri: PossibleAsset;
 }
 
-export default function AudioPlayer(props: AudioPlayerProps) {
+export default function AudioPlayer(props: Props) {
   const theme = useAppTheme();
   const [sound, setSound] = useState<Audio.Sound | null>(null);
 

@@ -1,11 +1,9 @@
 import { Button, Text, TextInput } from "react-native-paper";
 import { useAppTheme } from "@styles";
-import MainBody from "@components/main_body";
+import { MainBody, AuthForm, AppBar } from "@components";
 import { useState } from "react";
 import { Link, router } from "expo-router";
-import { AuthForm } from "@/components/auth_form";
 import { View } from "react-native";
-import { AppBar } from "@/components/app_bar";
 import { useApp } from "@realm/react";
 import Realm from "realm";
 import _ from "lodash";

@@ -1,17 +1,16 @@
-import { Dimensions, View } from "react-native";
+import { View } from "react-native";
 import { useAppTheme } from "@styles";
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
-import { ReactElement, ReactNode } from "react";
 import _ from "lodash";
 
-interface MainBodyProps {
+export interface Props {
   children?: JSX.Element | (JSX.Element | undefined | boolean)[] | undefined;
   padding?: Partial<EdgeInsets>;
   backgroundColor?: string | string[];
 }
 
-export default function MainBody({ children, padding, backgroundColor }: MainBodyProps): JSX.Element {
+export default function MainBody({ children, padding, backgroundColor }: Props): JSX.Element {
   const theme = useAppTheme();
   const { top, bottom, left, right } = { ...useSafeAreaInsets(), ..._.omitBy(padding, _.isNull) } as EdgeInsets;
 

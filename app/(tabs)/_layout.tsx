@@ -1,4 +1,4 @@
-import NavBar from "@components/nav_bar";
+import { NavBar } from "@components";
 import { Tabs } from "expo-router/tabs";
 import { HomeIcon, ExploreIcon } from "@/components/icons";
 import { DrawerProvider } from "@/providers/drawer_provider";

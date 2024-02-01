@@ -8,11 +8,10 @@ import {
   ViroSpinner,
   ViroSpotLight,
 } from "@viro-community/react-viro";
-import MainBody from "@components/main_body";
+import { MainBody, IconBtn } from "@components";
 import { ImageSourcePropType, StyleSheet, View } from "react-native";
 import { useAppTheme } from "@styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import IconBtn from "@components/icon_btn";
 import { ChevronLeftIcon } from "@/components/icons";
 import { router } from "expo-router";
 import { useState } from "react";

@@ -14,13 +14,13 @@ interface AuthForm {
   password: FormField<string>;
 }
 
-export interface AuthFormProps {
+export interface Props {
   setValid?: (value: boolean) => void;
   setEmail?: (value: string) => void;
   setPassword?: (value: string) => void;
 }
 
-export function AuthForm(props: AuthFormProps) {
+export default function AuthForm(props: Props) {
   const theme = useAppTheme();
   const style = useStyle(theme);
   const [form, setForm] = useState<AuthForm>({ email: { value: "" }, password: { value: "" } });
