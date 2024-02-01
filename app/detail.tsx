@@ -12,7 +12,6 @@ import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods } from
 import AudioPlayer from "@components/audio_player";
 import { BookmarkIcon, BookmarkOutlineIcon, CreateARIcon, ChevronLeftIcon, ErrorOutlineIcon, ShareIcon } from "@/components/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import moment from "moment";
 import { useObject } from "@models";
 import { Realm } from "@realm/react";
 import { useBookmarks } from "@providers/bookmark_provider";
@@ -67,11 +66,7 @@ export default function DetailPage() {
               <View style={_style.rowLayout}>
                 {
                   <Text variant="bodyMedium" style={{ color: theme.colors.tertiary, textAlign: "center" }}>
-                    {item.getPropertyType("date") === "string"
-                      ? (item.date as string)
-                      : item.getPropertyType("date") === "date"
-                      ? moment(item.date as Date).format("YYYY")
-                      : ""}
+                    {item.date}
                   </Text>
                 }
               </View>

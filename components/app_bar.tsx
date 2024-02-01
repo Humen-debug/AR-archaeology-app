@@ -1,29 +1,30 @@
 import { useDrawerContext } from "@/providers/drawer_provider";
-import { AppTheme } from "@/styles";
+import { AppTheme, useAppTheme } from "@/styles";
 import { useNavigation } from "expo-router";
 import { useContext, useState } from "react";
 import { StyleSheet } from "react-native";
 import { Appbar, AppbarActionProps, Drawer, useTheme } from "react-native-paper";
 
 export interface AppBarProps {
-  title: string;
+  title?: string;
   showDrawer?: boolean;
   showBack?: boolean;
   actions?: AppbarActionProps[];
+  backgroundColor?: string;
 }
 
 export function AppBar(props: AppBarProps) {
-  const { toggle } = useDrawerContext();
-  const style = useStyle(useTheme());
+  const theme = useAppTheme();
+  const style = useStyle(theme);
   const navigation = useNavigation();
   return (
-    <Appbar.Header>
-      {props.showBack && navigation.canGoBack() && <Appbar.BackAction />}
-      <Appbar.Content title="Home" />
+    <Appbar.Header style={{ backgroundColor: props.backgroundColor ?? theme.colors.background }}>
+      {props.showBack && navigation.canGoBack() && <Appbar.BackAction onPress={navigation.goBack} />}
+      {props.title && <Appbar.Content title={props.title} />}
       {(props.actions || []).map((actionProps) => (
         <Appbar.Action {...actionProps} />
       ))}
-      {!!props.showDrawer && <Appbar.Action icon="menu" onPress={toggle} />}
+      {!!props.showDrawer && <Appbar.Action icon="menu" onPress={useDrawerContext().toggle} />}
     </Appbar.Header>
   );
 }

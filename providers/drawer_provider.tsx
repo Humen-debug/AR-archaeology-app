@@ -1,9 +1,11 @@
 import { AppTheme, useAppTheme } from "@/styles";
-import { set, transform } from "lodash";
+import { useApp } from "@realm/react";
+import { router } from "expo-router";
+import _ from "lodash";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector, PanGestureHandler, TouchableOpacity } from "react-native-gesture-handler";
-import { Button, Drawer, IconButton } from "react-native-paper";
+import { Drawer, IconButton } from "react-native-paper";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -18,6 +20,7 @@ export const DrawerProvider = ({ children }: { children: JSX.Element | JSX.Eleme
   const theme = useAppTheme();
   const screen = Dimensions.get("window");
   const safePadding = useSafeAreaInsets();
+
   const style = useStyle({ theme, screen, safePadding });
   const [open, setOpen] = useState(false);
   // init drawer as out of screen if drawer is not opened
@@ -35,11 +38,21 @@ export const DrawerProvider = ({ children }: { children: JSX.Element | JSX.Eleme
       // open
       offsetX.value = withTiming(offsetX.value - screen.width);
     }
-
     setOpen((value) => !value);
   };
 
   const dragGesture = Gesture.Pan();
+
+  const app = useApp();
+  const isAnonymous = app.currentUser && !app.currentUser?.customData?.email;
+
+  const handleLogout = async () => {
+    if (!isAnonymous) {
+      !app.currentUser?.logOut();
+    } else {
+      router.replace("/login");
+    }
+  };
 
   return (
     <DrawerStore.Provider value={{ open, toggle: toggleDrawer }}>
@@ -55,8 +68,9 @@ export const DrawerProvider = ({ children }: { children: JSX.Element | JSX.Eleme
             <View style={style.drawerContainer}>
               <IconButton icon="menu" onPress={toggleDrawer} />
               <Drawer.Section>
-                <Drawer.Item label="Setting" />
-                <Drawer.Item label="Profile" />
+                <Drawer.Item label="Profile" onPress={() => {}} />
+                <Drawer.Item label="Settings" />
+                <Drawer.Item label={isAnonymous ? "Sign up" : "Log out"} onPress={handleLogout} />
               </Drawer.Section>
             </View>
           </Animated.View>

@@ -1,9 +1,9 @@
 import { AppProvider, UserProvider, useApp } from "@realm/react";
-import { RealmProvider, useRealm } from "@models";
+import { RealmProvider } from "@models";
 import { OpenRealmBehaviorType, OpenRealmTimeOutBehavior, CompensatingWriteError } from "realm";
 import Realm from "realm";
+
 import { useEffect } from "react";
-import { router, useRootNavigation } from "expo-router";
 
 export const AppWrapperSync: React.FC<{ appId: string; children: JSX.Element | JSX.Element[] }> = ({ appId, children }) => {
   return (
@@ -34,9 +34,9 @@ export const AppWrapperSync: React.FC<{ appId: string; children: JSX.Element | J
             },
             initialSubscriptions: {
               update: (subs, realm) => {
-                // subs.add(realm.objects("Artifact"));
-                // subs.add(realm.objects("Tag"));
-                // subs.add(realm.objects("Location"));
+                subs.add(realm.objects("Artifact"));
+                subs.add(realm.objects("Tag"));
+                subs.add(realm.objects("Location"));
               },
               rerunOnOpen: true,
             },
@@ -62,16 +62,6 @@ function LoginAnonymous() {
   }
   useEffect(() => {
     loginUser();
-  }, []);
-  return <></>;
-}
-
-function Login() {
-  const rootNav = useRootNavigation();
-
-  useEffect(() => {
-    if (!rootNav?.isReady) return;
-    router.replace("/login");
   }, []);
   return <></>;
 }
