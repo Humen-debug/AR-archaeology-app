@@ -12,7 +12,7 @@
     "build:ios": "eas build -p ios --profile preview",
     "postinstall": "patch-package",
     "pod-install": "cd ios && pod install",
-    "setup:ios": "yarn cache clean && rm -rf node_modules ios .expo yarn.lock && yarn install && expo prebuild --clean -p ios --no-install  && cd ios && pod install"
+    "reset": "yarn cache clean && rm -rf node_modules ios android .expo yarn.lock "
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^4.5.1",
