@@ -1,15 +1,14 @@
 import { customFonts, theme } from "@styles";
 import { Stack } from "expo-router";
-
 import { PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { AppWrapperSync } from "@providers/db_sync_provider";
-import { SYNC_CONFIG } from "../sync.config";
 import { BookmarkProvider } from "@providers/bookmark_provider";
+import { AuthProvider } from "@/providers/auth_provider";
+import { FeathersProvider } from "@/providers/feathers_provider";
 
 export default function RootLayout() {
   const [loadedFont, error] = useFonts(customFonts);
@@ -19,21 +18,23 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <BottomSheetModalProvider>
-            <AppWrapperSync appId={SYNC_CONFIG.appId}>
-              <BookmarkProvider>
-                <Stack screenOptions={{ headerShown: false }}>
-                  <Stack.Screen name="(tabs)" />
-                  <Stack.Screen name="login" />
-                  <Stack.Screen name="register" />
-                  <Stack.Screen name="search_result" options={{}} />
-                  <Stack.Screen name="category" options={{}} />
-                  <Stack.Screen name="detail" options={{}} />
-                  <Stack.Screen name="ar_placement" options={{}} />
-                  <Stack.Screen name="ar_explore" options={{}} />
-                </Stack>
-                <StatusBar style="light" />
-              </BookmarkProvider>
-            </AppWrapperSync>
+            <FeathersProvider>
+              <AuthProvider>
+                <BookmarkProvider>
+                  <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="(tabs)" />
+                    <Stack.Screen name="login" />
+                    <Stack.Screen name="register" />
+                    <Stack.Screen name="search_result" options={{}} />
+                    <Stack.Screen name="category" options={{}} />
+                    <Stack.Screen name="detail" options={{}} />
+                    <Stack.Screen name="ar_placement" options={{}} />
+                    <Stack.Screen name="ar_explore" options={{}} />
+                  </Stack>
+                  <StatusBar style="light" />
+                </BookmarkProvider>
+              </AuthProvider>
+            </FeathersProvider>
           </BottomSheetModalProvider>
         </GestureHandlerRootView>
       </SafeAreaProvider>

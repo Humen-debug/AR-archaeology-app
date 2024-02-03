@@ -8,8 +8,7 @@ import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { Artifact } from "@models";
-import { useQuery } from "@realm/react";
+import { Artifact } from "@/models";
 
 export default function SearchResultPage() {
   const theme = useAppTheme();
@@ -19,8 +18,8 @@ export default function SearchResultPage() {
   const [filters, setFilters] = useState<any[]>([]);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ["45%", "65%"], []);
-  const [allItems, setAllItems] = useState<Realm.Results<Artifact>>();
-  const items = useQuery(Artifact);
+  const [allItems, setAllItems] = useState<Artifact[]>([]);
+  const items: Artifact[] = [];
 
   const isEmptyResult = useMemo(() => allItems?.length === 0, [allItems]);
 
@@ -36,8 +35,8 @@ export default function SearchResultPage() {
   };
 
   const searchItems = (text: string) => {
-    const filtered = items.filtered(`name CONTAINS[c] $0`, text);
-    setAllItems(filtered);
+    // const filtered = items.filter(`name CONTAINS[c] $0`, text);
+    setAllItems(items);
   };
 
   return (

@@ -9,7 +9,6 @@ import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods } from
 import { BookmarkIcon, BookmarkOutlineIcon, CreateARIcon, ChevronLeftIcon, ErrorOutlineIcon, ShareIcon } from "@/components/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Artifact } from "@models";
-import { Realm, useObject } from "@realm/react";
 import { useBookmarks } from "@providers/bookmark_provider";
 
 export default function DetailPage() {
@@ -19,12 +18,12 @@ export default function DetailPage() {
   const [loading, setLoading] = useState(false);
   const [modelError, setModelError] = useState(null);
   const { bookmarks, setBookmark } = useBookmarks();
-  const item = useObject(Artifact, new Realm.BSON.ObjectId(params.id));
+  const [item, setItem] = useState<Artifact>();
 
   const isBookmarked = useMemo(() => {
     const artifacts = bookmarks?.artifacts;
     if (!artifacts || !item) return false;
-    return artifacts.indexOf(item._id.toString()) !== -1;
+    // return artifacts.indexOf(item._id.toString()) !== -1;
   }, [bookmarks]);
 
   // ref
@@ -57,12 +56,12 @@ export default function DetailPage() {
           {item && (
             <View style={[_style.columnLayout, { flex: 0, marginTop: theme.spacing.md }]}>
               <Text variant="headlineSmall" style={{ marginBottom: theme.spacing.sm }}>
-                {item.name}
+                {item?.name}
               </Text>
               <View style={_style.rowLayout}>
                 {
                   <Text variant="bodyMedium" style={{ color: theme.colors.tertiary, textAlign: "center" }}>
-                    {item.date}
+                    {item?.date}
                   </Text>
                 }
               </View>

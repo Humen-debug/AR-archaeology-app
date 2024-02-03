@@ -1,51 +1,50 @@
 import React, { createContext, useContext, useEffect, useLayoutEffect, useState } from "react";
-import { BSON } from "realm";
 import * as SecureStore from "expo-secure-store";
 
-export interface BookmarkStore {
+export interface BookmarkState {
   // bookmarked artifacts with their ids
   artifacts?: string[];
   // leave room for archaeological site
 }
 
-export interface BookmarkState {
-  bookmarks?: BookmarkStore;
-  updateState: (newState: Partial<BookmarkStore>) => void;
+export interface BookmarkStore {
+  bookmarks?: BookmarkState;
+  updateState: (newState: Partial<BookmarkState>) => void;
 
-  setBookmark: (id?: string | BSON.ObjectId) => void;
+  setBookmark: (id?: string) => void;
 }
 
-const defaultState: BookmarkState = {
+const defaultState: BookmarkStore = {
   bookmarks: { artifacts: [] },
-  updateState: (state?: Partial<BookmarkStore>) => {},
-  setBookmark: (id?: string | BSON.ObjectId) => {},
+  updateState: (state?: Partial<BookmarkState>) => {},
+  setBookmark: (id?: string) => {},
 };
 
-export const BookmarkContext = createContext<BookmarkState>(defaultState);
+export const BookmarkContext = createContext<BookmarkStore>(defaultState);
 export const useBookmarks = () => useContext(BookmarkContext);
 
 export function BookmarkProvider({ children }: { children: React.ReactNode }): JSX.Element {
-  const [state, setState] = useState<BookmarkStore | undefined>();
+  const [state, setState] = useState<BookmarkState | undefined>();
 
-  const updateState = (newState: Partial<BookmarkStore>) => {
+  const updateState = (newState: Partial<BookmarkState>) => {
     setState((state) => ({ ...state, ...newState }));
   };
 
-  const setBookmark = async (id: string | BSON.ObjectId) => {
+  const setBookmark = async (id?: string) => {
     const artifacts = state?.artifacts;
-    const ID = typeof id === "string" ? id : id.toString();
-    if (!artifacts) updateState({ artifacts: [ID] });
+    if (!id) return;
+    if (!artifacts) updateState({ artifacts: [id] });
     else {
-      const index = artifacts.indexOf(ID);
+      const index = artifacts.indexOf(id);
       if (index === -1) {
-        updateState({ artifacts: [...artifacts, ID] });
+        updateState({ artifacts: [...artifacts, id] });
       } else {
         updateState({ artifacts: artifacts.filter((_, idx) => index !== idx) });
       }
     }
   };
 
-  const bookmarkContext: BookmarkState = { bookmarks: state, setBookmark, updateState };
+  const bookmarkContext: BookmarkStore = { bookmarks: state, setBookmark, updateState };
 
   // retrieve bookmarks from local storage
   useLayoutEffect(() => {

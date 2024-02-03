@@ -1,5 +1,4 @@
 import { AppTheme, useAppTheme } from "@/styles";
-import { useApp } from "@realm/react";
 import { router } from "expo-router";
 import _ from "lodash";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -8,6 +7,7 @@ import { Gesture, GestureDetector, PanGestureHandler, TouchableOpacity } from "r
 import { Drawer, IconButton } from "react-native-paper";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAuth } from "./auth_provider";
 
 interface DrawerContext {
   open: boolean;
@@ -20,6 +20,7 @@ export const DrawerProvider = ({ children }: { children: JSX.Element | JSX.Eleme
   const theme = useAppTheme();
   const screen = Dimensions.get("window");
   const safePadding = useSafeAreaInsets();
+  const { logout, state: authState } = useAuth();
 
   const style = useStyle({ theme, screen, safePadding });
   const [open, setOpen] = useState(false);
@@ -43,12 +44,11 @@ export const DrawerProvider = ({ children }: { children: JSX.Element | JSX.Eleme
 
   const dragGesture = Gesture.Pan();
 
-  const app = useApp();
-  const isAnonymous = app.currentUser && !app.currentUser?.customData?.email;
+  const isAuthed: boolean = !!(authState.token && authState.token.length);
 
   const handleLogout = async () => {
-    if (!isAnonymous) {
-      !app.currentUser?.logOut();
+    if (isAuthed) {
+      await logout();
     } else {
       router.replace("/login");
     }
@@ -70,7 +70,7 @@ export const DrawerProvider = ({ children }: { children: JSX.Element | JSX.Eleme
               <Drawer.Section>
                 <Drawer.Item label="Profile" onPress={() => {}} />
                 <Drawer.Item label="Settings" />
-                <Drawer.Item label={isAnonymous ? "Sign up" : "Log out"} onPress={handleLogout} />
+                <Drawer.Item label={isAuthed ? "Log out" : "Sign in"} onPress={handleLogout} />
               </Drawer.Section>
             </View>
           </Animated.View>

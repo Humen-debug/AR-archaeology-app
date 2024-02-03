@@ -4,13 +4,13 @@ import { MainBody, AuthForm, AppBar } from "@components";
 import { useState } from "react";
 import { Link, router } from "expo-router";
 import { View } from "react-native";
-import { useApp, Realm } from "@realm/react";
 import _ from "lodash";
+import { useFeathers } from "@/providers/feathers_provider";
+import { useAuth } from "@/providers/auth_provider";
 
 export default function LoginPage() {
   const theme = useAppTheme();
-  const app = useApp();
-
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formValid, setFormValid] = useState(false);
@@ -20,13 +20,13 @@ export default function LoginPage() {
   const handleLogin = async () => {
     if (!formValid) return;
     setErrorMsg("");
-    const credentials = Realm.Credentials.emailPassword({ email, password });
     setLoading(true);
     try {
-      await app.logIn(credentials);
+      await login({ email, password });
+      router.replace("/");
     } catch (error) {
       console.log(error);
-      setErrorMsg(error.message);
+      setErrorMsg(`${error}`);
     } finally {
       setLoading(false);
     }

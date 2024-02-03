@@ -7,20 +7,12 @@ import { router, useLocalSearchParams } from "expo-router";
 import { ItemCard, MainBody } from "@components";
 import { Artifact } from "@models";
 import { useBookmarks } from "@providers/bookmark_provider";
-import { useQuery, Realm } from "@realm/react";
 
 export default function CategoryPage() {
   const theme = useAppTheme();
   const params = useLocalSearchParams<{ cat?: string }>();
   const { bookmarks } = useBookmarks();
-  const items = useQuery(
-    Artifact,
-    (collection) =>
-      params.cat === "bookmarks"
-        ? collection.filtered("_id IN $0", bookmarks?.artifacts?.map((it) => new Realm.BSON.ObjectId(it)) ?? [])
-        : collection,
-    [params.cat]
-  );
+  const items: Artifact[] = []; // todo
   return (
     <MainBody backgroundColor={theme.colors.gradientBackground}>
       <ScrollView>
