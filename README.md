@@ -16,6 +16,10 @@ For better type annotation, typescript is recommended.
   - [iOS]: <https://getupdraft.com/blog/how-enable-ios-developer-mode-iphone-or-ipad>.
 - Depends on your development environment, run `yarn android` or `yarn ios` for running on your mobile.
 
+### Notes
+
+The app has been migrated from Realm api to our own [server and apis](https://github.com/Humen-debug/XR-archaeology-server/tree/main). Before running the app, please create a `.env` file and configure the server api uri as `EXPO_PUBLIC_API_URL`. After running the server, the connection uri should be your **hosting device ip with port _3002_**.
+
 ## Folder structure
 
 - app: stores all the pages for front-end.
