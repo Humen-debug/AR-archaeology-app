@@ -20,10 +20,10 @@ export default function DetailPage() {
   const params = useLocalSearchParams<{ id?: string }>();
   const [loading, setLoading] = useState(false);
   const [modelError, setModelError] = useState(null);
-  const { state: authState, updateUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const [item, setItem] = useState<Artifact>();
 
-  const bookmarksRef = useRef<string[]>(authState.user?.bookmarks ?? []);
+  const bookmarksRef = useRef<string[]>(user?.bookmarks ?? []);
   const [isBookmarked, setIsBookmarked] = useState(bookmarksRef.current.includes(params.id || ""));
 
   const setBookmark = (id?: string) => {

@@ -20,7 +20,7 @@ export const DrawerProvider = ({ children }: { children: JSX.Element | JSX.Eleme
   const theme = useAppTheme();
   const screen = Dimensions.get("window");
   const safePadding = useSafeAreaInsets();
-  const { logout, state: authState } = useAuth();
+  const { logout, user } = useAuth();
 
   const style = useStyle({ theme, screen, safePadding });
   const [open, setOpen] = useState(false);
@@ -41,10 +41,10 @@ export const DrawerProvider = ({ children }: { children: JSX.Element | JSX.Eleme
     }
     setOpen((value) => !value);
   };
-
+  // todo, enable to drag drawer
   const dragGesture = Gesture.Pan();
 
-  const authenticated: boolean = !!(authState.token && authState.token.length);
+  const authenticated: boolean = !!user?._id;
 
   const handleLogout = async () => {
     if (authenticated) {

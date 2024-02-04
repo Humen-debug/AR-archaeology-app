@@ -9,18 +9,18 @@ class AuthState {
   token?: string;
 }
 
-interface LoginProps {
+interface AuthProps {
   email: string;
   password: string;
   strategy?: string;
 }
 
 class AuthContext {
-  state: AuthState;
+  user?: User;
   updateUser: (user: Partial<User>) => void;
   setToken: (token: string) => void;
-  login: (props: LoginProps) => Promise<void>;
-  logout: () => Promise<void>;
+  login: (props: AuthProps) => Promise<void>;
+  logout: () => Promise<boolean>;
   register: ({ email, password }: { email: string; password: string }) => Promise<void>;
 }
 
@@ -129,8 +129,6 @@ export function AuthProvider({ children, fallback }: Props) {
     });
   }
 
-  const isLogged: boolean = !!state.user;
-
   function handleSocket() {
     if (feathers.io) {
       feathers.io.on("disconnect", async () => {
@@ -141,7 +139,7 @@ export function AuthProvider({ children, fallback }: Props) {
     }
   }
 
-  async function login({ strategy = "local", email, password }: LoginProps) {
+  async function login({ strategy = "local", email, password }: AuthProps) {
     const res = await feathers.service("authentication").create({ strategy, email: email.toLowerCase(), password });
     let token: string;
     let user: User;
@@ -166,7 +164,10 @@ export function AuthProvider({ children, fallback }: Props) {
       const res = await fromStorage();
       oldToken = res?.token;
     }
-    if (!oldToken) return;
+    if (!oldToken) {
+      console.warn(`No access token stored in localStorage`);
+      return;
+    }
     const res = await feathers.service("authentication").create({ strategy: "jwt", accessToken: oldToken });
     const token = res.accessToken;
     console.log(`reauthenticate with token ${token}`);
@@ -174,12 +175,15 @@ export function AuthProvider({ children, fallback }: Props) {
   }
 
   async function logout() {
-    await feathers.service("authentication").remove(null);
-    setState({});
-    await localDelete();
+    const authRes = await feathers.service("authentication").remove(null);
+    // todo need discussion on bookmarks and collections
+    // should they be cached in local devices even when user logout or switch account?
+    setState((state) => ({ user: { bookmarks: state.user?.bookmarks, collections: state.user?.collections } }));
+    const deleteSuccess = await localDelete();
+    return authRes && deleteSuccess;
   }
 
-  return <AuthStore.Provider value={{ state, updateUser, setToken, login, logout, register }}>{children}</AuthStore.Provider>;
+  return <AuthStore.Provider value={{ user: state.user, updateUser, setToken, login, logout, register }}>{children}</AuthStore.Provider>;
 }
 
 export function useAuth() {

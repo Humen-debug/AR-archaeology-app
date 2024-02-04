@@ -3,8 +3,7 @@ import { useAuth } from "@/providers/auth_provider";
 import { Text } from "react-native-paper";
 
 export default function ProfilePage() {
-  const { state: authState } = useAuth();
-  const user = authState.user;
+  const { user } = useAuth();
 
   return (
     <MainBody padding={{ top: 0 }}>
