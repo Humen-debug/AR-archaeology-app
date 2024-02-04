@@ -2,35 +2,59 @@ import { Text } from "react-native-paper";
 import { useAppTheme } from "@styles";
 import { MainBody, IconBtn, AudioPlayer, ModelView } from "@components";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { ActivityIndicator } from "react-native";
 import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods } from "@gorhom/bottom-sheet";
 import { BookmarkIcon, BookmarkOutlineIcon, CreateARIcon, ChevronLeftIcon, ErrorOutlineIcon, ShareIcon } from "@/components/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Artifact } from "@models";
-import { useBookmarks } from "@providers/bookmark_provider";
+import { useAuth } from "@/providers/auth_provider";
+import { useFeathers } from "@/providers/feathers_provider";
+import _ from "lodash";
 
 export default function DetailPage() {
   const theme = useAppTheme();
+  const feathers = useFeathers();
   const { top } = useSafeAreaInsets();
   const params = useLocalSearchParams<{ id?: string }>();
   const [loading, setLoading] = useState(false);
   const [modelError, setModelError] = useState(null);
-  const { bookmarks, setBookmark } = useBookmarks();
+  const { state: authState, updateUser } = useAuth();
   const [item, setItem] = useState<Artifact>();
 
-  const isBookmarked = useMemo(() => {
-    const artifacts = bookmarks?.artifacts;
-    if (!artifacts || !item) return false;
-    // return artifacts.indexOf(item._id.toString()) !== -1;
-  }, [bookmarks]);
+  const bookmarksRef = useRef<string[]>(authState.user?.bookmarks ?? []);
+  const [isBookmarked, setIsBookmarked] = useState(bookmarksRef.current.includes(params.id || ""));
+
+  const setBookmark = (id?: string) => {
+    if (!id) return;
+    const bookmarks = bookmarksRef.current;
+    const index = bookmarks.indexOf(id);
+    if (index !== -1) {
+      bookmarks.splice(index, 1);
+    } else {
+      bookmarks.push(id);
+    }
+    bookmarksRef.current = bookmarks;
+
+    setIsBookmarked(index === -1);
+    updateUser({ bookmarks: bookmarks });
+  };
 
   // ref
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetScrollRef = useRef<BottomSheetScrollViewMethods | null>(null);
   // variables
   const snapPoints = useMemo(() => ["50%", "85%"], []);
+
+  useEffect(() => {
+    async function syncData() {
+      if (!params.id) return;
+      const res = await feathers.service("artifacts").get(params.id);
+      setItem(res);
+    }
+    syncData();
+  }, [params.id]);
 
   return (
     <MainBody backgroundColor={theme.colors.gradientBackground} padding={{ right: 0, left: 0 }}>

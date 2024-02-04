@@ -3,7 +3,6 @@ import React, { createContext, useContext, useEffect, useLayoutEffect, useState 
 import * as SecureStore from "expo-secure-store";
 import { useFeathers } from "./feathers_provider";
 import _ from "lodash";
-import { to } from "@react-spring/three";
 
 class AuthState {
   user?: User;
@@ -35,16 +34,22 @@ interface Props {
 
 export function AuthProvider({ children, fallback }: Props) {
   const feathers = useFeathers();
-  const [state, setState] = useState<AuthState>(new AuthState());
-
+  const [state, setState] = useState<AuthState>(() => new AuthState());
+  const authenticated: boolean = !!(state.token && state.token.length);
   /**
    * Retrieve authState from local storage
    */
   useLayoutEffect(() => {
     handleSocket();
     async function init() {
+      reAuthentication();
       let res = await fromStorage();
-      if (res) setState(res);
+      if (res) {
+        setState(res);
+      } else {
+        // new user
+        updateUser({ bookmarks: [], collections: [] });
+      }
       const user = await syncUser();
       if (user) {
         setState((state) => ({ ...state, user }));
@@ -60,9 +65,13 @@ export function AuthProvider({ children, fallback }: Props) {
   const localStorageKey = "authState";
 
   async function syncUser(): Promise<User | undefined> {
-    if (state.token && state.user) {
-      const me = await feathers.service("users").get(state.user._id);
-      return me;
+    if (state.token && state.user?._id) {
+      try {
+        const me = await feathers.service("users").get(state.user._id);
+        return me;
+      } catch (error) {
+        console.warn(`fail to sync user`, error);
+      }
     }
     return;
   }
@@ -92,14 +101,23 @@ export function AuthProvider({ children, fallback }: Props) {
         return state;
       }
     } catch (error) {
-      console.log("Cannot get from local storage", error);
+      console.warn("Cannot get from local storage", error);
     }
   }
 
   async function updateUser(user: Partial<User>) {
+    console.log(`update user called`);
     user = _.omit(user, ["_id", "createdAt"]);
+    if (state.user?._id && state.token) {
+      console.log(`patched user to server`);
+      const res = await feathers.service("users").patch(state.user._id, state.user);
+      user = { ...user, ...res };
+    }
     setState((state) => {
-      if (state.user) state.user = { ...state.user, ...user };
+      state.user ??= {};
+      if (state.user) {
+        state.user = { ...state.user, ...user };
+      }
       return state;
     });
   }
@@ -112,13 +130,12 @@ export function AuthProvider({ children, fallback }: Props) {
   }
 
   const isLogged: boolean = !!state.user;
-  const authenticated: boolean = !!(state.token && state.token.length);
 
   function handleSocket() {
     if (feathers.io) {
-      feathers.io.on("disconnect", () => {
+      feathers.io.on("disconnect", async () => {
         if (authenticated) {
-          reAuthentication();
+          await reAuthentication();
         }
       });
     }
@@ -130,7 +147,6 @@ export function AuthProvider({ children, fallback }: Props) {
     let user: User;
     if (res.accessToken) {
       token = res.accessToken;
-      console.log(token);
     }
     if (res.user) {
       user = res.user;
@@ -153,14 +169,14 @@ export function AuthProvider({ children, fallback }: Props) {
     if (!oldToken) return;
     const res = await feathers.service("authentication").create({ strategy: "jwt", accessToken: oldToken });
     const token = res.accessToken;
+    console.log(`reauthenticate with token ${token}`);
     setToken(token);
   }
 
   async function logout() {
     await feathers.service("authentication").remove(null);
     setState({});
-    const deleteSuccess = await localDelete();
-    console.log("logout success?", deleteSuccess);
+    await localDelete();
   }
 
   return <AuthStore.Provider value={{ state, updateUser, setToken, login, logout, register }}>{children}</AuthStore.Provider>;

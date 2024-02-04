@@ -6,7 +6,6 @@ import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { BookmarkProvider } from "@providers/bookmark_provider";
 import { AuthProvider } from "@/providers/auth_provider";
 import { FeathersProvider } from "@/providers/feathers_provider";
 
@@ -20,19 +19,18 @@ export default function RootLayout() {
           <BottomSheetModalProvider>
             <FeathersProvider>
               <AuthProvider>
-                <BookmarkProvider>
-                  <Stack screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="(tabs)" />
-                    <Stack.Screen name="login" />
-                    <Stack.Screen name="register" />
-                    <Stack.Screen name="search_result" options={{}} />
-                    <Stack.Screen name="category" options={{}} />
-                    <Stack.Screen name="detail" options={{}} />
-                    <Stack.Screen name="ar_placement" options={{}} />
-                    <Stack.Screen name="ar_explore" options={{}} />
-                  </Stack>
-                  <StatusBar style="light" />
-                </BookmarkProvider>
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="(tabs)" />
+                  <Stack.Screen name="login" />
+                  <Stack.Screen name="register" />
+                  <Stack.Screen name="search_result" options={{}} />
+                  <Stack.Screen name="category" options={{}} />
+                  <Stack.Screen name="detail" options={{}} />
+                  <Stack.Screen name="ar_placement" options={{}} />
+                  <Stack.Screen name="ar_explore" options={{}} />
+                  <Stack.Screen name="profile" />
+                </Stack>
+                <StatusBar style="light" />
               </AuthProvider>
             </FeathersProvider>
           </BottomSheetModalProvider>

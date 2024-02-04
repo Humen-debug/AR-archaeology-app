@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useContext } from "react";
+import { createContext, useContext } from "react";
 import { feathers, Application } from "@feathersjs/feathers";
 import fio from "@feathersjs/socketio-client";
 import socketio from "socket.io-client";
@@ -22,7 +22,9 @@ function createClient(baseURL?: string) {
     connected = true;
   });
 
-  socket.on("reconnect", function () {});
+  socket.on("reconnect", function () {
+    console.log("Socket reconnected");
+  });
   socket.on("disconnect", function () {
     console.log("Socket disconnects");
     connected = false;
@@ -44,8 +46,8 @@ function createClient(baseURL?: string) {
     });
   };
 
-  app.on("login", (authRes) => console.log(`login ${authRes}`));
-  app.on("logout", (args) => console.log(`logout ${args}`));
+  app.on("login", (authRes) => {});
+  app.on("logout", (args) => {});
 
   app.apiURL = apiURL;
 
@@ -61,7 +63,7 @@ interface Props {
 
 const FeathersContext = createContext<Application | null>(null);
 export const FeathersProvider = ({ children, baseURL }: Props) => {
-  const feathers = createClient(baseURL ?? "http://192.168.1.58:3002");
+  const feathers = createClient(baseURL ?? process.env.EXPO_PUBLIC_API_URL);
   return <FeathersContext.Provider value={feathers}>{children}</FeathersContext.Provider>;
 };
 

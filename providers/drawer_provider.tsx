@@ -44,10 +44,10 @@ export const DrawerProvider = ({ children }: { children: JSX.Element | JSX.Eleme
 
   const dragGesture = Gesture.Pan();
 
-  const isAuthed: boolean = !!(authState.token && authState.token.length);
+  const authenticated: boolean = !!(authState.token && authState.token.length);
 
   const handleLogout = async () => {
-    if (isAuthed) {
+    if (authenticated) {
       await logout();
     } else {
       router.replace("/login");
@@ -68,9 +68,14 @@ export const DrawerProvider = ({ children }: { children: JSX.Element | JSX.Eleme
             <View style={style.drawerContainer}>
               <IconButton icon="menu" onPress={toggleDrawer} />
               <Drawer.Section>
-                <Drawer.Item label="Profile" onPress={() => {}} />
+                <Drawer.Item
+                  label="Profile"
+                  onPress={() => {
+                    router.push("/profile");
+                  }}
+                />
                 <Drawer.Item label="Settings" />
-                <Drawer.Item label={isAuthed ? "Log out" : "Sign in"} onPress={handleLogout} />
+                <Drawer.Item label={authenticated ? "Log out" : "Sign in"} onPress={handleLogout} />
               </Drawer.Section>
             </View>
           </Animated.View>

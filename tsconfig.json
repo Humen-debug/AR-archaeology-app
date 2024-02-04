@@ -23,5 +23,5 @@
     }
   },
 
-  "include": ["./**/*", "./types/custom.d.ts", "**/*.ts", "**/*.tsx"]
+  "include": ["./**/*", "**/*.ts", "**/*.tsx"]
 }

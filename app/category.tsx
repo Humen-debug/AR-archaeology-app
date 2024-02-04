@@ -6,12 +6,11 @@ import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { router, useLocalSearchParams } from "expo-router";
 import { ItemCard, MainBody } from "@components";
 import { Artifact } from "@models";
-import { useBookmarks } from "@providers/bookmark_provider";
 
 export default function CategoryPage() {
   const theme = useAppTheme();
   const params = useLocalSearchParams<{ cat?: string }>();
-  const { bookmarks } = useBookmarks();
+
   const items: Artifact[] = []; // todo
   return (
     <MainBody backgroundColor={theme.colors.gradientBackground}>

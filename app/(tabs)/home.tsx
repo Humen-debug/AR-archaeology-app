@@ -13,19 +13,19 @@ import { Artifact } from "@models";
 import MapView, { Marker } from "react-native-maps";
 import * as Linking from "expo-linking";
 import { POINTS, getBoundaries } from "./explore";
+import { useFeathers } from "@/providers/feathers_provider";
 
 export default function Home() {
   const theme = useAppTheme();
-
   const router = useRouter();
+  const feathers = useFeathers();
 
   const [searchText, setSearchText] = useState("");
-
   const search = (query: string) => setSearchText(query);
 
   // for dev use
   const categories: String[] = ["Daily Features", "Antiquities", "Artifacts"];
-  const items = [];
+  const [items, setItems] = useState<Artifact[]>([]);
 
   const openAPSAP = async () => {
     const url = "http://openarchaeology.org/home/index";
@@ -41,6 +41,11 @@ export default function Home() {
       const bound = getBoundaries(POINTS);
       mapRef.current.setMapBoundaries?.(bound.northEast, bound.southWest);
     }
+    async function syncData() {
+      const res = await feathers.service("artifacts").find();
+      setItems(res.data);
+    }
+    syncData();
   }, []);
 
   return (
