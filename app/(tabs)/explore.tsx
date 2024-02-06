@@ -9,9 +9,8 @@ import { createRef, useEffect, useMemo, useState } from "react";
 import ExploreListModal from "@components/explore/explore_list_modal";
 import ExploreItem from "@components/explore/explore_item";
 import ExploreModal from "@/components/explore/explore_modal";
-import { TouchableHighlight } from "react-native-gesture-handler";
 import MarkerCallout from "@components/marker_callout";
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, withTiming } from "react-native-reanimated";
 
 const DATA = [
   {
@@ -110,10 +109,11 @@ export default function Explore() {
     };
   });
 
+  const [isAnimate, setIsAnimate] = useState(false);
+  const bound = getBoundaries(POINTS);
   useEffect(() => {
-    if (mapRef.current) {
-      const bound = getBoundaries(POINTS);
-      if (Platform.OS !== "ios") mapRef.current.setMapBoundaries?.(bound.northEast, bound.southWest); // TODO: add ios (home.tsx)
+    if (mapRef.current && Platform.OS !== "ios") {
+      mapRef.current.setMapBoundaries?.(bound.northEast, bound.southWest);
     }
   }, []);
 
@@ -162,6 +162,33 @@ export default function Explore() {
           userInterfaceStyle="dark"
           minZoomLevel={10}
           onPress={onMapPress}
+          onRegionChangeComplete={(region) => {
+            if (!isAnimate && Platform.OS == "ios") {
+              let needUpdate = false;
+              const newRegion = { ...region };
+              if (region.latitude > bound.northEast.latitude) {
+                newRegion.latitude = bound.northEast.latitude - 0.00001;
+                needUpdate = true;
+              }
+              if (region.latitude < bound.southWest.latitude) {
+                newRegion.latitude = bound.southWest.latitude - 0.00001;
+                needUpdate = true;
+              }
+              if (region.longitude > bound.northEast.longitude) {
+                newRegion.longitude = bound.northEast.longitude + 0.00001;
+                needUpdate = true;
+              }
+              if (region.longitude < bound.southWest.longitude) {
+                newRegion.longitude = bound.southWest.longitude + 0.00001;
+                needUpdate = true;
+              }
+
+              if (mapRef.current && needUpdate) {
+                setIsAnimate(true);
+                mapRef.current.animateToRegion(newRegion);
+              }
+            } else setIsAnimate(false);
+          }}
         >
           {POINTS.map((point) => (
             <Marker key={point._id} coordinate={{ latitude: point.latitude, longitude: point.longitude }} onPress={() => setFocusPoint(point._id)}>

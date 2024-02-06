@@ -1,4 +1,4 @@
-import { Searchbar, Text, TouchableRipple, Button, Appbar } from "react-native-paper";
+import { Searchbar, Text, TouchableRipple, Button } from "react-native-paper";
 import { useAppTheme } from "@styles";
 import MainBody from "@components/main_body";
 import { View, ScrollView, GestureResponderEvent, StyleSheet, ImageBackground, Platform } from "react-native";
@@ -23,7 +23,7 @@ export default function Home() {
   const router = useRouter();
 
   const [searchText, setSearchText] = useState("");
-
+  const [isAnimate, setIsAnimate] = useState(false);
   const search = (query: string) => setSearchText(query);
 
   // for dev use
@@ -39,15 +39,11 @@ export default function Home() {
   };
 
   const mapRef = createRef<MapView>();
+  const bound = getBoundaries(POINTS);
 
   useEffect(() => {
-    if (mapRef.current) {
-      const bound = getBoundaries(POINTS);
-      if (Platform.OS == "ios") {
-        // TODO: https://stackoverflow.com/questions/5680896/ios-how-to-limit-the-mapview-to-a-specific-region/6147386#6147386
-      } else {
-        mapRef.current.setMapBoundaries?.(bound.northEast, bound.southWest);
-      }
+    if (mapRef.current && Platform.OS !== "ios") {
+      mapRef.current.setMapBoundaries?.(bound.northEast, bound.southWest);
     }
   }, []);
 
@@ -107,6 +103,33 @@ export default function Home() {
               rotateEnabled={false}
               userInterfaceStyle="dark"
               onPress={() => router.replace({ pathname: "/explore" })}
+              onRegionChangeComplete={(region) => {
+                if (!isAnimate && Platform.OS == "ios") {
+                  let needUpdate = false;
+                  const newRegion = { ...region };
+                  if (region.latitude > bound.northEast.latitude) {
+                    newRegion.latitude = bound.northEast.latitude - 0.00001;
+                    needUpdate = true;
+                  }
+                  if (region.latitude < bound.southWest.latitude) {
+                    newRegion.latitude = bound.southWest.latitude - 0.00001;
+                    needUpdate = true;
+                  }
+                  if (region.longitude > bound.northEast.longitude) {
+                    newRegion.longitude = bound.northEast.longitude + 0.00001;
+                    needUpdate = true;
+                  }
+                  if (region.longitude < bound.southWest.longitude) {
+                    newRegion.longitude = bound.southWest.longitude + 0.00001;
+                    needUpdate = true;
+                  }
+
+                  if (mapRef.current && needUpdate) {
+                    setIsAnimate(true);
+                    mapRef.current.animateToRegion(newRegion);
+                  }
+                } else setIsAnimate(false);
+              }}
             >
               {POINTS.map((point) => (
                 <Marker

@@ -159,7 +159,6 @@ function ARExplorePage(props?: ARExploreProps) {
     },
   });
 
-  // TODO: my guess is when scene init, it should also set its facing(etc to always start as facing north )
   function handleError(event) {
     console.log("OBJ loading failed with error: " + event.nativeEvent.error);
   }

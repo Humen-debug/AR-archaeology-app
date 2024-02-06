@@ -11,7 +11,7 @@ interface ItemProps {
   images?: string[] | null;
   POINTS: any[];
   id: number;
-  modalCLose: () => void;
+  modalCLose?: () => void;
 }
 
 export default function ExploreItem(item: ItemProps) {
