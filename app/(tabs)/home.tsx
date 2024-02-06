@@ -1,7 +1,7 @@
 import { Searchbar, Text, TouchableRipple, Button } from "react-native-paper";
 import { useAppTheme } from "@styles";
 import { MainBody, AppBar } from "@components";
-import { View, ScrollView, GestureResponderEvent, StyleSheet, ImageBackground } from "react-native";
+import { View, ScrollView, GestureResponderEvent, StyleSheet, ImageBackground, Platform } from "react-native";
 import { createRef, useEffect, useState } from "react";
 import { SearchIcon } from "@components/icons";
 import * as Linking from "expo-linking";
@@ -20,7 +20,7 @@ export default function Home() {
   const router = useRouter();
 
   const [searchText, setSearchText] = useState("");
-
+  const [isAnimate, setIsAnimate] = useState(false);
   const search = (query: string) => setSearchText(query);
 
   // for dev use
@@ -36,10 +36,10 @@ export default function Home() {
   };
 
   const mapRef = createRef<MapView>();
+  const bound = getBoundaries(POINTS);
 
   useEffect(() => {
-    if (mapRef.current) {
-      const bound = getBoundaries(POINTS);
+    if (mapRef.current && Platform.OS !== "ios") {
       mapRef.current.setMapBoundaries?.(bound.northEast, bound.southWest);
     }
   }, []);
@@ -100,6 +100,33 @@ export default function Home() {
               rotateEnabled={false}
               userInterfaceStyle="dark"
               onPress={() => router.replace({ pathname: "/explore" })}
+              onRegionChangeComplete={(region) => {
+                if (!isAnimate && Platform.OS == "ios") {
+                  let needUpdate = false;
+                  const newRegion = { ...region };
+                  if (region.latitude > bound.northEast.latitude) {
+                    newRegion.latitude = bound.northEast.latitude - 0.00001;
+                    needUpdate = true;
+                  }
+                  if (region.latitude < bound.southWest.latitude) {
+                    newRegion.latitude = bound.southWest.latitude - 0.00001;
+                    needUpdate = true;
+                  }
+                  if (region.longitude > bound.northEast.longitude) {
+                    newRegion.longitude = bound.northEast.longitude + 0.00001;
+                    needUpdate = true;
+                  }
+                  if (region.longitude < bound.southWest.longitude) {
+                    newRegion.longitude = bound.southWest.longitude + 0.00001;
+                    needUpdate = true;
+                  }
+
+                  if (mapRef.current && needUpdate) {
+                    setIsAnimate(true);
+                    mapRef.current.animateToRegion(newRegion);
+                  }
+                } else setIsAnimate(false);
+              }}
             >
               {POINTS.map((point) => (
                 <Marker

@@ -11,11 +11,11 @@ interface ItemProps {
   images?: string[] | null;
   POINTS: any[];
   id: number;
-  onFocus?: Function;
+  modalCLose?: () => void;
 }
 
 export default function ExploreItem(item: ItemProps) {
-  const { title, length = 10, isSaved, images } = item;
+  const { title, length = 10, isSaved, images, modalCLose } = item;
   const router = useRouter();
   const theme = useAppTheme();
 
@@ -27,7 +27,11 @@ export default function ExploreItem(item: ItemProps) {
   });
 
   const fetchNextPoints = () => {
-    router.push({ pathname: "/ar_explore", params: { POINTS: item.POINTS, id: item.id } });
+    if (modalCLose) modalCLose();
+    const POINTSString = item.POINTS.map(({ _id, latitude, longitude }) => {
+      return { _id, latitude, longitude }; // Removed desc and title as it is unused
+    });
+    router.push({ pathname: "/ar_explore", params: { POINTS: JSON.stringify(POINTSString), targetId: item.id } });
   };
 
   return (
@@ -81,7 +85,7 @@ export default function ExploreItem(item: ItemProps) {
   );
 }
 
-const useStyle = ({ backgroundColor, spacing, labelGrey, withImage }: any) =>
+const useStyle = ({ backgroundColor, spacing, labelGrey, withImage, itemWidth }: any) =>
   StyleSheet.create({
     image: {
       height: 100,
@@ -97,6 +101,7 @@ const useStyle = ({ backgroundColor, spacing, labelGrey, withImage }: any) =>
       paddingHorizontal: spacing.lg,
       paddingVertical: spacing.sm,
       justifyContent: "space-between",
+      width: itemWidth,
     },
     button: {
       marginHorizontal: 16,

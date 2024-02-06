@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList, Platform } from "react-native";
 import MapView, { LatLng, Marker, Polyline } from "react-native-maps";
 import { Dimensions } from "react-native";
 import { useAppTheme } from "@styles";
@@ -8,8 +8,7 @@ import { createRef, useEffect, useMemo, useState } from "react";
 import ExploreListModal from "@components/explore/explore_list_modal";
 import ExploreItem from "@components/explore/explore_item";
 import ExploreModal from "@/components/explore/explore_modal";
-import { TouchableHighlight } from "react-native-gesture-handler";
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, withTiming } from "react-native-reanimated";
 
 const DATA = [
   {
@@ -86,7 +85,7 @@ export default function Explore() {
   const theme = useAppTheme();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id?: string }>();
-  const itemWidth = 270;
+  const itemWidth = 300;
   const itemSpacing = 10;
   const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
   const _style = useStyle({
@@ -108,9 +107,10 @@ export default function Explore() {
     };
   });
 
+  const [isAnimate, setIsAnimate] = useState(false);
+  const bound = getBoundaries(POINTS);
   useEffect(() => {
-    if (mapRef.current) {
-      const bound = getBoundaries(POINTS);
+    if (mapRef.current && Platform.OS !== "ios") {
       mapRef.current.setMapBoundaries?.(bound.northEast, bound.southWest);
     }
   }, []);
@@ -139,6 +139,11 @@ export default function Explore() {
     setListOpen(false);
   };
 
+  const getItemId = (event) => {
+    const index = Math.round(event.nativeEvent.contentOffset.x / (itemWidth + itemSpacing));
+    setFocusPoint(POINTS[index]._id);
+  };
+
   return (
     <MainBody padding={{ right: 0, left: 0 }}>
       <>
@@ -155,6 +160,33 @@ export default function Explore() {
           userInterfaceStyle="dark"
           minZoomLevel={10}
           onPress={onMapPress}
+          onRegionChangeComplete={(region) => {
+            if (!isAnimate && Platform.OS == "ios") {
+              let needUpdate = false;
+              const newRegion = { ...region };
+              if (region.latitude > bound.northEast.latitude) {
+                newRegion.latitude = bound.northEast.latitude - 0.00001;
+                needUpdate = true;
+              }
+              if (region.latitude < bound.southWest.latitude) {
+                newRegion.latitude = bound.southWest.latitude - 0.00001;
+                needUpdate = true;
+              }
+              if (region.longitude > bound.northEast.longitude) {
+                newRegion.longitude = bound.northEast.longitude + 0.00001;
+                needUpdate = true;
+              }
+              if (region.longitude < bound.southWest.longitude) {
+                newRegion.longitude = bound.southWest.longitude + 0.00001;
+                needUpdate = true;
+              }
+
+              if (mapRef.current && needUpdate) {
+                setIsAnimate(true);
+                mapRef.current.animateToRegion(newRegion);
+              }
+            } else setIsAnimate(false);
+          }}
         >
           {POINTS.map((point) => (
             <Marker key={point._id} coordinate={{ latitude: point.latitude, longitude: point.longitude }} onPress={() => setFocusPoint(point._id)}>
@@ -179,11 +211,8 @@ export default function Explore() {
             ItemSeparatorComponent={() => <View style={{ width: itemSpacing }} />}
             data={POINTS}
             keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <TouchableHighlight onPress={() => setFocusPoint(item._id)} style={{ overflow: "hidden", borderRadius: 8 }}>
-                <ExploreItem title={item.title} />
-              </TouchableHighlight>
-            )}
+            renderItem={({ item }) => <ExploreItem title={item.title} POINTS={POINTS} id={item._id} />}
+            onMomentumScrollEnd={getItemId}
             contentContainerStyle={_style.listContainer}
             onScrollToIndexFailed={(info) => {
               const wait = new Promise((resolve) => setTimeout(resolve, 500));
@@ -252,7 +281,7 @@ const useStyle = ({ spacing, itemWidth, screenWidth }: any) =>
     },
     buttonsContainer: {
       position: "absolute",
-      bottom: 86 + spacing.md + 96 + spacing.md,
+      bottom: 86 + spacing.md + 120 + spacing.md,
       right: spacing.lg,
     },
     iconButton: {
