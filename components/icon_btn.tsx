@@ -27,9 +27,9 @@ export default function IconBtn(props: Props) {
     if (!props.icon.endsWith("Icon")) key += "Icon";
     key = key[0].toUpperCase() + key.substring(1);
     IconComponent = Icons[key];
-    if (!IconComponent) throw Error(`IconBtn does not support icon ${props.icon}.`);
+    if (!IconComponent) throw Error(`IconBtn does not support icon ${props.icon}. Do you forget to add new icon to "@components/icons"?`);
   } else if (props.icon instanceof Object) {
-    IconComponent = () => props.icon;
+    IconComponent = (prop?: IconProps) => props.icon;
   } else {
     IconComponent = props.icon;
   }

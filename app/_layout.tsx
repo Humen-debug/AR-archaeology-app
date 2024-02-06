@@ -28,6 +28,7 @@ export default function RootLayout() {
                   <Stack.Screen name="detail" options={{}} />
                   <Stack.Screen name="ar_placement" options={{}} />
                   <Stack.Screen name="ar_explore" options={{}} />
+                  <Stack.Screen name="collection" options={{}} />
                   <Stack.Screen name="profile" />
                 </Stack>
                 <StatusBar style="light" />

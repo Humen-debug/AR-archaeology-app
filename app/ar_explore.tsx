@@ -141,6 +141,7 @@ function ARExplorePage(props?: ARExploreProps) {
             onError={handleError}
             shadowCastingBitMask={2}
             animation={{ name: "rotation", run: true, loop: true }}
+            onClick={() => {}}
           />
           {/* Default 2.5m radius */}
           <Viro3DObject
@@ -285,9 +286,7 @@ export default () => {
   }, []);
 
   useEffect(() => {
-    (async () => {
-      await getNearbyItems();
-    })();
+    getNearbyItems();
   }, [location]);
 
   const handleMapPressed = () => {
@@ -395,7 +394,7 @@ export default () => {
         style={[
           _style.rowLayout,
           {
-            justifyContent: "space-between",
+            columnGap: theme.spacing.sm,
             position: "absolute",
             top: top + theme.spacing.xs,
             left: 0,
@@ -405,6 +404,7 @@ export default () => {
         ]}
       >
         <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
+        <IconBtn icon={"backpack"} iconProps={{ fill: theme.colors.grey1 }} onPress={() => router.push("/collection")} />
       </View>
       {!!distance && (
         <View style={[_style.distanceContainer, { top: top + theme.spacing.xs + 34 }]}>
