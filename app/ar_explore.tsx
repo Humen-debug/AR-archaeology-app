@@ -14,7 +14,7 @@ import MainBody from "@components/main_body";
 import { ChevronLeftIcon, ArrowUpIcon } from "@/components/icons";
 import IconBtn from "@components/icon_btn";
 import * as Location from "expo-location";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState, useEffect, createRef } from "react";
 import { View, StyleSheet, useWindowDimensions } from "react-native";
 import _ from "lodash";
@@ -91,6 +91,49 @@ const transformGpsToAR = (deviceLoc: LatLong | undefined, objLoc: LatLong | unde
   return { x: objDeltaX, z: objDeltaY };
 };
 
+const getClosestPointOnPath = (path: LatLong[], point: LatLong) => {
+  const lineAB = {
+    longitude: path[1].longitude - path[0].longitude,
+    latitude: path[1].latitude - path[0].latitude,
+  };
+  const lineAP = {
+    longitude: point.longitude - path[0].longitude,
+    latitude: point.latitude - path[0].latitude,
+  };
+
+  const len = lineAB.longitude * lineAB.longitude + lineAB.latitude * lineAB.latitude;
+  let dot = lineAP.longitude * lineAB.longitude + lineAP.latitude * lineAB.latitude;
+
+  const t = Math.min(1, Math.max(0, dot / len));
+  dot = lineAB.longitude * lineAP.latitude - lineAB.latitude * lineAP.longitude;
+
+  return {
+    latitude: path[0].latitude + lineAB.latitude * t,
+    longitude: path[0].longitude + lineAB.longitude * t,
+  };
+};
+
+const getNextPoint = (targetId: number, points: LatLong[], location: LatLong) => {
+  let closestPoint = points[0];
+  let closestDistance = -1;
+
+  if (points.length > 1) {
+    for (let i = 0; i < points.length - 1; i++) {
+      const p = getClosestPointOnPath([points[i], points[i + 1]], location);
+      const d = distanceBetweenPoints(p, location);
+      if (closestDistance == -1 || closestDistance > d) {
+        closestDistance = d;
+
+        if (d > 0.025) closestPoint = p;
+        else
+          closestPoint =
+            distanceBetweenPoints(points[i], points[targetId]) < distanceBetweenPoints(points[i + 1], points[targetId]) ? points[i] : points[i + 1];
+      }
+    }
+  }
+
+  return closestPoint;
+};
 function ARExplorePage(props?: ARExploreProps) {
   ViroAnimations.registerAnimations({
     rotation: {
@@ -215,6 +258,8 @@ export default () => {
   const theme = useAppTheme();
   const { top } = useSafeAreaInsets();
   const { height: screenHeight } = useWindowDimensions();
+  const { targetId, POINTS } = useLocalSearchParams<{ targetId: string; POINTS: string }>();
+  const points = POINTS && JSON.parse(POINTS);
   const animatedProps = { duration: 300, easing: Easing.inOut(Easing.quad) };
   const [mapExpand, setMapExpand] = useState<boolean>(false);
   const [initAngle, setInitAngle] = useState<number>(-1);
@@ -238,7 +283,7 @@ export default () => {
     return { height: withTiming(mapExpand ? screenHeight - 200 : screenHeight, animatedProps) };
   });
 
-  const [nearestPoint, setNearestPoint] = useState<Location.LocationObjectCoords>();
+  const [nearestPoint, setNearestPoint] = useState<LatLong>();
   const mapRef = createRef<MapView>();
   // demo
   const [initLocation, setInitLocation] = useState<Location.LocationObjectCoords>();
@@ -266,6 +311,7 @@ export default () => {
         const coords = result.coords;
         if (coords.accuracy && coords.accuracy < 50) {
           setLocation(coords);
+          if (points && targetId) setNearestPoint(getNextPoint(parseInt(targetId), points, coords));
 
           // Moving map to center user's location
           mapRef?.current?.animateToRegion({ latitude: coords.latitude, longitude: coords.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 });
@@ -299,36 +345,40 @@ export default () => {
     // demo
 
     if (initLocation) {
-      const lat = initLocation.latitude + 8 * Math.pow(10, -5);
-      const lon = initLocation.longitude + Math.pow(10, -5);
+      if (points && targetId) {
+        setNearestPoint(getNextPoint(parseInt(targetId), points, initLocation));
+      } else {
+        const lat = initLocation.latitude + 8 * Math.pow(10, -5);
+        const lon = initLocation.longitude + Math.pow(10, -5);
 
-      const locations: Location.LocationObjectCoords[] = [
-        {
-          ...initLocation,
-          latitude: lat,
-          longitude: lon,
-        },
-        {
-          ...initLocation,
-          latitude: 22.282812,
-          longitude: 114.139614,
-        },
-        {
-          ...initLocation,
-          latitude: 22.282812,
-          longitude: 114.139634,
-        },
-      ];
+        const locations: Location.LocationObjectCoords[] = [
+          {
+            ...initLocation,
+            latitude: lat,
+            longitude: lon,
+          },
+          {
+            ...initLocation,
+            latitude: 22.282812,
+            longitude: 114.139614,
+          },
+          {
+            ...initLocation,
+            latitude: 22.282812,
+            longitude: 114.139634,
+          },
+        ];
 
-      const distances = locations.map((item, index) => [distanceBetweenPoints(location, item), index]);
-      if (distances.length !== 0) {
-        const minDist = distances.reduce((previousValue, currentValue) => {
-          return previousValue[0] < currentValue[0] ? previousValue : currentValue;
-        });
+        const distances = locations.map((item, index) => [distanceBetweenPoints(location, item), index]);
+        if (distances.length !== 0) {
+          const minDist = distances.reduce((previousValue, currentValue) => {
+            return previousValue[0] < currentValue[0] ? previousValue : currentValue;
+          });
 
-        setNearestPoint(locations[minDist[1]]);
+          setNearestPoint(locations[minDist[1]]);
+        }
+        setNearbyItems(locations);
       }
-      setNearbyItems(locations);
     }
   };
 

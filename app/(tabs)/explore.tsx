@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList, Platform } from "react-native";
 import MapView, { LatLng, Marker, Polyline } from "react-native-maps";
 import { Dimensions } from "react-native";
 import { useAppTheme } from "@styles";
@@ -88,7 +88,7 @@ export default function Explore() {
   const theme = useAppTheme();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id?: string }>();
-  const itemWidth = 270;
+  const itemWidth = 300;
   const itemSpacing = 10;
   const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
   const _style = useStyle({
@@ -113,7 +113,7 @@ export default function Explore() {
   useEffect(() => {
     if (mapRef.current) {
       const bound = getBoundaries(POINTS);
-      mapRef.current.setMapBoundaries?.(bound.northEast, bound.southWest);
+      if (Platform.OS !== "ios") mapRef.current.setMapBoundaries?.(bound.northEast, bound.southWest); // TODO: add ios (home.tsx)
     }
   }, []);
 
@@ -139,6 +139,11 @@ export default function Explore() {
     // close all bottom sheets
     setDetailOpen(false);
     setListOpen(false);
+  };
+
+  const getItemId = (event) => {
+    const index = Math.round(event.nativeEvent.contentOffset.x / (itemWidth + itemSpacing));
+    setFocusPoint(POINTS[index]._id);
   };
 
   return (
@@ -181,11 +186,8 @@ export default function Explore() {
             ItemSeparatorComponent={() => <View style={{ width: itemSpacing }} />}
             data={POINTS}
             keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <TouchableHighlight onPress={() => setFocusPoint(item._id)} style={{ overflow: "hidden", borderRadius: 8 }}>
-                <ExploreItem title={item.title} />
-              </TouchableHighlight>
-            )}
+            renderItem={({ item }) => <ExploreItem title={item.title} POINTS={POINTS} id={item._id} />}
+            onMomentumScrollEnd={getItemId}
             contentContainerStyle={_style.listContainer}
             onScrollToIndexFailed={(info) => {
               const wait = new Promise((resolve) => setTimeout(resolve, 500));
@@ -254,7 +256,7 @@ const useStyle = ({ spacing, itemWidth, screenWidth }: any) =>
     },
     buttonsContainer: {
       position: "absolute",
-      bottom: 86 + spacing.md + 96 + spacing.md,
+      bottom: 86 + spacing.md + 120 + spacing.md,
       right: spacing.lg,
     },
     iconButton: {

@@ -1,7 +1,7 @@
 import { Searchbar, Text, TouchableRipple, Button, Appbar } from "react-native-paper";
 import { useAppTheme } from "@styles";
 import MainBody from "@components/main_body";
-import { View, ScrollView, GestureResponderEvent, Image, StyleSheet, ImageBackground } from "react-native";
+import { View, ScrollView, GestureResponderEvent, StyleSheet, ImageBackground, Platform } from "react-native";
 import { createRef, useEffect, useState } from "react";
 import { SearchIcon } from "@components/icons";
 import * as Linking from "expo-linking";
@@ -43,7 +43,11 @@ export default function Home() {
   useEffect(() => {
     if (mapRef.current) {
       const bound = getBoundaries(POINTS);
-      mapRef.current.setMapBoundaries?.(bound.northEast, bound.southWest);
+      if (Platform.OS == "ios") {
+        // TODO: https://stackoverflow.com/questions/5680896/ios-how-to-limit-the-mapview-to-a-specific-region/6147386#6147386
+      } else {
+        mapRef.current.setMapBoundaries?.(bound.northEast, bound.southWest);
+      }
     }
   }, []);
 
