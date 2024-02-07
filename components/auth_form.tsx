@@ -1,8 +1,8 @@
-import { AppTheme, useAppTheme } from "@/styles";
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
+import { useAppTheme, AppTheme } from "@providers/style_provider";
 
 interface FormField<T> {
   value: T;
@@ -21,7 +21,7 @@ export interface Props {
 }
 
 export default function AuthForm(props: Props) {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const style = useStyle(theme);
   const [form, setForm] = useState<AuthForm>({ email: { value: "" }, password: { value: "" } });
 

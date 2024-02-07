@@ -1,7 +1,7 @@
 import { Text, Button } from "react-native-paper";
 import { StyleSheet, View, FlatList, Image } from "react-native";
-import { useAppTheme } from "@styles";
-import { GPSIcon, BookmarkIcon, BookmarkOutlineIcon } from "@/components/icons";
+import { useAppTheme } from "@providers/style_provider";
+import { GPSIcon, BookmarkIcon, BookmarkOutlineIcon } from "@components/icons";
 import { useRouter } from "expo-router";
 
 interface ItemProps {
@@ -17,11 +17,11 @@ interface ItemProps {
 export default function ExploreItem(item: ItemProps) {
   const { title, length = 10, isSaved, images, modalCLose } = item;
   const router = useRouter();
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
 
   const _style = useStyle({
     backgroundColor: theme.colors.grey4 + "e9",
-    labelGrey: theme.colors.label,
+    labelGrey: theme.colors.text,
     spacing: theme.spacing,
     withImage: !!images,
   });

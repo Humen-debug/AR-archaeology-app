@@ -1,7 +1,7 @@
 import { NavBar } from "@components";
 import { Tabs } from "expo-router/tabs";
-import { HomeIcon, ExploreIcon } from "@/components/icons";
-import { DrawerProvider } from "@/providers/drawer_provider";
+import { HomeIcon, ExploreIcon, SettingIcon } from "@components/icons";
+import { DrawerProvider } from "@providers/drawer_provider";
 
 export default function TabLayout() {
   return (
@@ -23,11 +23,19 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="explore"
+          name="map"
           options={{
-            href: "/explore",
-            tabBarLabel: "Explore",
+            href: "/map",
+            tabBarLabel: "Map",
             tabBarIcon: ({ color, size }) => <ExploreIcon fill={color} size={size} />,
+          }}
+        />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            href: "/settings",
+            tabBarLabel: "Setting",
+            tabBarIcon: ({ color, size }) => <SettingIcon fill={color} size={size} />,
           }}
         />
       </Tabs>

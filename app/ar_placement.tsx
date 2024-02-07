@@ -10,13 +10,13 @@ import {
 } from "@viro-community/react-viro";
 import { MainBody, IconBtn } from "@components";
 import { ImageSourcePropType, StyleSheet, View } from "react-native";
-import { useAppTheme } from "@styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ChevronLeftIcon } from "@/components/icons";
+import { ChevronLeftIcon } from "@components/icons";
 import { router } from "expo-router";
 import { useState } from "react";
 import { ViroPinchState, ViroRotateState } from "@viro-community/react-viro/dist/components/Types/ViroEvents";
 import { ViroRotation, ViroScale } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
+import { useAppTheme } from "@providers/style_provider";
 
 function ARPlacementPage() {
   const [loading, setLoading] = useState(false);
@@ -104,7 +104,7 @@ function ARPlacementPage() {
   );
 }
 export default () => {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const { top } = useSafeAreaInsets();
   return (
     <MainBody>

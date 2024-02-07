@@ -1,5 +1,4 @@
 import { Searchbar, Text, TouchableRipple, Button } from "react-native-paper";
-import { useAppTheme } from "@styles";
 import { MainBody, AppBar } from "@components";
 import { View, ScrollView, GestureResponderEvent, StyleSheet, ImageBackground, Platform } from "react-native";
 import { createRef, useEffect, useState } from "react";
@@ -12,11 +11,12 @@ import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import { Artifact } from "@models";
 import MapView, { Marker } from "react-native-maps";
 import * as Linking from "expo-linking";
-import { POINTS, getBoundaries } from "./explore";
-import { useFeathers } from "@/providers/feathers_provider";
+import { POINTS, getBoundaries } from "./map";
+import { useFeathers } from "@providers/feathers_provider";
+import { useAppTheme } from "@providers/style_provider";
 
 export default function Home() {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const router = useRouter();
   const feathers = useFeathers();
 
@@ -104,7 +104,7 @@ export default function Home() {
               minZoomLevel={15}
               rotateEnabled={false}
               userInterfaceStyle="dark"
-              onPress={() => router.replace({ pathname: "/explore" })}
+              onPress={() => router.replace({ pathname: "/map" })}
               onRegionChangeComplete={(region) => {
                 if (!isAnimate && Platform.OS == "ios") {
                   let needUpdate = false;
@@ -138,7 +138,7 @@ export default function Home() {
                   key={point._id}
                   coordinate={{ latitude: point.latitude, longitude: point.longitude }}
                   onPress={() => {
-                    router.replace({ pathname: "/explore", params: { id: point._id } });
+                    router.replace({ pathname: "/map", params: { id: point._id } });
                   }}
                 />
               ))}

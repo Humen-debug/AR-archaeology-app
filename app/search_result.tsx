@@ -1,17 +1,17 @@
 import { Checkbox, List, RadioButton, Searchbar, Text } from "react-native-paper";
-import { useAppTheme } from "@styles";
 import { MainBody, ItemCard } from "@components";
 import { View, StyleSheet } from "react-native";
 import { ForwardedRef, forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronLeftIcon, SearchIcon, SortIcon } from "@/components/icons";
+import { ChevronLeftIcon, SearchIcon, SortIcon } from "@components/icons";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Artifact } from "@/models";
+import { useAppTheme } from "@providers/style_provider";
 
 export default function SearchResultPage() {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const params = useLocalSearchParams<{ q?: string }>();
   const [searchText, setSearchText] = useState(params.q || "");
   const [sortBy, setSortBy] = useState("");
@@ -40,7 +40,7 @@ export default function SearchResultPage() {
   };
 
   return (
-    <MainBody backgroundColor={theme.colors.gradientBackground} padding={{ top: 0 }}>
+    <MainBody backgroundColor={theme.colors.background} padding={{ top: 0 }}>
       <>
         <View
           style={[
@@ -137,7 +137,7 @@ interface SortFilterSheetProps<T> {
 }
 
 const SortFilterSheet = forwardRef(function SortFilterSheet<T>(props: SortFilterSheetProps<T>, ref: ForwardedRef<BottomSheetModal>) {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
 
   const sortOptions = [
     { label: "Relevance", value: "1" },
@@ -180,7 +180,7 @@ const SortFilterSheet = forwardRef(function SortFilterSheet<T>(props: SortFilter
                   key={value}
                   mode="android"
                   position="leading"
-                  color={theme.colors.highlight}
+                  color={theme.colors.primary}
                   style={{ paddingVertical: theme.spacing.xs, paddingLeft: 0 }}
                 />
               ))}
@@ -207,7 +207,7 @@ const SortFilterSheet = forwardRef(function SortFilterSheet<T>(props: SortFilter
                     <List.Item
                       key={`${value.value}${index}`}
                       title={value.title}
-                      left={() => <Checkbox.Android status={status} color={theme.colors.highlight} />}
+                      left={() => <Checkbox.Android status={status} color={theme.colors.primary} />}
                       style={{ paddingLeft: theme.spacing.xs }}
                       onPress={() => {
                         props.setFilter(value.value);

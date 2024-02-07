@@ -2,13 +2,13 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, View, FlatList, Platform } from "react-native";
 import MapView, { LatLng, Marker, Polyline } from "react-native-maps";
 import { Dimensions } from "react-native";
-import { useAppTheme } from "@styles";
 import { MainBody, IconBtn, MarkerCallout } from "@components";
 import { createRef, useEffect, useMemo, useState } from "react";
-import ExploreListModal from "@components/explore/explore_list_modal";
-import ExploreItem from "@components/explore/explore_item";
-import ExploreModal from "@/components/explore/explore_modal";
+import ExploreListModal from "@components/map/explore_list_modal";
+import ExploreItem from "@components/map/explore_item";
+import ExploreModal from "@components/map/explore_modal";
 import Animated, { useAnimatedStyle, withTiming } from "react-native-reanimated";
+import { useAppTheme } from "@providers/style_provider";
 
 export const POINTS = [
   {
@@ -59,7 +59,7 @@ export const getBoundaries = (points: { latitude: number; longitude: number }[])
 };
 
 export default function Explore() {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const itemWidth = 300;

@@ -1,8 +1,8 @@
 import { View } from "react-native";
-import { useAppTheme } from "@styles";
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import _ from "lodash";
+import { useAppTheme } from "@providers/style_provider";
 
 export interface Props {
   children?: JSX.Element | (JSX.Element | undefined | boolean)[] | undefined;
@@ -11,7 +11,7 @@ export interface Props {
 }
 
 export default function MainBody({ children, padding, backgroundColor }: Props): JSX.Element {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const { top, bottom, left, right } = { ...useSafeAreaInsets(), ..._.omitBy(padding, _.isNull) } as EdgeInsets;
 
   const bgColor: string[] = backgroundColor

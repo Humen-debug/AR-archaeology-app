@@ -1,5 +1,5 @@
-import { useDrawerContext } from "@/providers/drawer_provider";
-import { AppTheme, useAppTheme } from "@/styles";
+import { useDrawerContext } from "@providers/drawer_provider";
+import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { useNavigation } from "expo-router";
 import { StyleSheet } from "react-native";
 import { Appbar, AppbarActionProps, Drawer, useTheme } from "react-native-paper";
@@ -13,7 +13,7 @@ export interface Props {
 }
 
 export default function AppBar(props: Props) {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const style = useStyle(theme);
   const navigation = useNavigation();
   return (

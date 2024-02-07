@@ -1,11 +1,11 @@
 import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useMemo, useRef, useEffect, useCallback } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
-import { AppTheme, useAppTheme } from "@styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button, Text } from "react-native-paper";
 import { ScrollView } from "react-native-gesture-handler";
 import { GPSIcon, BookmarkOutlineIcon } from "@components/icons";
+import { useAppTheme, AppTheme } from "@providers/style_provider";
 
 interface ExploreModalProps {
   open: boolean;
@@ -14,7 +14,7 @@ interface ExploreModalProps {
 }
 
 export default function ExploreModal({ open, setOpen, data }: ExploreModalProps) {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const style = useStyle(theme);
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const { top: safeTop } = useSafeAreaInsets();

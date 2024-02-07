@@ -1,20 +1,20 @@
 import { Text } from "react-native-paper";
-import { useAppTheme } from "@styles";
 import { MainBody, IconBtn, AudioPlayer, ModelView } from "@components";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { ActivityIndicator } from "react-native";
 import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods } from "@gorhom/bottom-sheet";
-import { BookmarkIcon, BookmarkOutlineIcon, CreateARIcon, ChevronLeftIcon, ErrorOutlineIcon, ShareIcon } from "@/components/icons";
+import { BookmarkIcon, BookmarkOutlineIcon, CreateARIcon, ChevronLeftIcon, ErrorOutlineIcon, ShareIcon } from "@components/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Artifact } from "@models";
-import { useAuth } from "@/providers/auth_provider";
-import { useFeathers } from "@/providers/feathers_provider";
+import { useAuth } from "@providers/auth_provider";
+import { useFeathers } from "@providers/feathers_provider";
 import _ from "lodash";
+import { useAppTheme } from "@providers/style_provider";
 
 export default function DetailPage() {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const feathers = useFeathers();
   const { top } = useSafeAreaInsets();
   const params = useLocalSearchParams<{ id?: string }>();
@@ -57,7 +57,7 @@ export default function DetailPage() {
   }, [params.id]);
 
   return (
-    <MainBody backgroundColor={theme.colors.gradientBackground} padding={{ right: 0, left: 0 }}>
+    <MainBody backgroundColor={theme.colors.background} padding={{ right: 0, left: 0 }}>
       <>
         <View style={{ flex: 0.5, position: "relative" }}>
           <ModelView style={{ flex: 1 }} setLoading={setLoading} setError={setModelError} />

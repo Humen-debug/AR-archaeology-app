@@ -1,7 +1,7 @@
 import { Image, StyleSheet, View, Dimensions } from "react-native";
 import { Callout } from "react-native-maps";
 import { Text } from "react-native-paper";
-import { AppTheme, useAppTheme } from "@styles";
+import { AppTheme, useAppTheme } from "@providers/style_provider";
 
 export interface Props {
   title: string;
@@ -11,7 +11,7 @@ export interface Props {
 }
 
 export default function MarkerCallout({ title, desc, image, onPress }: Props) {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const screenWidth = Dimensions.get("window").width;
   const style = useStyle(theme, screenWidth);
   return (

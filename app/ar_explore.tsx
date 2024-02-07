@@ -8,10 +8,9 @@ import {
   ViroMaterials,
   ViroNode,
 } from "@viro-community/react-viro";
-import { useAppTheme } from "@styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MainBody, IconBtn } from "@components";
-import { ChevronLeftIcon, ArrowUpIcon } from "@/components/icons";
+import { ChevronLeftIcon, ArrowUpIcon } from "@components/icons";
 import * as Location from "expo-location";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, useEffect, createRef } from "react";
@@ -25,6 +24,7 @@ import { TouchableHighlight } from "react-native-gesture-handler";
 import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import { THREE } from "expo-three";
+import { AppTheme, useAppTheme } from "@providers/style_provider";
 /*
  * stackoverflow.com/questions/47419496/augmented-reality-with-react-native-points-of-interest-over-the-camera
  * Solution to convert latitude and longitude to device's local coordinates and vice versa
@@ -254,7 +254,7 @@ function ARExplorePage(props?: ARExploreProps) {
 }
 
 export default () => {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const { top } = useSafeAreaInsets();
   const { height: screenHeight } = useWindowDimensions();
   const { targetId, POINTS } = useLocalSearchParams<{ targetId: string; POINTS: string }>();

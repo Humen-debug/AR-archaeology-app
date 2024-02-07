@@ -1,8 +1,8 @@
-import { MainBody } from "@/components";
+import { MainBody } from "@components";
 import { Artifact } from "@/models";
-import { useAuth } from "@/providers/auth_provider";
-import { useFeathers } from "@/providers/feathers_provider";
-import { AppTheme, useAppTheme } from "@/styles";
+import { useAuth } from "@providers/auth_provider";
+import { useFeathers } from "@providers/feathers_provider";
+import { useAppTheme, AppTheme } from "@providers/style_provider";
 import { router } from "expo-router";
 import _ from "lodash";
 import { useEffect, useRef, useState } from "react";
@@ -12,7 +12,7 @@ import { Button, Text } from "react-native-paper";
 function CollectionPage() {
   const { user } = useAuth();
   const feathers = useFeathers();
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const style = useStyle(theme);
   const [collection, setCollection] = useState<Artifact[]>([]);
 

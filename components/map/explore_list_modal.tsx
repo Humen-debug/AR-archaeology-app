@@ -1,13 +1,13 @@
 import { Text, Searchbar, Divider } from "react-native-paper";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
-import { useAppTheme } from "@styles";
+import { useAppTheme } from "@providers/style_provider";
 import { useRef, useMemo, useCallback, useState, useEffect } from "react";
 import { BottomSheetModal, BottomSheetScrollView, BottomSheetScrollViewMethods } from "@gorhom/bottom-sheet";
-import { SearchIcon } from "@/components/icons";
+import { SearchIcon } from "@components/icons";
 import ExploreItem from "./explore_item";
 
 export default function ExploreListModal({ open, setOpen, data }: { open: boolean; setOpen: (open: boolean) => void; data: any[] }) {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const _style = useStyle({
     spacing: theme.spacing,
   });

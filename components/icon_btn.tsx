@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, TouchableOpacityProps, View } from "react-native";
-import { useAppTheme } from "@styles";
+import { useAppTheme } from "@providers/style_provider";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { GenericTouchableProps } from "react-native-gesture-handler/lib/typescript/components/touchables/GenericTouchable";
 import * as Icons from "@components/icons";
@@ -19,7 +19,7 @@ interface IconBtnProps {
 export type Props = IconBtnProps & GenericTouchableProps & TouchableOpacityProps;
 
 export default function IconBtn(props: Props) {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const _style = useStyle({ square: props.square });
   let IconComponent;
   if (typeof props.icon === "string") {

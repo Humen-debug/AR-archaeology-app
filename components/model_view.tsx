@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import _ from "lodash";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
-import ExpoTHREE, { Renderer, THREE, loadObjAsync, loadTextureAsync, TextureLoader } from "expo-three";
+import { Renderer, THREE, loadObjAsync, loadTextureAsync, TextureLoader } from "expo-three";
 import { AnimatedSensor } from "react-native-reanimated";
 import { Scene, PerspectiveCamera, Camera, AmbientLight, PointLight, SpotLight, MeshBasicMaterial } from "three";
 import { Asset } from "expo-asset";

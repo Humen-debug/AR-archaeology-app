@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { Audio } from "expo-av";
-import { useAppTheme } from "@styles";
 import { LinearGradient } from "expo-linear-gradient";
-import { PlayDarkIcon as PlayIcon, PauseDarkIcon as PauseIcon, ForwardIcon, ReplayIcon } from "@/components/icons";
+import { PlayDarkIcon as PlayIcon, PauseDarkIcon as PauseIcon, ForwardIcon, ReplayIcon } from "@components/icons";
 import { Text } from "react-native-paper";
 import Animated, {
   useSharedValue,
@@ -17,13 +16,14 @@ import Animated, {
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import moment from "moment";
+import { useAppTheme } from "@providers/style_provider";
 
 export interface Props {
   soundUri: PossibleAsset;
 }
 
 export default function AudioPlayer(props: Props) {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const [sound, setSound] = useState<Audio.Sound | null>(null);
 
   const [playing, setPlaying] = useState(false);
@@ -276,8 +276,8 @@ export default function AudioPlayer(props: Props) {
       <View style={_style.rowLayout}>
         <TouchableOpacity onPress={replay5sec}>
           <View style={_style.playBtn}>
-            <ReplayIcon fill={theme.colors.highlight} width={50} height={50} />
-            <Text variant="bodySmall" style={{ color: theme.colors.highlight, position: "absolute" }}>
+            <ReplayIcon fill={theme.colors.primary} width={50} height={50} />
+            <Text variant="bodySmall" style={{ color: theme.colors.primary, position: "absolute" }}>
               5
             </Text>
           </View>
@@ -285,16 +285,16 @@ export default function AudioPlayer(props: Props) {
         <TouchableOpacity onPress={onPressPlayPause}>
           <View style={_style.playBtn}>
             {!playing ? (
-              <PlayIcon style={[_style.playIcon, { shadowColor: theme.colors.highlight }]} />
+              <PlayIcon style={[_style.playIcon, { shadowColor: theme.colors.primary }]} />
             ) : (
-              <PauseIcon style={[_style.playIcon, { shadowColor: theme.colors.highlight }]} />
+              <PauseIcon style={[_style.playIcon, { shadowColor: theme.colors.primary }]} />
             )}
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={forward5sec}>
           <View style={_style.playBtn}>
-            <ForwardIcon fill={theme.colors.highlight} width={50} height={50} />
-            <Text variant="bodySmall" style={{ color: theme.colors.highlight, position: "absolute" }}>
+            <ForwardIcon fill={theme.colors.primary} width={50} height={50} />
+            <Text variant="bodySmall" style={{ color: theme.colors.primary, position: "absolute" }}>
               5
             </Text>
           </View>

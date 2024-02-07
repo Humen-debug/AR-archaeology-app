@@ -1,14 +1,13 @@
 import { AppBar, AuthForm, MainBody } from "@components";
-import { useAppTheme } from "@/styles";
 import _ from "lodash";
 import { useState } from "react";
 import { View } from "react-native";
 import { Button, Text } from "react-native-paper";
-import { useFeathers } from "@/providers/feathers_provider";
-import { useAuth } from "@/providers/auth_provider";
+import { useAuth } from "@providers/auth_provider";
+import { useAppTheme } from "@providers/style_provider";
 
 export default function RegisterPage() {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const { register, login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,7 +36,7 @@ export default function RegisterPage() {
       <View style={{ padding: theme.spacing.md, display: "flex", alignSelf: "center", width: "100%", flexDirection: "column", flexGrow: 1 }}>
         <AuthForm setEmail={setEmail} setPassword={setPassword} setValid={setFormValid} />
         <View style={{ height: theme.spacing.xl }} />
-        <Button mode="contained" buttonColor={theme.colors.highlight} onPress={handleRegister} style={{ borderRadius: 4 }} loading={loading}>
+        <Button mode="contained" buttonColor={theme.colors.primary} onPress={handleRegister} style={{ borderRadius: 4 }} loading={loading}>
           <Text variant="labelMedium" style={{ color: theme.colors.background, fontWeight: "bold" }}>
             Create an account
           </Text>

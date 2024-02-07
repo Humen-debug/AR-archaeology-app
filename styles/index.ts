@@ -1,104 +1,128 @@
-import { MD3DarkTheme, useTheme, configureFonts } from "react-native-paper";
+import { MD3LightTheme, configureFonts, MD3DarkTheme } from "react-native-paper";
 
 export const customFonts = {
-  "LibreCaslonText-Bold": require("@assets/fonts/LibreCaslonText-Bold.ttf"),
-  "LibreCaslonText-Regular": require("@assets/fonts/LibreCaslonText-Regular.ttf"),
-  "Lexend-Black": require("@assets/fonts/Lexend-Black.ttf"),
-  "Lexend-Bold": require("@assets/fonts/Lexend-Bold.ttf"),
-  "Lexend-ExtraBold": require("@assets/fonts/Lexend-ExtraBold.ttf"),
-  "Lexend-ExtraLight": require("@assets/fonts/Lexend-ExtraLight.ttf"),
-  "Lexend-Light": require("@assets/fonts/Lexend-Light.ttf"),
-  "Lexend-Medium": require("@assets/fonts/Lexend-Medium.ttf"),
-  "Lexend-Regular": require("@assets/fonts/Lexend-Regular.ttf"),
-  "Lexend-Thin": require("@assets/fonts/Lexend-Thin.ttf"),
+  "Poppins-Bold": require("@assets/fonts/Poppins-Bold.ttf"),
+  "Poppins-Regular": require("@assets/fonts/Poppins-Regular.ttf"),
+  "Poppins-Black": require("@assets/fonts/Poppins-Black.ttf"),
+  "Poppins-ExtraBold": require("@assets/fonts/Poppins-ExtraBold.ttf"),
+  "Poppins-ExtraLight": require("@assets/fonts/Poppins-ExtraLight.ttf"),
+  "Poppins-Light": require("@assets/fonts/Poppins-Light.ttf"),
+  "Poppins-Medium": require("@assets/fonts/Poppins-Medium.ttf"),
+  "Poppins-SemiBold": require("@assets/fonts/Poppins-SemiBold.ttf"),
+  "Poppins-Thin": require("@assets/fonts/Poppins-Thin.ttf"),
 };
 
 const _baseFontConfig = {
-  fontFamily: "Lexend-Regular",
-} as const;
-
-const _titleFontConfig = {
-  fontFamily: "LibreCaslonText-Regular",
+  fontFamily: "Poppins-Regular",
 } as const;
 
 const _baseFontVar = configureFonts({ config: _baseFontConfig });
-const _titleFontVar = configureFonts({ config: _titleFontConfig });
 
 const fontConfig = {
   // displayLarge: {},
   // displayMedium: {},
   // displaySmall: {},
   // headlineLarge: {},
-  headlineMedium: { ..._titleFontVar.headlineMedium, fontSize: 32 },
-  headlineSmall: { ..._titleFontVar.headlineSmall, fontSize: 24, fontWeight: "600" },
+  headlineMedium: { ..._baseFontVar.headlineMedium, fontSize: 32, fontWeight: "500" },
+  headlineSmall: { ..._baseFontVar.headlineSmall, fontSize: 24, fontWeight: "600" },
   // titleLarge: {},
-  titleMedium: { ..._titleFontVar.titleMedium, fontSize: 16, fontWeight: "600", lineHeight: 20 },
-  titleSmall: { ..._titleFontVar.titleSmall, fontSize: 12 },
-  labelLarge: { ..._baseFontVar.titleMedium, fontSize: 20 },
-  labelMedium: { ..._baseFontVar.labelMedium, fontSize: 16, fontWeight: "600", lineHeight: 20 },
-  labelSmall: { ..._baseFontVar.labelSmall, fontSize: 12 },
-  bodySmall: {
-    ..._baseFontVar.bodySmall,
-    fontSize: 8,
-  },
-  bodyMedium: {
-    ..._baseFontVar.bodyMedium,
-    fontSize: 14,
-    fontWeight: "300",
-  },
-  bodyLarge: {
-    ..._baseFontVar.bodyLarge,
-    fontSize: 14,
-  },
+  titleMedium: { ..._baseFontVar.titleMedium, fontSize: 16, fontWeight: "600", lineHeight: 20 },
+  titleSmall: { ..._baseFontVar.titleSmall, fontSize: 12 },
+  labelLarge: { ..._baseFontVar.titleMedium, fontSize: 16 },
+  labelMedium: { ..._baseFontVar.labelMedium, fontSize: 14, fontWeight: "600", lineHeight: 20 },
+  labelSmall: { ..._baseFontVar.labelSmall, fontSize: 12, fontWeight: "600" },
+  bodySmall: { ..._baseFontVar.bodySmall, fontSize: 12 },
+  bodyMedium: { ..._baseFontVar.bodyMedium, fontSize: 14 },
+  bodyLarge: { ..._baseFontVar.bodyLarge, fontSize: 16 },
 } as const;
 
 const fonts = configureFonts({
-  config: {
-    ..._titleFontVar,
-    ..._baseFontVar,
-    ...fontConfig,
-  },
+  config: { ..._baseFontVar, ...fontConfig },
 });
 
-export const theme = {
+const spacings = {
+  xxs: 4,
+  xs: 8,
+  sm: 12,
+  md: 16,
+  lg: 20,
+  xl: 40,
+};
+
+const borderRadius = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 20,
+  xl: 32,
+};
+
+const breakpoint = {
+  xs: 600,
+  sm: 960,
+  md: 1264,
+  lg: 1904,
+  xl: 1904,
+};
+
+export const lightTheme = {
+  ...MD3LightTheme,
+  myOwnProperty: true,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: "#00AAF8",
+    secondary: "#0160D6",
+    tertiary: "#DEA516",
+    success: "#AAB624",
+    error: "#F13B13",
+    background: "#FFFDFC",
+    container: "#FFFFFF",
+    grey1: "#1C1C1C",
+    grey2: "#6D6D6D",
+    grey3: "#A5AAB0",
+    grey4: "#DEE3E4",
+    text: "#1C1C1C",
+
+    white: "#FFFFFF",
+    black: "#000000",
+
+    gradient: ["#00AAF8", "#0160D6"],
+    gradientBlack: ["#2D302D", "#2C2F2C"],
+  },
+  spacing: spacings,
+  borderRadius: borderRadius,
+  breakpoint: breakpoint,
+  fonts: fonts,
+};
+
+export const darkTheme = {
   ...MD3DarkTheme,
   myOwnProperty: true,
   colors: {
     ...MD3DarkTheme.colors,
-    primary: "#427e55",
-    secondary: "#f4c03e",
-    tertiary: "#B07f2f",
-    highlight: "#dbf43e",
-    highlight2: "#def0a7",
-    background: "#131A13",
-    container: "#222f2b",
-    grey1: "#fffffd",
-    grey2: "#a4a2a2",
-    grey3: "#736e6e",
-    grey4: "#363535",
-    label: "#6D6D6D",
-    gradient: ["#DBF43E", "#DEF0A7"],
-    gradientGreyTran: ["#E5E5E533 ", "#6D6D6D33"],
-    gradientGrey: ["#404140", "#2C2D2C"],
+    primary: "#009EE7",
+    secondary: "#0054BC",
+    tertiary: "#D59E17",
+    success: "#99A41F",
+    error: "#BD2B18",
+    background: "#1B1B20",
+    container: "#282830",
+    grey1: "#555555",
+    grey2: "#878787",
+    grey3: "#90959A",
+    grey4: "#AEB0B4",
+    text: "#FFFFFF",
+
+    white: "#FFFFFF",
+    black: "#000000",
+
+    gradient: ["##009EE7", "#0054BC"],
     gradientBlack: ["#2D302D", "#2C2F2C"],
-    gradientBackground: ["#191B19", "#222F2B"],
-    onSurfaceVariant: "white",
   },
-  spacing: {
-    xs: 8,
-    sm: 12,
-    md: 16,
-    lg: 20,
-    xl: 32,
-  },
-  breakpoint: {
-    xs: 600,
-    sm: 960,
-    md: 1264,
-    lg: 1904,
-    xl: 1904,
-  },
+  spacing: spacings,
+  borderRadius: borderRadius,
+  breakpoint: breakpoint,
   fonts: fonts,
 };
-export type AppTheme = typeof theme;
-export const useAppTheme = () => useTheme<AppTheme>();
+
+export type AppTheme = typeof lightTheme;

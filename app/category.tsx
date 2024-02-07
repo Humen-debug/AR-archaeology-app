@@ -1,19 +1,19 @@
 import { Text } from "react-native-paper";
-import { useAppTheme } from "@styles";
 import { View, ScrollView, StyleSheet } from "react-native";
-import { ChevronLeftIcon, SortIcon } from "@/components/icons";
+import { ChevronLeftIcon, SortIcon } from "@components/icons";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { router, useLocalSearchParams } from "expo-router";
 import { ItemCard, MainBody } from "@components";
 import { Artifact } from "@models";
+import { useAppTheme } from "@providers/style_provider";
 
 export default function CategoryPage() {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const params = useLocalSearchParams<{ cat?: string }>();
 
   const items: Artifact[] = []; // todo
   return (
-    <MainBody backgroundColor={theme.colors.gradientBackground}>
+    <MainBody backgroundColor={theme.colors.background}>
       <ScrollView>
         <View style={[_style.header, { padding: theme.spacing.md, gap: theme.spacing.sm }]}>
           <TouchableOpacity onPress={() => router.back()}>

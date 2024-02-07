@@ -18,6 +18,7 @@ export { default as PlayDarkIcon } from "@assets/icons/play-dark.svg";
 export { default as ProfileIcon } from "@assets/icons/profile.svg";
 export { default as ReplayIcon } from "@assets/icons/replay.svg";
 export { default as SearchIcon } from "@assets/icons/search.svg";
+export { default as SettingIcon } from "@assets/icons/setting.svg";
 export { default as ShareIcon } from "@assets/icons/share.svg";
 export { default as SortIcon } from "@assets/icons/sort.svg";
 export { default as TimeIcon } from "@assets/icons/time.svg";

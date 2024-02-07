@@ -1,15 +1,14 @@
 import { Button, Text, TextInput } from "react-native-paper";
-import { useAppTheme } from "@styles";
 import { MainBody, AuthForm, AppBar } from "@components";
 import { useState } from "react";
 import { Link, router } from "expo-router";
 import { View } from "react-native";
 import _ from "lodash";
-import { useFeathers } from "@/providers/feathers_provider";
-import { useAuth } from "@/providers/auth_provider";
+import { useAuth } from "@providers/auth_provider";
+import { useAppTheme } from "@providers/style_provider";
 
 export default function LoginPage() {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,7 +42,7 @@ export default function LoginPage() {
         <View style={{ height: 2 * theme.spacing.xl }} />
         <Button
           mode="contained"
-          buttonColor={theme.colors.highlight}
+          buttonColor={theme.colors.primary}
           onPress={handleLogin}
           style={{ borderRadius: 4 }}
           loading={loading}
@@ -58,11 +57,11 @@ export default function LoginPage() {
         <Button
           mode="outlined"
           onPress={() => router.push("/register")}
-          style={{ borderRadius: 4, borderColor: theme.colors.highlight }}
+          style={{ borderRadius: 4, borderColor: theme.colors.primary }}
           loading={loading}
           disabled={loading}
         >
-          <Text variant="labelMedium" style={{ color: theme.colors.highlight, fontWeight: "bold" }}>
+          <Text variant="labelMedium" style={{ color: theme.colors.primary, fontWeight: "bold" }}>
             Sign up
           </Text>
         </Button>

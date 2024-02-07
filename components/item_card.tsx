@@ -1,10 +1,10 @@
 import { Text, Card } from "react-native-paper";
-import { theme } from "@styles";
 import { View, GestureResponderEvent, StyleSheet, ViewStyle } from "react-native";
-import { TimeIcon, LocationIcon } from "@/components/icons";
+import { TimeIcon, LocationIcon } from "@components/icons";
 import { Artifact } from "@models";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import { useAppTheme } from "@providers/style_provider";
 
 export interface Props {
   onPress?: (e: GestureResponderEvent) => void;
@@ -14,6 +14,7 @@ export interface Props {
   style?: ViewStyle;
 }
 export default (props: Props) => {
+  const { theme } = useAppTheme();
   const { item, onPress, onLongPress, style } = props;
   const imageUri = item.image ?? require("@assets/images/demo_item.png");
 
@@ -32,7 +33,7 @@ export default (props: Props) => {
       <Card.Cover source={imageUri} resizeMode="cover" style={_style.cardImg} />
       <Card.Content style={{ paddingHorizontal: 0, paddingBottom: 0 }}>
         <LinearGradient
-          colors={theme.colors.gradientGrey}
+          colors={theme.colors.gradientBlack}
           start={{ x: 0, y: 1 }}
           end={{ x: 1, y: 0 }}
           style={[_style.cardContext, { paddingVertical: theme.spacing.sm, paddingHorizontal: theme.spacing.md }]}

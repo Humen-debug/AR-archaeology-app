@@ -1,4 +1,3 @@
-import { AppTheme, useAppTheme } from "@/styles";
 import { router } from "expo-router";
 import _ from "lodash";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -8,6 +7,7 @@ import { Drawer, IconButton } from "react-native-paper";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "./auth_provider";
+import { useAppTheme, AppTheme } from "./style_provider";
 
 interface DrawerContext {
   open: boolean;
@@ -17,7 +17,7 @@ interface DrawerContext {
 const DrawerStore = createContext<DrawerContext | null>(null);
 
 export const DrawerProvider = ({ children }: { children: JSX.Element | JSX.Element[] }) => {
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
   const screen = Dimensions.get("window");
   const safePadding = useSafeAreaInsets();
   const { logout, user } = useAuth();
