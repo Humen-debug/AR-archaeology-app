@@ -34,7 +34,7 @@ const fontConfig = {
   // titleLarge: {},
   titleMedium: { ..._titleFontVar.titleMedium, fontSize: 16, fontWeight: "600", lineHeight: 20 },
   titleSmall: { ..._titleFontVar.titleSmall, fontSize: 12 },
-  // labelLarge: {},
+  labelLarge: { ..._baseFontVar.titleMedium, fontSize: 20 },
   labelMedium: { ..._baseFontVar.labelMedium, fontSize: 16, fontWeight: "600", lineHeight: 20 },
   labelSmall: { ..._baseFontVar.labelSmall, fontSize: 12 },
   bodySmall: {
