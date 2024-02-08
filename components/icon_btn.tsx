@@ -15,6 +15,7 @@ interface IconBtnProps {
   square?: boolean;
   iconProps?: IconProps;
   icon: string | ((props?: IconProps) => JSX.Element) | JSX.Element;
+  backgroundColor?: string[] | string;
 }
 export type Props = IconBtnProps & GenericTouchableProps & TouchableOpacityProps;
 
@@ -33,10 +34,16 @@ export default function IconBtn(props: Props) {
   } else {
     IconComponent = props.icon;
   }
+  const backgroundColors = Array.isArray(props.backgroundColor)
+    ? props.backgroundColor
+    : props.backgroundColor
+    ? [props.backgroundColor, props.backgroundColor]
+    : [theme.colors.container, theme.colors.container];
+
   return (
     <TouchableOpacity {...props}>
       <View style={[_style.container, { width: props.size ?? 48, height: props.size ?? 48 }]}>
-        <LinearGradient colors={theme.colors.gradientBlack} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={_style.gradient}>
+        <LinearGradient colors={backgroundColors} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={_style.gradient}>
           <IconComponent {...props.iconProps} />
         </LinearGradient>
       </View>

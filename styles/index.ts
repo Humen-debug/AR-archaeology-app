@@ -1,4 +1,4 @@
-import { MD3LightTheme, configureFonts, MD3DarkTheme } from "react-native-paper";
+import { MD3LightTheme, configureFonts, MD3DarkTheme, shadow } from "react-native-paper";
 
 export const customFonts = {
   "Poppins-Bold": require("@assets/fonts/Poppins-Bold.ttf"),
@@ -13,7 +13,7 @@ export const customFonts = {
 };
 
 const _baseFontConfig = {
-  fontFamily: "Poppins-Regular",
+  fontFamily: "Poppins",
 } as const;
 
 const _baseFontVar = configureFonts({ config: _baseFontConfig });
@@ -23,14 +23,14 @@ const fontConfig = {
   // displayMedium: {},
   // displaySmall: {},
   // headlineLarge: {},
-  headlineMedium: { ..._baseFontVar.headlineMedium, fontSize: 32, fontWeight: "500" },
-  headlineSmall: { ..._baseFontVar.headlineSmall, fontSize: 24, fontWeight: "600" },
+  headlineMedium: { ..._baseFontVar.headlineMedium, fontSize: 32, fontWeight: "600" },
+  headlineSmall: { ..._baseFontVar.headlineSmall, fontSize: 24, fontWeight: "700" },
   // titleLarge: {},
-  titleMedium: { ..._baseFontVar.titleMedium, fontSize: 16, fontWeight: "600", lineHeight: 20 },
+  titleMedium: { ..._baseFontVar.titleMedium, fontSize: 20, fontWeight: "700", lineHeight: 20 },
   titleSmall: { ..._baseFontVar.titleSmall, fontSize: 12 },
-  labelLarge: { ..._baseFontVar.titleMedium, fontSize: 16 },
-  labelMedium: { ..._baseFontVar.labelMedium, fontSize: 14, fontWeight: "600", lineHeight: 20 },
-  labelSmall: { ..._baseFontVar.labelSmall, fontSize: 12, fontWeight: "600" },
+  labelLarge: { ..._baseFontVar.titleMedium, fontSize: 16, fontWeight: "700" },
+  labelMedium: { ..._baseFontVar.labelMedium, fontSize: 14, fontWeight: "700", lineHeight: 20 },
+  labelSmall: { ..._baseFontVar.labelSmall, fontSize: 12, fontWeight: "700" },
   bodySmall: { ..._baseFontVar.bodySmall, fontSize: 12 },
   bodyMedium: { ..._baseFontVar.bodyMedium, fontSize: 14 },
   bodyLarge: { ..._baseFontVar.bodyLarge, fontSize: 16 },
@@ -75,20 +75,23 @@ export const lightTheme = {
     tertiary: "#DEA516",
     success: "#AAB624",
     error: "#F13B13",
-    background: "#FFFDFC",
+    background: "#F6F6F6",
     container: "#FFFFFF",
     grey1: "#1C1C1C",
     grey2: "#6D6D6D",
     grey3: "#A5AAB0",
     grey4: "#DEE3E4",
     text: "#1C1C1C",
+    textOnPrimary: "#FFFFFD",
 
     white: "#FFFFFF",
     black: "#000000",
 
     gradient: ["#00AAF8", "#0160D6"],
     gradientBlack: ["#2D302D", "#2C2F2C"],
+    shadowColor: "#00000026",
   },
+
   spacing: spacings,
   borderRadius: borderRadius,
   breakpoint: breakpoint,
@@ -112,12 +115,15 @@ export const darkTheme = {
     grey3: "#90959A",
     grey4: "#AEB0B4",
     text: "#FFFFFF",
+    textOnPrimary: "#1C1C1C",
 
     white: "#FFFFFF",
     black: "#000000",
 
     gradient: ["##009EE7", "#0054BC"],
     gradientBlack: ["#2D302D", "#2C2F2C"],
+
+    shadowColor: "#0000004D",
   },
   spacing: spacings,
   borderRadius: borderRadius,

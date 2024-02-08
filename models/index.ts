@@ -1,7 +1,7 @@
-// configure monogdb Realm schemas
-import { Artifact, File } from "./artifact";
-import { Tag } from "./tag";
-import { User } from "./user";
-import { Location } from "./location";
-
-export { Artifact, File, Tag, User, Location };
+export { Artifact, File } from "./artifact";
+export { Tag } from "./tag";
+export { User } from "./user";
+export { Location, Route, DifficultyLevel, GeoPoint } from "./location";
+export { Document } from "./document";
+export { Content } from "./utils";
+export { Attraction, OpenHour, AttractionType, Weekday } from "./attraction";

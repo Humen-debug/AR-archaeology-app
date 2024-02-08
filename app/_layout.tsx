@@ -7,7 +7,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { AuthProvider } from "@providers/auth_provider";
 import { FeathersProvider } from "@providers/feathers_provider";
-import { StyleProvider } from "@providers/style_provider";
+import { StyleProvider, useAppTheme } from "@providers/style_provider";
 
 export default function RootLayout() {
   const [loadedFont, error] = useFonts(customFonts);
@@ -19,24 +19,37 @@ export default function RootLayout() {
           <BottomSheetModalProvider>
             <FeathersProvider>
               <AuthProvider>
-                <Stack screenOptions={{ headerShown: false }}>
-                  <Stack.Screen name="(tabs)" />
-                  <Stack.Screen name="login" />
-                  <Stack.Screen name="register" />
-                  <Stack.Screen name="search_result" options={{}} />
-                  <Stack.Screen name="category" options={{}} />
-                  <Stack.Screen name="detail" options={{}} />
-                  <Stack.Screen name="ar_placement" options={{}} />
-                  <Stack.Screen name="ar_explore" options={{}} />
-                  <Stack.Screen name="collection" options={{}} />
-                  <Stack.Screen name="profile" />
-                </Stack>
-                <StatusBar style="light" />
+                <StackLayout />
               </AuthProvider>
             </FeathersProvider>
           </BottomSheetModalProvider>
         </GestureHandlerRootView>
       </SafeAreaProvider>
     </StyleProvider>
+  );
+}
+
+/**
+ * Separates the layouts from above so that we can use `useAppTheme` context.
+ * @returns Stack Layout and a Status Bar
+ */
+function StackLayout() {
+  const { style } = useAppTheme();
+  return (
+    <>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="(auth)/login" />
+        <Stack.Screen name="(auth)/register" />
+        <Stack.Screen name="search_result" options={{}} />
+        <Stack.Screen name="category" options={{}} />
+        <Stack.Screen name="detail" options={{}} />
+        <Stack.Screen name="ar_placement" options={{}} />
+        <Stack.Screen name="ar_explore" options={{}} />
+        <Stack.Screen name="collection" options={{}} />
+        <Stack.Screen name="profile" />
+      </Stack>
+      <StatusBar style={style === "system" ? "auto" : style === "dark" ? "light" : "dark"} />
+    </>
   );
 }

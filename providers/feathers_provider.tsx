@@ -1,7 +1,9 @@
 import { createContext, useContext } from "react";
-import { feathers, Application } from "@feathersjs/feathers";
+import { feathers, Application, Paginated } from "@feathersjs/feathers";
 import fio from "@feathersjs/socketio-client";
 import socketio from "socket.io-client";
+
+export { Paginated };
 
 let connected = false;
 function createClient(baseURL?: string) {

@@ -9,6 +9,7 @@ import ExploreItem from "@components/map/explore_item";
 import ExploreModal from "@components/map/explore_modal";
 import Animated, { useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { useAppTheme } from "@providers/style_provider";
+import { getBoundaries } from "@/plugins/geolocation";
 
 export const POINTS = [
   {
@@ -40,28 +41,10 @@ export const POINTS = [
   },
 ];
 
-export const getBoundaries = (points: { latitude: number; longitude: number }[]) => {
-  let north = -Infinity,
-    east = -Infinity;
-  let west = Infinity,
-    south = Infinity;
-  for (const point of points) {
-    const { latitude, longitude } = point;
-    if (latitude > north) north = latitude;
-    if (latitude < south) south = latitude;
-    if (longitude > east) east = longitude;
-    if (longitude < west) west = longitude;
-  }
-  return {
-    northEast: { latitude: north, longitude: east },
-    southWest: { latitude: south, longitude: west },
-  };
-};
-
 export default function Explore() {
   const { theme } = useAppTheme();
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id?: string }>();
+  const { id, latitude, longitude } = useLocalSearchParams<{ id?: string; latitude?: string; longitude?: string }>();
   const itemWidth = 300;
   const itemSpacing = 10;
   const { width: screenWidth, height: screenHeight } = Dimensions.get("window");

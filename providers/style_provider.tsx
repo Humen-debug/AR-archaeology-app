@@ -4,7 +4,7 @@ import { PaperProvider } from "react-native-paper";
 
 export { AppTheme };
 
-export type StyleEnum = "dark" | "light" | "system";
+export type StyleEnum = "dark" | "light";
 class StyleState {
   style: StyleEnum;
   theme: AppTheme;

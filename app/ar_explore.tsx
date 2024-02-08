@@ -25,27 +25,12 @@ import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/Vi
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import { THREE } from "expo-three";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
+import { distanceFromLatLonInKm } from "@/plugins/geolocation";
 /*
  * stackoverflow.com/questions/47419496/augmented-reality-with-react-native-points-of-interest-over-the-camera
  * Solution to convert latitude and longitude to device's local coordinates and vice versa
  * https://github.com/ViroCommunity/geoar/blob/master/App.js for coding
  */
-
-const distanceBetweenPoints = (p1: LatLong | undefined, p2: LatLong | undefined) => {
-  if (!p1 || !p2) {
-    return 0;
-  }
-
-  var R = 6371; // Radius of the Earth in km
-  var dLat = ((p2.latitude - p1.latitude) * Math.PI) / 180;
-  var dLon = ((p2.longitude - p1.longitude) * Math.PI) / 180;
-  var a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((p1.latitude * Math.PI) / 180) * Math.cos((p2.latitude * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  var d = R * c;
-  return d;
-};
 
 const latLongToMerc = (latDeg: number, longDeg: number) => {
   // From: https://gist.github.com/scaraveos/5409402
@@ -119,14 +104,14 @@ const getNextPoint = (targetId: number, points: LatLong[], location: LatLong) =>
   if (points.length > 1) {
     for (let i = 0; i < points.length - 1; i++) {
       const p = getClosestPointOnPath([points[i], points[i + 1]], location);
-      const d = distanceBetweenPoints(p, location);
+      const d = distanceFromLatLonInKm(p, location);
       if (closestDistance == -1 || closestDistance > d) {
         closestDistance = d;
 
         if (d > 0.025) closestPoint = p;
         else
           closestPoint =
-            distanceBetweenPoints(points[i], points[targetId]) < distanceBetweenPoints(points[i + 1], points[targetId]) ? points[i] : points[i + 1];
+            distanceFromLatLonInKm(points[i], points[targetId]) < distanceFromLatLonInKm(points[i + 1], points[targetId]) ? points[i] : points[i + 1];
       }
     }
   }
@@ -366,7 +351,7 @@ export default () => {
           },
         ];
 
-        const distances = locations.map((item, index) => [distanceBetweenPoints(location, item), index]);
+        const distances = locations.map((item, index) => [distanceFromLatLonInKm(location, item), index]);
         if (distances.length !== 0) {
           const minDist = distances.reduce((previousValue, currentValue) => {
             return previousValue[0] < currentValue[0] ? previousValue : currentValue;
@@ -403,7 +388,7 @@ export default () => {
   const getNearestDistance = () => {
     if (!nearestPoint) return undefined;
     // convert km to m
-    const distance = distanceBetweenPoints(location, nearestPoint) * 1000;
+    const distance = distanceFromLatLonInKm(location, nearestPoint) * 1000;
     if (distance > 99) {
       return ">100m";
     } else if (distance > 49) {

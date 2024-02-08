@@ -1,9 +1,7 @@
-import { Artifact } from "./artifact";
-
 export class User {
   _id?: string;
-  name?: String;
-  email?: String;
+  name?: string;
+  email?: string;
   createdAt?: Date = new Date();
   bookmarks?: string[];
   collections?: string[];

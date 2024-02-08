@@ -1,4 +1,4 @@
-import { Tag } from "./tag";
+import { Model } from "./utils";
 
 export class File {
   object!: string;
@@ -6,8 +6,7 @@ export class File {
   texture?: string;
 }
 
-export class Artifact {
-  _id: string;
+export class Artifact extends Model {
   name!: string;
   image?: string;
   desc?: string;

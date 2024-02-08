@@ -1,8 +1,9 @@
 import { View, StyleSheet, useWindowDimensions } from "react-native";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { TouchableRipple } from "react-native-paper";
+
+export const NAVBAR_HEIGHT = 64;
 
 export default function NavBar({ state, descriptors, navigation, insets }: BottomTabBarProps) {
   const { theme } = useAppTheme();
@@ -69,12 +70,12 @@ const useStyle = (theme: AppTheme, barWidth: number) =>
       backgroundColor: "transparent",
     },
     bar: {
-      height: 64,
+      height: NAVBAR_HEIGHT,
       width: "100%",
       position: "relative",
       display: "flex",
       flexDirection: "row",
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.container,
     },
     barItem: {
       height: "100%",
