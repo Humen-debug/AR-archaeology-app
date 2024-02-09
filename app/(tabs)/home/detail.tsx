@@ -54,15 +54,7 @@ export default function Page() {
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.md }}>
           {item.thumbnails && <Carousel images={item.thumbnails} />}
 
-          <View
-            style={{
-              flexDirection: "column",
-              paddingHorizontal: theme.spacing.lg,
-              rowGap: theme.spacing.sm,
-              marginTop: theme.spacing.md,
-              marginBottom: theme.spacing.xl,
-            }}
-          >
+          <View style={style.topSection}>
             <Text variant="headlineSmall" style={{ color: theme.colors.text }}>
               {item.name}
             </Text>
@@ -141,6 +133,13 @@ export default function Page() {
 const useStyle = ({ theme, screenWidth }: { theme: AppTheme; screenWidth: number }) =>
   StyleSheet.create({
     center: { flex: 1, justifyContent: "center", alignContent: "center" },
+    topSection: {
+      flexDirection: "column",
+      paddingHorizontal: theme.spacing.lg,
+      rowGap: theme.spacing.sm,
+      marginTop: theme.spacing.md,
+      marginBottom: theme.spacing.xl,
+    },
     image: { resizeMode: "cover" },
     thumbnail: {
       width: screenWidth,

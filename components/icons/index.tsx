@@ -3,6 +3,8 @@ export { default as BackpackIcon } from "@assets/icons/backpack.svg";
 export { default as BookmarkOutlineIcon } from "@assets/icons/bookmark-outline.svg";
 export { default as BookmarkIcon } from "@assets/icons/bookmark.svg";
 export { default as BoxIcon } from "@assets/icons/box.svg";
+export { default as CalendarIcon } from "@assets/icons/calendar-fill.svg";
+export { default as CalendarOutlinedIcon } from "@assets/icons/calendar-line.svg";
 export { default as ChevronLeftIcon } from "@assets/icons/chevron-left.svg";
 export { default as CreateARIcon } from "@assets/icons/create-ar.svg";
 export { default as CompassIcon } from "@assets/icons/compass.svg";

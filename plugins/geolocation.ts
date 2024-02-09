@@ -4,6 +4,7 @@ export function distanceFromLatLonInKm(p1?: LatLng, p2?: LatLng) {
   if (!p1 || !p2) return 0;
   const { latitude: lat1, longitude: lon1 } = p1;
   const { latitude: lat2, longitude: lon2 } = p2;
+  if (lat1 === undefined || lon1 === undefined || lat2 === undefined || lon2 === undefined) return 0;
   var R = 6371; // Radius of the earth in km
   var dLat = deg2rad(lat2 - lat1); // deg2rad below
   var dLon = deg2rad(lon2 - lon1);
@@ -18,10 +19,15 @@ function deg2rad(deg: number) {
 }
 
 export function getBoundaries(points: LatLng[]) {
-  let north = -Infinity,
-    east = -Infinity;
-  let west = Infinity,
-    south = Infinity;
+  let north = -90,
+    east = -180;
+  let west = 89,
+    south = 179;
+  if (!points)
+    return {
+      northEast: { latitude: north, longitude: east },
+      southWest: { latitude: south, longitude: west },
+    };
   for (const point of points) {
     const { latitude, longitude } = point;
     if (latitude > north) north = latitude;

@@ -1,37 +1,19 @@
-import { AppBar, EventItem, EventItemProps, MainBody, NAVBAR_HEIGHT } from "@/components";
-import { useFeathers } from "@/providers/feathers_provider";
+import { AppBar, EventItem, MainBody, NAVBAR_HEIGHT } from "@/components";
+import { Event } from "@/models";
+import { Paginated, useFeathers } from "@/providers/feathers_provider";
 import { useAppTheme, AppTheme } from "@/providers/style_provider";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, ScrollView, StyleSheet, View } from "react-native";
 import { Calendar, CalendarUtils, DateData } from "react-native-calendars";
 import { MarkedDates } from "react-native-calendars/src/types";
-import { Button, Text } from "react-native-paper";
-
-// demo, need to be deleted once implement event data
-const DATA = [
-  {
-    name: "Pottery Making",
-    briefDesc: "Get your hands dirty and try out these great pottery classes",
-    startDate: new Date(),
-  },
-  {
-    name: "Pottery Painting",
-    briefDesc: "There is a lot of fun things to do, let’s paint your own pottery",
-    startDate: new Date(),
-    endDate: new Date(new Date().getTime() + 1000 * 3600 * 24),
-  },
-  {
-    name: "Pottery Festival",
-    briefDesc: "There is a lot of fun things to do, let’s paint your own pottery",
-    startDate: new Date(),
-    endDate: new Date(new Date().getTime() + 1000 * 3600 * 24),
-  },
-];
+import { ActivityIndicator, Button, Text } from "react-native-paper";
 
 export default function Page() {
   const feathers = useFeathers();
   const { theme } = useAppTheme();
   const style = useStyle({ theme });
+  const [loaded, setLoaded] = useState(false);
+  const [events, setEvents] = useState<Event[]>([]);
 
   const initDate = CalendarUtils.getCalendarDateString(new Date());
   const minDate = initDate;
@@ -58,6 +40,18 @@ export default function Page() {
     setSelectedDate(null);
   }, []);
 
+  useEffect(() => {
+    async function init() {
+      try {
+        const res: Paginated<Event> = await feathers.service("events").find({ query: { $sort: "startDate,order" } });
+        setEvents(res.data);
+      } finally {
+        setLoaded(true);
+      }
+    }
+    init();
+  }, []);
+
   return (
     <MainBody padding={{ top: 0 }}>
       <AppBar showBack title="What's Hot!" />
@@ -77,31 +71,32 @@ export default function Page() {
         </View>
         <Calendar enableSwipeMonths current={initDate} minDate={minDate} onDayPress={onDayPress} markedDates={markedDates} />
       </View>
-      <FlatList
-        contentContainerStyle={{
-          flexGrow: 1,
-          paddingTop: theme.spacing.lg,
-          paddingBottom: NAVBAR_HEIGHT + theme.spacing.md,
-          paddingHorizontal: theme.spacing.sm,
-        }}
-        data={DATA}
-        ItemSeparatorComponent={() => <View style={{ height: theme.spacing.md }} />}
-        renderItem={({ item }) => {
-          const props: EventItemProps = {
-            name: item.name,
-            briefDesc: item.briefDesc,
-            startDate: item.startDate,
-            endDate: item.endDate,
-          };
-          return <EventItem {...props} />;
-        }}
-      />
+      {!loaded ? (
+        <View style={style.center}>
+          <ActivityIndicator size={"large"} />
+        </View>
+      ) : (
+        <FlatList
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingTop: theme.spacing.lg,
+            paddingBottom: NAVBAR_HEIGHT + theme.spacing.md,
+            paddingHorizontal: theme.spacing.sm,
+          }}
+          data={events}
+          ItemSeparatorComponent={() => <View style={{ height: theme.spacing.md }} />}
+          renderItem={({ item }) => {
+            return <EventItem {...item} />;
+          }}
+        />
+      )}
     </MainBody>
   );
 }
 
 const useStyle = ({ theme }: { theme: AppTheme }) =>
   StyleSheet.create({
+    center: { flex: 1, justifyContent: "center", alignContent: "center" },
     calendarContainer: {
       flexDirection: "column",
       backgroundColor: theme.colors.container,

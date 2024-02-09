@@ -59,7 +59,9 @@ export default function ExploreModal({ open, setOpen, data }: ExploreModalProps)
                   icon={() => <GPSIcon fill="white" width={14} height={14} />}
                   labelStyle={style.button}
                 >
-                  <Text variant="bodyMedium">Start</Text>
+                  <Text variant="bodyMedium" style={{ color: theme.colors.textOnPrimary }}>
+                    Start
+                  </Text>
                 </Button>
                 <Button
                   mode="outlined"
@@ -73,7 +75,9 @@ export default function ExploreModal({ open, setOpen, data }: ExploreModalProps)
                 </Button>
               </View>
             </ScrollView>
-            <Text>{data.desc}</Text>
+            <Text variant="bodyMedium" style={{ color: theme.colors.text }}>
+              {data.desc}
+            </Text>
           </BottomSheetScrollView>
         )}
       </BottomSheetModal>

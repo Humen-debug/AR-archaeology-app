@@ -9,7 +9,7 @@ interface ItemProps {
   length?: number; // in km
   isSaved?: boolean;
   images?: string[] | null;
-  POINTS: any[];
+  points: any[];
   id: number;
   modalCLose?: () => void;
 }
@@ -28,7 +28,7 @@ export default function ExploreItem(item: ItemProps) {
 
   const fetchNextPoints = () => {
     if (modalCLose) modalCLose();
-    const POINTSString = item.POINTS.map(({ _id, latitude, longitude }) => {
+    const POINTSString = item.points.map(({ _id, latitude, longitude }) => {
       return { _id, latitude, longitude }; // Removed desc and title as it is unused
     });
     router.push({ pathname: "/ar_explore", params: { POINTS: JSON.stringify(POINTSString), targetId: item.id } });
@@ -37,7 +37,9 @@ export default function ExploreItem(item: ItemProps) {
   return (
     <View style={_style.item}>
       <>
-        <Text variant="labelLarge">{title}</Text>
+        <Text variant="labelLarge" style={{ color: theme.colors.text }}>
+          {title}
+        </Text>
         {length && (
           <Text variant="labelMedium" style={_style.lengthText}>
             {length} km
@@ -107,6 +109,10 @@ const useStyle = ({ backgroundColor, spacing, labelGrey, withImage, itemWidth }:
     },
     button: {
       paddingHorizontal: 16,
+      flexDirection: "row",
+      alignContent: "center",
+      justifyContent: "center",
+      alignItems: "center",
     },
     icon: {
       // maxHeight: 16,

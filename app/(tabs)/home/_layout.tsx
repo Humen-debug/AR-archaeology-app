@@ -8,6 +8,7 @@ export default function StackLayout() {
       <Stack.Screen name="livings" />
       <Stack.Screen name="hiking" />
       <Stack.Screen name="route" />
+      <Stack.Screen name="event" />
       <Stack.Screen name="events" />
       <Stack.Screen name="attractions" />
     </Stack>

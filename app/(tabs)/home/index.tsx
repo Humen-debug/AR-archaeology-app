@@ -2,7 +2,6 @@ import { Button, Text } from "react-native-paper";
 import { MainBody } from "@components";
 import { View, StyleSheet, ImageBackground, useWindowDimensions, Pressable } from "react-native";
 import { useState } from "react";
-import { POINTS } from "../map";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { useAuth } from "@providers/auth_provider";
 import { Link, router } from "expo-router";
@@ -151,7 +150,12 @@ export default function Home() {
 
       {/* Map */}
       <View style={{ flexGrow: 0, flexShrink: 1 }}>
-        <MapPreview points={POINTS} style={[style.mapContainer, style.fill]} />
+        <MapPreview points={[]} style={[style.mapContainer, style.fill]} />
+        <View style={{ position: "absolute", top: theme.spacing.md, right: theme.spacing.sm }}>
+          <Text variant="titleMedium" style={style.mapLabel}>
+            Map of Valley
+          </Text>
+        </View>
       </View>
     </MainBody>
   );
@@ -208,5 +212,11 @@ const useStyle = ({ theme, screenWidth }: { theme: AppTheme; screenWidth: number
       height: 1,
       width: "100%",
       backgroundColor: theme.colors.grey4,
+    },
+    mapLabel: {
+      color: "white",
+      textShadowColor: "black",
+      textShadowRadius: 8,
+      elevation: 8,
     },
   });

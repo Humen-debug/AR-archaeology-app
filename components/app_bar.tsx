@@ -17,7 +17,7 @@ export default function AppBar(props: Props) {
   return (
     <Appbar.Header style={{ backgroundColor: props.backgroundColor ?? theme.colors.container }}>
       {props.showBack && navigation.canGoBack() && <Appbar.BackAction onPress={navigation.goBack} />}
-      <Appbar.Content title={props.title ?? ""} />
+      <Appbar.Content title={props.title ?? ""} titleStyle={{ fontWeight: "700" }} />
       {(props.actions || []).map((actionProps, index) => (
         <Appbar.Action key={index} {...actionProps} />
       ))}

@@ -2,7 +2,7 @@ import { GeoPoint } from "@/models";
 import { getBoundaries } from "@/plugins/geolocation";
 import { useAppTheme } from "@/providers/style_provider";
 import { router } from "expo-router";
-import { createRef, useEffect, useState } from "react";
+import { createRef, useEffect, useMemo, useState } from "react";
 import { Platform, StyleProp, View, ViewStyle } from "react-native";
 import MapView, { LatLng, Marker, Region } from "react-native-maps";
 
@@ -17,11 +17,11 @@ export interface Props {
 export default function MapPreview({ points, style, onMapPress, initialRegion, miniZoomLevel = 15 }: Props) {
   const ref = createRef<MapView>();
   const [isAnimate, setIsAnimate] = useState(false);
-  const bound = getBoundaries(points);
   const { style: appStyle } = useAppTheme();
 
+  const bound = useMemo(() => getBoundaries(points), [points]);
   useEffect(() => {
-    if (ref.current && Platform.OS !== "ios") {
+    if (ref.current && Platform.OS !== "ios" && points.length) {
       ref.current.setMapBoundaries?.(bound.northEast, bound.southWest);
     }
   }, []);
@@ -33,7 +33,7 @@ export default function MapPreview({ points, style, onMapPress, initialRegion, m
       <MapView
         ref={ref}
         style={{ width: "100%", height: "100%" }}
-        initialRegion={initialRegion ?? { ...(points[0] ?? vediFortress), latitudeDelta: 0.009, longitudeDelta: 0.009 }}
+        initialRegion={initialRegion ?? { ...(points?.[0] ?? vediFortress), latitudeDelta: 0.009, longitudeDelta: 0.009 }}
         mapType="satellite"
         minZoomLevel={miniZoomLevel}
         rotateEnabled={false}
@@ -42,11 +42,13 @@ export default function MapPreview({ points, style, onMapPress, initialRegion, m
           if (onMapPress) {
             onMapPress();
           } else {
-            router.replace({ pathname: "/map" });
+            const { latitude, longitude } = points?.[0];
+            const params = !!latitude && !!longitude ? { latitude, longitude } : {};
+            router.replace({ pathname: "/map", params: params });
           }
         }}
         onRegionChangeComplete={(region) => {
-          if (!isAnimate) {
+          if (!isAnimate && points.length) {
             let needUpdate = false;
             const newRegion = { ...region };
             if (region.latitude > bound.northEast.latitude) {
@@ -73,7 +75,7 @@ export default function MapPreview({ points, style, onMapPress, initialRegion, m
           } else setIsAnimate(false);
         }}
       >
-        {points.map((point) => (
+        {(points || []).map((point) => (
           <Marker
             key={point._id}
             coordinate={point}

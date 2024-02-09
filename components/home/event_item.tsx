@@ -1,39 +1,22 @@
+import { Event } from "@models";
 import { getThumb } from "@/plugins/utils";
 import { AppTheme, useAppTheme } from "@/providers/style_provider";
-import { router } from "expo-router";
-import { Href } from "expo-router/build/link/href";
+import { Link } from "expo-router";
 import moment from "moment";
-import { useCallback, useMemo } from "react";
-import { Image, StyleSheet, View } from "react-native";
-import { Text, TouchableRipple } from "react-native-paper";
+import { Image, Pressable, StyleSheet, View } from "react-native";
+import { Text } from "react-native-paper";
 
-export interface Props {
-  name: string;
-  briefDesc?: string;
-  images?: string[];
-  href?: Href;
-  onPress?: () => void;
-  startDate: Date;
-  endDate?: Date;
-}
-
-export default function EventItem({ name, briefDesc, images, href, startDate, endDate, ...props }: Props) {
+export default function EventItem({ _id, name, briefDesc, images, startDate, endDate, ...props }: Event) {
   const { theme } = useAppTheme();
   const style = useStyle({ theme });
   const image: string | undefined = images?.[0];
-  const onPress = useCallback(() => {
-    if (href) {
-      router.push(href);
-    } else {
-      props.onPress?.();
-    }
-  }, []);
 
   function getDateLabel(date: Date) {
+    if (!date) return <></>;
     return (
       <>
         <Text variant="headlineSmall" style={{ color: theme.colors.textOnPrimary }}>
-          {date.getDate()}
+          {moment(date).date()}
         </Text>
         <Text variant="bodySmall" style={{ fontWeight: "700", color: theme.colors.textOnPrimary, marginTop: -8 }}>
           {moment(date).format("MMM")}
@@ -41,33 +24,36 @@ export default function EventItem({ name, briefDesc, images, href, startDate, en
       </>
     );
   }
+
   return (
-    <TouchableRipple onPress={onPress}>
-      <View style={style.card}>
-        {image ? (
-          <View style={style.imagePlaceholder}>
-            <Image source={{ uri: getThumb(image) }} style={style.image} />
+    <Link href={{ pathname: "/home/event", params: { id: _id } }} asChild>
+      <Pressable>
+        <View style={style.card}>
+          {image ? (
+            <View style={style.imagePlaceholder}>
+              <Image source={{ uri: getThumb(image) }} style={style.image} />
+            </View>
+          ) : (
+            <View style={style.imagePlaceholder} />
+          )}
+          <View style={style.content}>
+            <Text variant="labelLarge" style={{ color: theme.colors.text }}>
+              {name}
+            </Text>
+            <Text variant="bodyMedium" style={{ color: theme.colors.text }}>
+              {briefDesc}
+            </Text>
           </View>
-        ) : (
-          <View style={style.imagePlaceholder} />
-        )}
-        <View style={style.content}>
-          <Text variant="labelLarge" style={{ color: theme.colors.text }}>
-            {name}
-          </Text>
-          <Text variant="bodyMedium" style={{ color: theme.colors.text }}>
-            {briefDesc}
-          </Text>
-        </View>
-        <View style={style.dateStack}>
-          <View style={style.dateContainer}>
-            {getDateLabel(startDate)}
-            {endDate && <View style={style.toSign} />}
-            {endDate && getDateLabel(endDate)}
+          <View style={style.dateStack}>
+            <View style={style.dateContainer}>
+              {getDateLabel(startDate)}
+              {endDate && <View style={style.toSign} />}
+              {endDate && getDateLabel(endDate)}
+            </View>
           </View>
         </View>
-      </View>
-    </TouchableRipple>
+      </Pressable>
+    </Link>
   );
 }
 

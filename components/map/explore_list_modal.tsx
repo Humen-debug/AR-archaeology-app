@@ -77,7 +77,7 @@ export default function ExploreListModal({ open, setOpen, data }: { open: boolea
           <View style={_style.list}>
             {data.map(({ title, length, save, images, id }, index) => (
               <View key={index}>
-                <ExploreItem title={title} length={length} isSaved={save} images={images} POINTS={data} id={index} modalCLose={modalCLose} />
+                <ExploreItem title={title} length={length} isSaved={save} images={images} points={data} id={index} modalCLose={modalCLose} />
                 <Divider style={{ backgroundColor: "black", marginHorizontal: -theme.spacing.lg }} />
               </View>
             ))}
