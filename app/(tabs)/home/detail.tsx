@@ -1,6 +1,7 @@
 import { AppBar, Carousel, ContentItem, MainBody, NAVBAR_HEIGHT } from "@/components";
+import MapPreview from "@/components/map/map_preview";
 import { BookmarkOutlineIcon, CompassIcon, LocationIcon } from "@components/icons";
-import { Attraction } from "@models";
+import { Attraction, GeoPoint } from "@models";
 import { useFeathers } from "@providers/feathers_provider";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { router, useLocalSearchParams } from "expo-router";
@@ -53,7 +54,15 @@ export default function Page() {
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.md }}>
           {item.thumbnails && <Carousel images={item.thumbnails} />}
 
-          <View style={{ flexDirection: "column", paddingHorizontal: theme.spacing.lg, rowGap: theme.spacing.sm, marginTop: theme.spacing.md }}>
+          <View
+            style={{
+              flexDirection: "column",
+              paddingHorizontal: theme.spacing.lg,
+              rowGap: theme.spacing.sm,
+              marginTop: theme.spacing.md,
+              marginBottom: theme.spacing.xl,
+            }}
+          >
             <Text variant="headlineSmall" style={{ color: theme.colors.text }}>
               {item.name}
             </Text>
@@ -68,10 +77,23 @@ export default function Page() {
                 </Text>
               )
             )}
+          </View>
 
-            {/* Buttons */}
-            {canNavigate && (
-              <View style={{ flexDirection: "row", columnGap: theme.spacing.xs }}>
+          {/* Map */}
+          {canNavigate && (
+            <View style={{ flexDirection: "column" }}>
+              <Text variant="titleMedium" style={{ color: theme.colors.text, paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.xs }}>
+                Explore the area
+              </Text>
+              <MapPreview points={[item as GeoPoint]} style={style.map} miniZoomLevel={13} />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  paddingHorizontal: theme.spacing.lg,
+                  paddingVertical: theme.spacing.xs,
+                }}
+              >
                 <Button
                   mode="contained"
                   onPress={() => router.replace({ pathname: "/map", params: { latitude: item.latitude, longitude: item.longitude } })}
@@ -80,7 +102,7 @@ export default function Page() {
                   icon={() => <LocationIcon fill={theme.colors.textOnPrimary} size={20} />}
                 >
                   <Text variant="labelMedium" style={{ color: theme.colors.textOnPrimary }}>
-                    Show on Map
+                    View in a map
                   </Text>
                 </Button>
                 <Button
@@ -89,12 +111,12 @@ export default function Page() {
                   icon={() => <CompassIcon fill={theme.colors.primary} size={20} />}
                 >
                   <Text variant="labelMedium" style={{ color: theme.colors.primary }}>
-                    AR tour
+                    Start AR tour
                   </Text>
                 </Button>
               </View>
-            )}
-          </View>
+            </View>
+          )}
 
           {/* Content */}
           {item.content && (
@@ -123,5 +145,9 @@ const useStyle = ({ theme, screenWidth }: { theme: AppTheme; screenWidth: number
     thumbnail: {
       width: screenWidth,
       height: (screenWidth * 9) / 16,
+    },
+    map: {
+      width: screenWidth,
+      height: (screenWidth * 9) / 32,
     },
   });

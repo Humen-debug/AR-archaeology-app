@@ -83,8 +83,16 @@ export default function Page() {
         }}
         ListHeaderComponent={() => {
           return (
-            <View style={{ paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.lg }}>
-              <Text style={{ color: theme.colors.text }}>Vedi is known for its rich history, culture and tradition.</Text>
+            <View
+              style={{
+                paddingHorizontal: theme.spacing.lg,
+                paddingBottom: theme.spacing.lg,
+                paddingTop: theme.spacing.md,
+              }}
+            >
+              <Text variant="bodyMedium" style={{ color: theme.colors.grey2 }}>
+                Armenia is a moutainous country, you can enjoy a heritage and scenic hike.
+              </Text>
             </View>
           );
         }}

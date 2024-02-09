@@ -7,6 +7,23 @@ import { useEffect, useRef, useState } from "react";
 import { FlatList, View } from "react-native";
 import { ActivityIndicator, Text } from "react-native-paper";
 
+const mappingDesc: Record<AttractionType, { title: string; desc?: string }> = {
+  Attraction: {
+    title: "Fun Attractions",
+    desc: "Vedi is know for its rich history, culture and tradition",
+  },
+  Restaurant: {
+    title: "Culinary Delights",
+    desc: "Armenian cuisine is known for its rich flavours and unique combinations of ingredients",
+  },
+  Lodging: {
+    title: "Lodging",
+  },
+  Other: {
+    title: "Others",
+  },
+};
+
 export default function Page() {
   const feathers = useFeathers();
   const { theme } = useAppTheme();
@@ -15,6 +32,7 @@ export default function Page() {
    * @param service refers to the feathers api service's name
    */
   const { type } = useLocalSearchParams<{ type?: AttractionType }>();
+  const _type: AttractionType = type ?? "Attraction";
   const [attractions, setAttractions] = useState<Attraction[]>([]);
   /** initial loading */
   const [loaded, setLoaded] = useState(false);
@@ -37,9 +55,7 @@ export default function Page() {
   }, []);
 
   async function syncData() {
-    const trueType: AttractionType = type ?? "Attraction";
-
-    const query = { $skip: cursor.current, $sort: "order", type: trueType };
+    const query = { $skip: cursor.current, $sort: "order", type: _type };
     const res: Paginated<Attraction> = await feathers.service("attractions").find({
       query: query,
     });
@@ -67,7 +83,7 @@ export default function Page() {
 
   return (
     <MainBody padding={{ top: 0 }}>
-      <AppBar title="Fun Attractions" showBack />
+      <AppBar title={mappingDesc[_type].title} showBack />
       <FlatList
         onScroll={onScroll}
         onEndReached={loadMore}
@@ -94,8 +110,10 @@ export default function Page() {
         }}
         ListHeaderComponent={() => {
           return (
-            <View style={{ paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.lg }}>
-              <Text style={{ color: theme.colors.text }}>Vedi is known for its rich history, culture and tradition.</Text>
+            <View style={{ paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.lg, paddingTop: theme.spacing.md }}>
+              <Text variant="bodyMedium" style={{ color: theme.colors.grey2 }}>
+                {mappingDesc[_type].desc}
+              </Text>
             </View>
           );
         }}

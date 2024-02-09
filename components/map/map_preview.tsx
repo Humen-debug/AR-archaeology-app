@@ -11,9 +11,10 @@ export interface Props {
   style: StyleProp<ViewStyle>;
   onMapPress?: () => void;
   initialRegion?: Region;
+  miniZoomLevel?: number;
 }
 
-export default function MapPreview({ points, style, onMapPress, initialRegion }: Props) {
+export default function MapPreview({ points, style, onMapPress, initialRegion, miniZoomLevel = 15 }: Props) {
   const ref = createRef<MapView>();
   const [isAnimate, setIsAnimate] = useState(false);
   const bound = getBoundaries(points);
@@ -34,7 +35,7 @@ export default function MapPreview({ points, style, onMapPress, initialRegion }:
         style={{ width: "100%", height: "100%" }}
         initialRegion={initialRegion ?? { ...(points[0] ?? vediFortress), latitudeDelta: 0.009, longitudeDelta: 0.009 }}
         mapType="satellite"
-        minZoomLevel={15}
+        minZoomLevel={miniZoomLevel}
         rotateEnabled={false}
         userInterfaceStyle={appStyle}
         onPress={() => {

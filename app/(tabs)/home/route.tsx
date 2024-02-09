@@ -145,7 +145,7 @@ export default function Page() {
           {points.current.length && (
             <View style={{ flexDirection: "column" }}>
               <Text variant="titleMedium" style={{ color: theme.colors.text, paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.xs }}>
-                Map to {route.name}
+                Explore the area
               </Text>
               <MapPreview points={points.current} style={style.map} />
             </View>
@@ -186,6 +186,6 @@ const useStyle = ({ theme, screenWidth }: { theme: AppTheme; screenWidth: number
     },
     map: {
       width: screenWidth,
-      height: (screenWidth * 9) / 16,
+      height: (screenWidth * 9) / 32,
     },
   });

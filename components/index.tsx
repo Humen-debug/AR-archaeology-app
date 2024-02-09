@@ -10,6 +10,7 @@ export { default as MarkerCallout } from "./marker_callout";
 export { default as ModelView } from "./model_view";
 export { default as NavBar } from "./nav_bar";
 export { default as ContentItem } from "./home/content_item";
+export { default as EventItem } from "./home/event_item";
 
 import * as Icons from "./icons";
 export { Icons };
@@ -20,6 +21,7 @@ export type { Props as AudioPlayerProps } from "./audio_player";
 export type { Props as AuthFormProps } from "./auth_form";
 export type { Props as CarouselProps } from "./home/carousel";
 export type { Props as ContentItemProps } from "./home/content_item";
+export type { Props as EventItemProps } from "./home/event_item";
 export type { Props as IconBtnProps } from "./icon_btn";
 export type { Props as ItemCardProps } from "./item_card";
 export type { Props as ListItemProps } from "./home/list_item";

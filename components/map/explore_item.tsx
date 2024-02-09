@@ -20,7 +20,7 @@ export default function ExploreItem(item: ItemProps) {
   const { theme } = useAppTheme();
 
   const _style = useStyle({
-    backgroundColor: theme.colors.grey4 + "e9",
+    backgroundColor: theme.colors.container + "e9",
     labelGrey: theme.colors.text,
     spacing: theme.spacing,
     withImage: !!images,
@@ -52,20 +52,22 @@ export default function ExploreItem(item: ItemProps) {
           />
         )}
       </>
-      <View style={{ display: "flex", flexDirection: "row" }}>
+      <View style={{ display: "flex", flexDirection: "row", columnGap: theme.spacing.xs }}>
         <Button
           compact
-          contentStyle={_style.button}
-          textColor={theme.colors.grey1}
+          style={[_style.button, { borderRadius: 999 }]}
+          textColor={theme.colors.textOnPrimary}
           mode="contained"
           icon={() => <GPSIcon fill="white" style={_style.icon} />}
           onPress={fetchNextPoints}
         >
-          <Text variant="labelLarge">Start</Text>
+          <Text variant="labelLarge" style={{ color: theme.colors.textOnPrimary }}>
+            Start
+          </Text>
         </Button>
         <Button
           compact
-          contentStyle={_style.button}
+          style={{ borderWidth: 2, borderRadius: 999, borderColor: theme.colors.primary }}
           mode="outlined"
           icon={() =>
             isSaved ? (
@@ -74,7 +76,7 @@ export default function ExploreItem(item: ItemProps) {
               <BookmarkOutlineIcon style={_style.icon} fill={theme.colors.primary} />
             )
           }
-          style={{ marginLeft: 8, borderColor: theme.colors.primary }}
+          contentStyle={_style.button}
         >
           <Text variant="labelLarge" style={{ color: theme.colors.primary }}>
             {isSaved ? "Saved" : "Save"}
@@ -104,7 +106,7 @@ const useStyle = ({ backgroundColor, spacing, labelGrey, withImage, itemWidth }:
       width: itemWidth,
     },
     button: {
-      marginHorizontal: 16,
+      paddingHorizontal: 16,
     },
     icon: {
       // maxHeight: 16,

@@ -2,10 +2,9 @@ import { AppBar, ContentItem, MainBody, NAVBAR_HEIGHT } from "@/components";
 import { useFeathers } from "@/providers/feathers_provider";
 import { useAppTheme } from "@/providers/style_provider";
 import { useEffect, useState } from "react";
-import { Image, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
+import { ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
 import { ActivityIndicator, Text } from "react-native-paper";
-import type { Document, Content } from "@/models";
-import { getThumb } from "@/plugins/utils";
+import type { Document } from "@/models";
 
 export default function HistoryPage() {
   const { theme } = useAppTheme();
@@ -37,7 +36,7 @@ export default function HistoryPage() {
           <ActivityIndicator animating size={"large"} />
         </View>
       ) : doc ? (
-        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.md }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.md, paddingTop: theme.spacing.lg }}>
           <View style={{ flexDirection: "column", rowGap: 1.5 * theme.spacing.xl }}>
             {doc.content.map((content, index) => (
               <ContentItem content={content} key={index} />

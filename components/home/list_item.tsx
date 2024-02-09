@@ -1,7 +1,7 @@
 import { getThumb } from "@/plugins/utils";
 import { useAppTheme, AppTheme } from "@/providers/style_provider";
 import { router } from "expo-router";
-import React from "react";
+import React, { useCallback } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { Text, TouchableRipple } from "react-native-paper";
 import IconBtn from "../icon_btn";
@@ -23,13 +23,13 @@ export default function ListItem({ name, briefDesc, images, href, showNavigate, 
   const { theme } = useAppTheme();
   const style = useStyle({ theme });
 
-  async function onPress() {
+  const onPress = useCallback(() => {
     if (href) {
       router.push(href);
     } else {
       props.onPress?.();
     }
-  }
+  }, []);
 
   const getActions = () => {
     const actions = props.actions || [];
@@ -90,7 +90,58 @@ export default function ListItem({ name, briefDesc, images, href, showNavigate, 
     );
   }
 
-  return render1();
+  function render2() {
+    const image: string | undefined = images?.[0];
+    return (
+      <TouchableRipple onPress={onPress}>
+        <View style={{ backgroundColor: theme.colors.container, elevation: 2 }}>
+          <View style={{ flexDirection: "row", alignContent: "center", justifyContent: "center", position: "relative" }}>
+            {image && (
+              <View style={{ width: 132, position: "absolute", top: 0, bottom: 0, left: 0 }}>
+                <Image source={{ uri: getThumb(image) }} style={style.image} />
+              </View>
+            )}
+            <View
+              style={{
+                flexGrow: 1,
+                flexShrink: 1,
+                flexDirection: "row",
+                alignContent: "center",
+                paddingVertical: theme.spacing.sm,
+                paddingHorizontal: theme.spacing.md,
+                marginLeft: image ? 132 : 0,
+                gap: theme.spacing.xs,
+              }}
+            >
+              <View
+                style={{
+                  flexGrow: 1,
+                  flexShrink: 1,
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignContent: "center",
+                  rowGap: theme.spacing.xs,
+                  minHeight: 132,
+                }}
+              >
+                <Text variant="labelLarge" style={{ color: theme.colors.text }}>
+                  {name}
+                </Text>
+                {briefDesc && (
+                  <Text variant="bodyMedium" style={{ color: theme.colors.text }}>
+                    {briefDesc}
+                  </Text>
+                )}
+              </View>
+              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>{actions}</View>
+            </View>
+          </View>
+        </View>
+      </TouchableRipple>
+    );
+  }
+
+  return render2();
 }
 
 const useStyle = ({ theme }: { theme: AppTheme }) =>

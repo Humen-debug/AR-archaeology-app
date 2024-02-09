@@ -1,16 +1,14 @@
 import { Button, Text } from "react-native-paper";
 import { MainBody } from "@components";
-import { View, StyleSheet, ImageBackground, Platform, useWindowDimensions, Pressable } from "react-native";
-import { createRef, useEffect, useState } from "react";
-import MapView, { Marker } from "react-native-maps";
+import { View, StyleSheet, ImageBackground, useWindowDimensions, Pressable } from "react-native";
+import { useState } from "react";
 import { POINTS } from "../map";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { useAuth } from "@providers/auth_provider";
 import { Link, router } from "expo-router";
-import { getBoundaries } from "@/plugins/geolocation";
 import MapPreview from "@/components/map/map_preview";
 
-const DECORATE_BOX_HEIGHT = 100;
+const DECORATE_BOX_HEIGHT = 114;
 
 export default function Home() {
   const { theme } = useAppTheme();
@@ -36,7 +34,7 @@ export default function Home() {
         }}
       />
       <View style={style.appBarDecorateBox} />
-      <View style={{ flexDirection: "column", paddingVertical: theme.spacing.xs, paddingHorizontal: theme.spacing.lg }}>
+      <View style={{ flexDirection: "column", paddingTop: theme.spacing.md, paddingBottom: theme.spacing.xs, paddingHorizontal: theme.spacing.lg }}>
         <Text variant="titleMedium" style={{ color: theme.colors.background }}>
           {authenticated ? "Let’s have fun in Vedi Valley!" : "Welcome to Vedi Valley"}
         </Text>

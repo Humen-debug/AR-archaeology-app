@@ -2,11 +2,12 @@ import { AppBar, ListItem, ListItemProps, MainBody, NAVBAR_HEIGHT } from "@/comp
 import { Attraction, OpenHour, Weekday } from "@/models";
 import { Paginated, useFeathers } from "@/providers/feathers_provider";
 import { AppTheme, useAppTheme } from "@/providers/style_provider";
+import { Link } from "expo-router";
 import _ from "lodash";
 import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Button, Text } from "react-native-paper";
 
 interface BusinessHour {
   openTime: Date;
@@ -93,6 +94,18 @@ export default function Page() {
     <MainBody padding={{ top: 0 }}>
       <AppBar showBack />
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.md }}>
+        <View style={style.sectionHeader}>
+          <Text variant="titleMedium" style={style.title}>
+            Culinary Delights
+          </Text>
+          <Link href={{ pathname: "/home/attractions", params: { type: "Restaurant" } }} asChild>
+            <Pressable style={style.button}>
+              <Text variant="labelMedium" style={{ color: theme.colors.grey3 }}>
+                view all
+              </Text>
+            </Pressable>
+          </Link>
+        </View>
         <Text variant="bodyMedium" style={style.sectionDesc}>
           Armenian cuisine is known for its rich flavours and unique combinations of ingredients
         </Text>
@@ -114,9 +127,18 @@ export default function Page() {
             })}
           </View>
         )}
-        <Text variant="titleMedium" style={style.title}>
-          Lodging
-        </Text>
+        <View style={style.sectionHeader}>
+          <Text variant="titleMedium" style={style.title}>
+            Lodgings
+          </Text>
+          <Link href={{ pathname: "/home/attractions", params: { type: "Lodging" } }} asChild>
+            <Pressable style={style.button}>
+              <Text variant="labelMedium" style={{ color: theme.colors.grey3 }}>
+                view all
+              </Text>
+            </Pressable>
+          </Link>
+        </View>
         {lodgings && (
           <View style={style.list}>
             {lodgings.map((item) => {
@@ -140,19 +162,29 @@ export default function Page() {
 
 const useStyle = ({ theme }: { theme: AppTheme }) =>
   StyleSheet.create({
+    sectionHeader: {
+      paddingLeft: theme.spacing.lg,
+      paddingRight: theme.spacing.xs,
+      paddingVertical: theme.spacing.xs,
+      flexDirection: "row",
+      alignContent: "center",
+      justifyContent: "space-between",
+    },
+    title: {
+      textAlignVertical: "center",
+    },
     sectionDesc: {
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.xxs,
-      color: theme.colors.text,
-    },
-    title: {
-      paddingHorizontal: theme.spacing.lg,
-      paddingVertical: theme.spacing.xs,
       color: theme.colors.text,
     },
     list: {
       flexDirection: "column",
       marginVertical: theme.spacing.md,
       gap: theme.spacing.xs,
+    },
+    button: {
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
     },
   });
