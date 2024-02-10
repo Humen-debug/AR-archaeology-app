@@ -42,8 +42,12 @@ export default function MapPreview({ points, style, onMapPress, initialRegion, m
           if (onMapPress) {
             onMapPress();
           } else {
-            const { latitude, longitude } = points?.[0];
-            const params = !!latitude && !!longitude ? { latitude, longitude } : {};
+            let params = {};
+            if (points && points?.[0]) {
+              const { latitude, longitude } = points?.[0];
+              params = !!latitude && !!longitude ? { latitude, longitude } : {};
+            }
+
             router.replace({ pathname: "/map", params: params });
           }
         }}
