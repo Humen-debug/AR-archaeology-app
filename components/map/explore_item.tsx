@@ -60,7 +60,7 @@ export default function ExploreItem(item: ItemProps) {
           style={[_style.button, { borderRadius: 999 }]}
           textColor={theme.colors.textOnPrimary}
           mode="contained"
-          icon={() => <GPSIcon fill="white" style={_style.icon} />}
+          icon={() => <GPSIcon fill={theme.colors.textOnPrimary} style={_style.icon} />}
           onPress={fetchNextPoints}
         >
           <Text variant="labelLarge" style={{ color: theme.colors.textOnPrimary }}>

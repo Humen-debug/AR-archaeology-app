@@ -65,11 +65,24 @@ export default function Page() {
             onPress={clearDay}
           >
             <Text variant="labelSmall" style={style.buttonText}>
-              Clear
+              Reset selected day
             </Text>
           </Button>
         </View>
-        <Calendar enableSwipeMonths current={initDate} minDate={minDate} onDayPress={onDayPress} markedDates={markedDates} />
+        <Calendar
+          enableSwipeMonths
+          current={initDate}
+          minDate={minDate}
+          onDayPress={onDayPress}
+          markedDates={markedDates}
+          theme={{
+            calendarBackground: "transparent",
+            textSectionTitleColor: theme.colors.text,
+            monthTextColor: theme.colors.text,
+            dayTextColor: theme.colors.text,
+            textDisabledColor: theme.colors.grey2,
+          }}
+        />
       </View>
       {!loaded ? (
         <View style={style.center}>

@@ -1,6 +1,7 @@
 import { AppTheme, darkTheme, lightTheme } from "@/styles";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useLayoutEffect, useState } from "react";
 import { PaperProvider } from "react-native-paper";
+import * as SecureStore from "expo-secure-store";
 
 export { AppTheme };
 
@@ -13,7 +14,7 @@ class StyleState {
 class StyleContext {
   style: StyleEnum;
   theme: AppTheme;
-  switchStyle: (theme: StyleEnum) => void;
+  switchStyle: () => void;
 }
 
 const StyleStore = createContext<StyleContext | null>(null);
@@ -24,10 +25,55 @@ interface Props {
 
 export function StyleProvider({ children }: Props) {
   const [state, setState] = useState<StyleState>({ style: "light", theme: lightTheme });
-  function switchStyle(theme: StyleEnum) {
-    if (theme === "dark") {
+
+  useLayoutEffect(() => {
+    async function init() {
+      const style = await fromStorage();
+      if (style) {
+        setState({ style, theme: style === "dark" ? darkTheme : lightTheme });
+      }
+    }
+    init();
+  }, []);
+
+  useEffect(() => {
+    localSave();
+  }, [state]);
+
+  const localStorageKey = "styleState";
+  async function localSave(): Promise<boolean> {
+    const res = JSON.stringify(state.style);
+    try {
+      if (res) await SecureStore.setItemAsync(localStorageKey, res);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  async function localDelete(): Promise<boolean> {
+    try {
+      await SecureStore.deleteItemAsync(localStorageKey);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  async function fromStorage(): Promise<StyleEnum | undefined> {
+    try {
+      let res = await SecureStore.getItemAsync(localStorageKey);
+      if (res) {
+        const style = JSON.parse(res);
+        return style;
+      }
+    } catch (error) {
+      console.warn("Cannot get from local storage", error);
+    }
+  }
+
+  function switchStyle() {
+    if (state.style === "light") {
       setState({ style: "dark", theme: darkTheme });
-    } else if (theme === "light") {
+    } else {
       setState({ style: "light", theme: lightTheme });
     }
   }

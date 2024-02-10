@@ -142,7 +142,9 @@ export default function Home() {
           </View>
         ) : (
           <Button mode="contained" style={{ width: "100%", borderRadius: theme.spacing.xs }}>
-            Your Favorite Places
+            <Text variant="labelLarge" style={{ color: theme.colors.textOnPrimary }}>
+              Your Favorite Places
+            </Text>
           </Button>
         )}
         <View style={style.divider} />

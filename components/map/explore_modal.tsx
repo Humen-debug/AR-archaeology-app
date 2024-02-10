@@ -41,7 +41,7 @@ export default function ExploreModal({ open, setOpen, data }: ExploreModalProps)
   return (
     <View>
       <BottomSheetModal
-        backgroundStyle={{ backgroundColor: theme.colors.grey4 }}
+        backgroundStyle={{ backgroundColor: theme.colors.background }}
         enablePanDownToClose
         ref={bottomSheetRef}
         index={2}

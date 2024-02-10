@@ -238,11 +238,11 @@ export default function Explore() {
           contentContainerStyle={style.listContainer}
         /> */}
           <View style={style.buttonsContainer}>
-            <IconBtn style={style.iconButton} icon="locate" iconProps={{ fill: theme.colors.grey1 }} onPress={() => {}} />
+            <IconBtn style={style.iconButton} icon="locate" iconProps={{ fill: theme.colors.text }} onPress={() => {}} />
             <IconBtn
               style={style.iconButton}
               icon="createAR"
-              iconProps={{ fill: theme.colors.grey1 }}
+              iconProps={{ fill: theme.colors.text }}
               onPress={() => {
                 router.push("/ar_explore");
               }}
@@ -251,7 +251,7 @@ export default function Explore() {
               square
               style={style.iconButton}
               icon="menu"
-              iconProps={{ fill: theme.colors.grey1 }}
+              iconProps={{ fill: theme.colors.text }}
               onPress={() => {
                 setListOpen((prev) => !prev);
               }}

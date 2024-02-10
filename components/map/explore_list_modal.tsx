@@ -50,7 +50,7 @@ export default function ExploreListModal({ open, setOpen, data }: { open: boolea
     <View style={{ ..._style.fill, position: "absolute" }}>
       {open && <TouchableOpacity style={_style.fill} onPress={modalToggle} />}
       <BottomSheetModal
-        backgroundStyle={{ backgroundColor: theme.colors.grey4 }}
+        backgroundStyle={{ backgroundColor: theme.colors.background }}
         enablePanDownToClose
         ref={bottomSheetRef}
         index={1}
@@ -71,14 +71,14 @@ export default function ExploreListModal({ open, setOpen, data }: { open: boolea
             traileringIconColor={theme.colors.grey1}
             traileringIcon={({ color }) => <SearchIcon fill={color || theme.colors.grey1} />}
           />
-          <Divider style={{ backgroundColor: "black", marginHorizontal: -theme.spacing.lg }} />
+          <Divider style={{ backgroundColor: theme.colors.grey1, marginHorizontal: -theme.spacing.lg }} />
         </View>
         <BottomSheetScrollView contentContainerStyle={{ flex: 1 }} showsVerticalScrollIndicator={false}>
           <View style={_style.list}>
-            {data.map(({ title, length, save, images, id }, index) => (
+            {data.map(({ name, length, save, images, id }, index) => (
               <View key={index}>
-                <ExploreItem title={title} length={length} isSaved={save} images={images} points={data} id={index} modalCLose={modalCLose} />
-                <Divider style={{ backgroundColor: "black", marginHorizontal: -theme.spacing.lg }} />
+                <ExploreItem title={name} length={length} isSaved={save} images={images} points={data} id={index} modalCLose={modalCLose} />
+                <Divider style={{ backgroundColor: theme.colors.grey1, marginHorizontal: -theme.spacing.lg }} />
               </View>
             ))}
           </View>

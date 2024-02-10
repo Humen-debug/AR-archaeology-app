@@ -38,7 +38,7 @@ export default function MarkerCallout({ title, desc, image, onPress }: Props) {
 const useStyle = (theme: AppTheme, screenWidth?: number) =>
   StyleSheet.create({
     container: {
-      backgroundColor: theme.colors.grey4 + "e9",
+      backgroundColor: theme.colors.container + "e9",
       width: (screenWidth || 200) * 0.8,
       flexDirection: "row",
       overflow: "hidden",
@@ -54,7 +54,7 @@ const useStyle = (theme: AppTheme, screenWidth?: number) =>
       borderRightWidth: 10,
       borderBottomWidth: 0,
       borderLeftWidth: 10,
-      borderTopColor: theme.colors.grey4 + "e9",
+      borderTopColor: theme.colors.container + "e9",
       borderRightColor: "transparent",
       borderBottomColor: "transparent",
       borderLeftColor: "transparent",
