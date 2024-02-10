@@ -6,6 +6,7 @@ export { default as BoxIcon } from "@assets/icons/box.svg";
 export { default as CalendarIcon } from "@assets/icons/calendar-fill.svg";
 export { default as CalendarOutlinedIcon } from "@assets/icons/calendar-line.svg";
 export { default as ChevronLeftIcon } from "@assets/icons/chevron-left.svg";
+export { default as ChevronRightSharpIcon } from "@assets/icons/chevron-right-sharp.svg";
 export { default as CreateARIcon } from "@assets/icons/create-ar.svg";
 export { default as CompassIcon } from "@assets/icons/compass.svg";
 export { default as ErrorOutlineIcon } from "@assets/icons/error-outline.svg";
@@ -28,3 +29,11 @@ export { default as ShareIcon } from "@assets/icons/share.svg";
 export { default as SortIcon } from "@assets/icons/sort.svg";
 export { default as TimeIcon } from "@assets/icons/time.svg";
 export { default as TimeOutlineIcon } from "@assets/icons/time-outline.svg";
+
+import { ViewProps } from "react-native";
+import { SvgProps } from "react-native-svg";
+
+export interface IconProps extends SvgProps, ViewProps {
+  fill?: string;
+  size?: number;
+}

@@ -1,17 +1,16 @@
 import { AppBar, ContentItem, MainBody, NAVBAR_HEIGHT } from "@/components";
-import { FootStepsIcon, MountainIcon, TimeOutlineIcon } from "@/components/icons";
+import { CompassIcon, FootStepsIcon, LocationIcon, MountainIcon, TimeOutlineIcon } from "@/components/icons";
 import MapPreview from "@/components/map/map_preview";
 import { GeoPoint, Route } from "@/models";
 import { distanceFromLatLonInKm } from "@/plugins/geolocation";
 import { getThumb } from "@/plugins/utils";
 import { Paginated, useFeathers } from "@/providers/feathers_provider";
 import { AppTheme, useAppTheme } from "@/providers/style_provider";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import _ from "lodash";
 import { useEffect, useRef, useState } from "react";
 import { ImageBackground, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
-import MapView, { Marker } from "react-native-maps";
-import { ActivityIndicator, Text } from "react-native-paper";
+import { ActivityIndicator, Button, Text } from "react-native-paper";
 
 export default function Page() {
   const feathers = useFeathers();
@@ -148,6 +147,37 @@ export default function Page() {
                 Explore the area
               </Text>
               <MapPreview points={points.current} style={style.map} />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  paddingHorizontal: theme.spacing.lg,
+                  paddingVertical: theme.spacing.xs,
+                }}
+              >
+                <Button
+                  mode="contained"
+                  onPress={() =>
+                    router.replace({ pathname: "/map", params: { latitude: points.current[0].latitude, longitude: points.current[0].longitude } })
+                  }
+                  textColor={theme.colors.textOnPrimary}
+                  style={style.button}
+                  icon={() => <LocationIcon fill={theme.colors.textOnPrimary} size={20} />}
+                >
+                  <Text variant="labelMedium" style={{ color: theme.colors.textOnPrimary, textAlignVertical: "center" }}>
+                    View in a map
+                  </Text>
+                </Button>
+                <Button
+                  mode="outlined"
+                  style={[style.button, { borderWidth: 2, borderColor: theme.colors.primary }]}
+                  icon={() => <CompassIcon fill={theme.colors.primary} size={20} />}
+                >
+                  <Text variant="labelMedium" style={{ color: theme.colors.primary }}>
+                    Start AR tour
+                  </Text>
+                </Button>
+              </View>
             </View>
           )}
 
@@ -187,5 +217,10 @@ const useStyle = ({ theme, screenWidth }: { theme: AppTheme; screenWidth: number
     map: {
       width: screenWidth,
       height: (screenWidth * 9) / 32,
+    },
+    button: {
+      borderRadius: theme.borderRadius.xs,
+      flexDirection: "row",
+      alignContent: "center",
     },
   });

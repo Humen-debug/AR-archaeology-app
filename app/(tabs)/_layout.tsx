@@ -31,10 +31,10 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="settings"
+          name="account"
           options={{
-            href: "/settings",
-            tabBarLabel: "Setting",
+            href: "/account",
+            tabBarLabel: "Account",
             tabBarIcon: ({ color, size }) => <SettingIcon fill={color} size={size} />,
           }}
         />

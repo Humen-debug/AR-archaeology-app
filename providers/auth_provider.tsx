@@ -21,7 +21,7 @@ class AuthContext {
   setToken: (token: string) => void;
   login: (props: AuthProps) => Promise<void>;
   logout: () => Promise<boolean>;
-  register: ({ email, password }: { email: string; password: string }) => Promise<void>;
+  register: (user: Partial<User>) => Promise<void>;
 }
 
 const AuthStore = createContext<AuthContext | null>(null);
@@ -152,10 +152,9 @@ export function AuthProvider({ children, fallback }: Props) {
     setState((state) => ({ ...state, token, user }));
   }
 
-  async function register({ email, password }: { email: string; password: string }) {
-    await feathers
-      .service("users")
-      .create({ email: email.toLowerCase(), password: password, bookmarks: state.user?.bookmarks ?? [], collections: state.user?.collections ?? [] });
+  async function register(newUser: Partial<User>) {
+    const user = await feathers.service("users").create(newUser);
+    console.log(user);
   }
 
   async function reAuthentication() {

@@ -4,17 +4,12 @@ import { useAppTheme } from "@providers/style_provider";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { GenericTouchableProps } from "react-native-gesture-handler/lib/typescript/components/touchables/GenericTouchable";
 import * as Icons from "@components/icons";
-import { SvgProps } from "react-native-svg";
-
-interface IconProps extends SvgProps {
-  fill?: string;
-}
 
 interface IconBtnProps {
   size?: number;
   square?: boolean;
-  iconProps?: IconProps;
-  icon: string | ((props?: IconProps) => JSX.Element) | JSX.Element;
+  iconProps?: Icons.IconProps;
+  icon: string | ((props?: Icons.IconProps) => JSX.Element) | JSX.Element;
   backgroundColor?: string[] | string;
 }
 export type Props = IconBtnProps & GenericTouchableProps & TouchableOpacityProps;
@@ -30,7 +25,7 @@ export default function IconBtn(props: Props) {
     IconComponent = Icons[key];
     if (!IconComponent) throw Error(`IconBtn does not support icon ${props.icon}. Do you forget to add new icon to "@components/icons"?`);
   } else if (props.icon instanceof Object) {
-    IconComponent = (prop?: IconProps) => props.icon;
+    IconComponent = (prop?: Icons.IconProps) => props.icon;
   } else {
     IconComponent = props.icon;
   }
