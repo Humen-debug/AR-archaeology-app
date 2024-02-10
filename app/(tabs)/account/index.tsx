@@ -2,7 +2,6 @@ import { AccountListItem, MainBody } from "@/components";
 import { useAuth } from "@/providers/auth_provider";
 import { useAppTheme, AppTheme } from "@/providers/style_provider";
 import { router } from "expo-router";
-import { Href } from "expo-router/build/link/href";
 import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
@@ -33,7 +32,7 @@ export default function SettingsPage() {
   return (
     <MainBody padding={{ top: 0 }}>
       <ScrollView>
-        <View style={style.topSection}>
+        <View style={[style.topSection, { minHeight: authenticated ? 132 : 60 }]}>
           {authenticated && (
             <View style={{ paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.sm }}>
               <Text variant="headlineMedium" style={{ color: theme.colors.textOnPrimary }}>
@@ -70,10 +69,10 @@ const useStyle = ({ theme, statusBarHeight }: { theme: AppTheme; statusBarHeight
   StyleSheet.create({
     topSection: {
       backgroundColor: theme.colors.primary,
-      bottomBorderRightRadius: theme.borderRadius.lg,
-      bottomBottomLeftRadius: theme.borderRadius.lg,
+      borderBottomLeftRadius: theme.borderRadius.lg,
+      borderBottomRightRadius: theme.borderRadius.lg,
       paddingTop: statusBarHeight,
-      minHeight: 132,
+
       overflow: "hidden",
     },
 
@@ -83,8 +82,5 @@ const useStyle = ({ theme, statusBarHeight }: { theme: AppTheme; statusBarHeight
     },
     button: {
       borderRadius: theme.borderRadius.xs,
-      flexDirection: "row",
-      justifyContent: "center",
-      alignContent: "center",
     },
   });

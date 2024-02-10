@@ -36,7 +36,7 @@ export default function LoginPage() {
 
   return (
     <MainBody padding={{ top: 0 }}>
-      <AppBar title="Login" />
+      <AppBar title="Login" showBack />
       <View
         style={{
           paddingVertical: theme.spacing.md,
@@ -121,8 +121,5 @@ const useStyle = ({ theme }: { theme: AppTheme }) =>
     largeButton: {
       borderRadius: 4,
       minHeight: 48,
-      flexDirection: "row",
-      justifyContent: "center",
-      alignItems: "center",
     },
   });

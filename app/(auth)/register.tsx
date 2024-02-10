@@ -166,8 +166,5 @@ const useStyle = ({ theme }: { theme: AppTheme }) =>
     largeButton: {
       borderRadius: 4,
       minHeight: 48,
-      flexDirection: "row",
-      justifyContent: "center",
-      alignItems: "center",
     },
   });
