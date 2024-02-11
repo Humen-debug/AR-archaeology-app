@@ -17,7 +17,7 @@ export default function Home() {
   const style = useStyle({ theme, screenWidth });
 
   const { user } = useAuth();
-  const authenticated = user && user._id;
+  const authenticated = !!user && !!user._id;
 
   return (
     <MainBody>

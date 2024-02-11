@@ -36,7 +36,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const birthday = !!dob && moment(dob, "DD/MM/YYYY").toDate();
-
+      const contactNum = !!areaCode && !!phone ? `+${areaCode} ${phone}` : undefined;
       const newUser = {
         email,
         password,
@@ -44,6 +44,7 @@ export default function RegisterPage() {
         lastName,
         username,
         dob: birthday ? birthday : undefined,
+        phone: contactNum,
       };
 
       await register(newUser);
@@ -100,7 +101,9 @@ export default function RegisterPage() {
                     try {
                       const num = Number(value);
                       setAreaCode(num);
-                    } catch (error) {}
+                    } catch (error) {
+                      console.log("fail to update areaCode", error);
+                    }
                   },
                   keyboardType: "number-pad",
                   label: "Area code",
@@ -108,7 +111,7 @@ export default function RegisterPage() {
                 },
                 {
                   value: phone,
-                  onChange: setPassword,
+                  onChange: setPhone,
                   keyboardType: "phone-pad",
                   label: "Mobile Number",
                   flex: 4,

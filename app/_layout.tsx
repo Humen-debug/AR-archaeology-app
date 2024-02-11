@@ -41,15 +41,15 @@ function StackLayout() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(auth)/login" />
         <Stack.Screen name="(auth)/register" />
-        <Stack.Screen name="search_result" options={{}} />
-        <Stack.Screen name="category" options={{}} />
-        <Stack.Screen name="detail" options={{}} />
-        <Stack.Screen name="ar_placement" options={{}} />
-        <Stack.Screen name="ar_explore" options={{}} />
-        <Stack.Screen name="collection" options={{}} />
+        <Stack.Screen name="search_result" />
+        <Stack.Screen name="category" />
+        <Stack.Screen name="detail" />
+        <Stack.Screen name="ar_placement" />
+        <Stack.Screen name="ar_explore" />
+        <Stack.Screen name="collection" />
         <Stack.Screen name="profile" />
       </Stack>
-      <StatusBar style={style === "system" ? "auto" : style === "dark" ? "light" : "dark"} />
+      <StatusBar style={style === "dark" ? "light" : "dark"} />
     </>
   );
 }

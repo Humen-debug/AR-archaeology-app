@@ -68,7 +68,7 @@ export default function AuthForm({ fields, setValid, spacing }: Props) {
     <View style={[style.column, { rowGap: spacing ?? theme.spacing.lg }]}>
       {fields.map((field, index) =>
         field.inner ? (
-          <View style={[style.row, { gap: theme.spacing.xs }]}>
+          <View key={index} style={[style.row, { gap: theme.spacing.xs }]}>
             {field.inner.map((f, i) => (
               <View style={{ flex: f.flex }} key={`f${i}`}>
                 {renderInput(f, i)}

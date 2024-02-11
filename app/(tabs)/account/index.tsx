@@ -2,7 +2,7 @@ import { AccountListItem, MainBody } from "@/components";
 import { useAuth } from "@/providers/auth_provider";
 import { useAppTheme, AppTheme } from "@/providers/style_provider";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -36,7 +36,7 @@ export default function SettingsPage() {
           {authenticated && (
             <View style={{ paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.sm }}>
               <Text variant="headlineMedium" style={{ color: theme.colors.textOnPrimary }}>
-                Hi, {user.username || (user.firstName && user.lastName) ? `${user.firstName} ${user.lastName}` : "User"}
+                Hi, {user.username ? user.username : user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : "User"}
               </Text>
               <Text variant="bodyMedium" style={{ color: theme.colors.textOnPrimary }}>
                 {user.email}
@@ -47,7 +47,7 @@ export default function SettingsPage() {
         <View style={{ padding: theme.spacing.lg, gap: theme.spacing.md }}>
           {authenticated && <AccountListItem label="Profile" prefix="profile" onPress={() => router.push("/account/profile")} />}
           <AccountListItem label="Settings" prefix="setting" onPress={() => router.push("/account/settings")} />
-          <AccountListItem label="Help and feedback" />
+          <AccountListItem label="Help and feedback" prefix="help" />
         </View>
         <View style={{ padding: theme.spacing.lg }}>
           <Button
