@@ -55,6 +55,7 @@ export default function SettingsPage() {
             disabled={loading}
             onPress={handleAuth}
             mode={authenticated ? "outlined" : "contained"}
+            textColor={authenticated ? theme.colors.primary : theme.colors.textOnPrimary}
             style={[style.button, authenticated ? style.outlinedButton : {}]}
           >
             {authenticated ? "Sign out" : "Login"}

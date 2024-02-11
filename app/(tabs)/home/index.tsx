@@ -128,7 +128,12 @@ export default function Home() {
               Please login or create an account for more information.
             </Text>
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-              <Button mode="contained" style={{ borderRadius: theme.spacing.xs }} onPress={() => router.push("/login")}>
+              <Button
+                textColor={theme.colors.textOnPrimary}
+                mode="contained"
+                style={{ borderRadius: theme.spacing.xs }}
+                onPress={() => router.push("/login")}
+              >
                 Login
               </Button>
               <Button
