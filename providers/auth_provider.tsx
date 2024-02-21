@@ -1,5 +1,5 @@
 import { User } from "@/models";
-import React, { createContext, useCallback, useContext, useEffect, useLayoutEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useFeathers } from "./feathers_provider";
 import _ from "lodash";
@@ -13,6 +13,10 @@ interface AuthProps {
   email: string;
   password: string;
   strategy?: string;
+}
+interface AuthRequest {
+  strategy: string;
+  [key: string]: any;
 }
 
 class AuthContext {
@@ -34,14 +38,14 @@ interface Props {
 export function AuthProvider({ children, fallback }: Props) {
   const feathers = useFeathers();
   const [state, setState] = useState<AuthState>(() => new AuthState());
-  const authenticated: boolean = !!(state.token && state.token.length);
+  const authPromise = useRef<Promise<void> | null>(null);
+  const authenticated = useRef(false);
   /**
    * Retrieve authState from local storage
    */
-  useLayoutEffect(() => {
-    handleSocket();
+  useEffect(() => {
     async function init() {
-      await reAuthentication();
+      handleFeathers();
       let res = await fromStorage();
       if (res) {
         setState(res);
@@ -112,19 +116,12 @@ export function AuthProvider({ children, fallback }: Props) {
         user = await feathers.service("users").patch(state.user._id, user);
         console.log(`patched result`, user);
       }
-      setState((state) => ({ ...state, user: user }));
+      setState((state) => ({ ...state, user: { ...state.user, ...user } }));
     },
     [state, setState]
   );
 
-  async function setToken(token: string) {
-    setState((state) => {
-      state.token = token;
-      return state;
-    });
-  }
-
-  function handleSocket() {
+  function handleFeathers() {
     if (feathers.io) {
       feathers.io.on("disconnect", async () => {
         if (authenticated) {
@@ -134,28 +131,39 @@ export function AuthProvider({ children, fallback }: Props) {
     }
   }
 
-  const login = useCallback(
-    async function login({ strategy = "local", email, password }: AuthProps) {
-      const res = await feathers.service("authentication").create({ strategy, email: email.toLowerCase(), password });
-      let token: string;
-      let user: User;
-      if (res.accessToken) {
-        token = res.accessToken;
-      }
-      if (res.user) {
-        user = res.user;
-      }
-      setState((state) => ({ ...state, token, user }));
+  const authentication = useCallback(
+    async (req: AuthRequest) => {
+      const promise = feathers
+        .service("authentication")
+        .create(req)
+        .then((res) => {
+          let token: string;
+          let user: User;
+          if (res.accessToken) {
+            token = res.accessToken;
+          }
+          if (res.user) {
+            user = res.user;
+          }
+          authenticated.current = true;
+
+          setState((state) => ({ token, user: { ...state.user, ...user } }));
+        });
+      authPromise.current = promise;
+      return promise;
     },
     [state, setState]
   );
 
-  async function register(newUser: Partial<User>) {
-    await feathers.service("users").create(newUser);
-  }
+  const login = useCallback(
+    async function login({ strategy = "local", email, password }: AuthProps) {
+      await authentication({ strategy, email, password });
+    },
+    [authentication]
+  );
 
-  const reAuthentication = useCallback(
-    async function reAuthentication() {
+  const reAuthentication = async (force: boolean = false) => {
+    if (!authPromise.current || force) {
       let oldToken = state.token;
       if (!oldToken) {
         const res = await fromStorage();
@@ -165,18 +173,25 @@ export function AuthProvider({ children, fallback }: Props) {
         console.warn(`No access token stored in localStorage`);
         return;
       }
-      const res = await feathers.service("authentication").create({ strategy: "jwt", accessToken: oldToken });
-      const token = res.accessToken;
-      console.log(`reauthenticate with token`, new Date());
-      setToken(token);
-    },
-    [state, setState]
-  );
+      try {
+        return authentication({ strategy: "jwt", accessToken: oldToken });
+      } catch (error) {
+        console.warn("fail re-authentication");
+      }
+    }
+    return authPromise.current;
+  };
+
+  async function register(newUser: Partial<User>) {
+    await feathers.service("users").create(newUser);
+  }
 
   const logout = useCallback(
     async function logout() {
       console.log("logout called");
       const authRes = await feathers.service("authentication").remove(null);
+      authPromise.current = null;
+      authenticated.current = false;
       // todo need discussion on bookmarks and collections
       // should they be cached in local devices even when user logout or switch account?
       setState((state) => ({ user: { bookmarks: state.user?.bookmarks, collections: state.user?.collections } }));
