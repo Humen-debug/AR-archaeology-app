@@ -13,11 +13,10 @@ import { MainBody, IconBtn } from "@components";
 import { ChevronLeftIcon, ArrowUpIcon } from "@components/icons";
 import * as Location from "expo-location";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState, useEffect, createRef } from "react";
+import { useState, useEffect, createRef, useCallback } from "react";
 import { View, StyleSheet, useWindowDimensions } from "react-native";
 import _ from "lodash";
 import { ActivityIndicator, Text } from "react-native-paper";
-import { LinearGradient } from "expo-linear-gradient";
 import MapView, { Marker } from "react-native-maps";
 import Animated, { Easing, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { TouchableHighlight } from "react-native-gesture-handler";
@@ -25,100 +24,12 @@ import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/Vi
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import { THREE } from "expo-three";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
-import { distanceFromLatLonInKm } from "@/plugins/geolocation";
-/*
- * stackoverflow.com/questions/47419496/augmented-reality-with-react-native-points-of-interest-over-the-camera
- * Solution to convert latitude and longitude to device's local coordinates and vice versa
- * https://github.com/ViroCommunity/geoar/blob/master/App.js for coding
- */
+import { distanceFromLatLonInKm, bearingBetweenTwoPoints, transformGpsToAR, getNextPoint } from "@/plugins/geolocation";
+import { useFeathers } from "@/providers/feathers_provider";
 
-const latLongToMerc = (latDeg: number, longDeg: number) => {
-  // From: https://gist.github.com/scaraveos/5409402
-  const longRad = (longDeg / 180.0) * Math.PI;
-  const latRad = (latDeg / 180.0) * Math.PI;
-  const smA = 6378137.0;
-  const xmeters = smA * longRad;
-  const ymeters = smA * Math.log((Math.sin(latRad) + 1) / Math.cos(latRad));
-  return { x: xmeters, y: ymeters };
-};
+function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
+  const { location, points, nearestPoint, setInitAngle, initAngle, degree: bearingDegree } = props?.arSceneNavigator?.viroAppProps ?? {};
 
-/*
- * From http://www.movable-type.co.uk/scripts/latlong.html?from=48.9613600,-122.0413400&to=48.965496,-122.072989
- * Given two points, return the bearing degree from p1 to p2
- */
-const bearingBetweenTwoPoints = (p1: LatLong | undefined, p2: LatLong | undefined) => {
-  if (!p1 || !p2) return 0;
-
-  const y = Math.sin(p2.longitude - p1.longitude) * Math.cos(p2.latitude);
-  const x = Math.cos(p1.latitude) * Math.sin(p2.latitude) - Math.sin(p1.latitude) * Math.cos(p2.latitude) * Math.cos(p2.longitude - p1.longitude);
-  const theta = Math.atan2(y, x);
-  const bearing = ((theta * 180) / Math.PI + 360) % 360; // in degrees
-
-  return bearing;
-};
-
-const transformGpsToAR = (deviceLoc: LatLong | undefined, objLoc: LatLong | undefined) => {
-  if (!deviceLoc || !objLoc) return undefined;
-
-  const objPoint = latLongToMerc(objLoc.latitude, objLoc.longitude);
-  const devicePoint = latLongToMerc(deviceLoc.latitude, deviceLoc.longitude);
-  var objDeltaX = objPoint.x - devicePoint.x;
-  var objDeltaY = devicePoint.y - objPoint.y;
-  // testing the render with heading
-  // if (deviceLoc.heading) {
-  //   const angleRadian = (deviceLoc.heading * Math.PI) / 180;
-  //   objDeltaX = objDeltaX * Math.cos(angleRadian) - objDeltaY * Math.sin(angleRadian);
-  //   objDeltaY = objDeltaX * Math.sin(angleRadian) + objDeltaY * Math.cos(angleRadian);
-  // }
-
-  // accuracy need improvement
-  return { x: objDeltaX, z: objDeltaY };
-};
-
-const getClosestPointOnPath = (path: LatLong[], point: LatLong) => {
-  const lineAB = {
-    longitude: path[1].longitude - path[0].longitude,
-    latitude: path[1].latitude - path[0].latitude,
-  };
-  const lineAP = {
-    longitude: point.longitude - path[0].longitude,
-    latitude: point.latitude - path[0].latitude,
-  };
-
-  const len = lineAB.longitude * lineAB.longitude + lineAB.latitude * lineAB.latitude;
-  let dot = lineAP.longitude * lineAB.longitude + lineAP.latitude * lineAB.latitude;
-
-  const t = Math.min(1, Math.max(0, dot / len));
-  dot = lineAB.longitude * lineAP.latitude - lineAB.latitude * lineAP.longitude;
-
-  return {
-    latitude: path[0].latitude + lineAB.latitude * t,
-    longitude: path[0].longitude + lineAB.longitude * t,
-  };
-};
-
-const getNextPoint = (targetId: number, points: LatLong[], location: LatLong) => {
-  let closestPoint = points[0];
-  let closestDistance = -1;
-
-  if (points.length > 1) {
-    for (let i = 0; i < points.length - 1; i++) {
-      const p = getClosestPointOnPath([points[i], points[i + 1]], location);
-      const d = distanceFromLatLonInKm(p, location);
-      if (closestDistance == -1 || closestDistance > d) {
-        closestDistance = d;
-
-        if (d > 0.025) closestPoint = p;
-        else
-          closestPoint =
-            distanceFromLatLonInKm(points[i], points[targetId]) < distanceFromLatLonInKm(points[i + 1], points[targetId]) ? points[i] : points[i + 1];
-      }
-    }
-  }
-
-  return closestPoint;
-};
-function ARExplorePage(props?: ARExploreProps) {
   ViroAnimations.registerAnimations({
     rotation: {
       properties: {
@@ -147,13 +58,13 @@ function ARExplorePage(props?: ARExploreProps) {
     console.log("OBJ loading failed with error: " + event.nativeEvent.error);
   }
 
-  const placeARObjects = () => {
-    if (!props?.arSceneNavigator.viroAppProps.nearbyItems) {
+  const placeARObjects = useCallback(() => {
+    if (!points) {
       return undefined;
     }
 
-    const ARObjects = props?.arSceneNavigator.viroAppProps.nearbyItems?.map((item, index) => {
-      const coords = transformGpsToAR(props?.arSceneNavigator.viroAppProps.location, item);
+    const ARObjects = points.map((item, index) => {
+      const coords = transformGpsToAR(location, item);
       if (!coords) return undefined;
 
       const scale = Math.min(Math.abs(Math.round(15 / coords.z)), 0.5);
@@ -184,16 +95,12 @@ function ARExplorePage(props?: ARExploreProps) {
       );
     });
     return ARObjects;
-  };
+  }, [location, points]);
 
   const [position, setPosition] = useState<Viro3DPoint>([0, 0, 0]);
-  const calPoint =
-    props?.arSceneNavigator.viroAppProps.nearestPoint &&
-    transformGpsToAR(props?.arSceneNavigator.viroAppProps.location, props?.arSceneNavigator.viroAppProps.nearestPoint);
+  const calPoint = nearestPoint && transformGpsToAR(location, nearestPoint);
   const point = { x: calPoint?.x || 0, z: calPoint?.z || 0 };
 
-  const bearingDegree = props?.arSceneNavigator.viroAppProps.degree;
-  const initAngle = props?.arSceneNavigator.viroAppProps.initAngle;
   const degree = (Math.atan2(point.x - position[0], point.z - position[2]) * 180) / Math.PI;
   const distance = Math.sqrt((point.z - position[2]) ** 2 + (point.x - position[0]) ** 2);
 
@@ -215,13 +122,12 @@ function ARExplorePage(props?: ARExploreProps) {
 
           // need better cal but my brain no longer function anymore, will update tmr
           const angleDiff = (360 + bearingDegree - headingDegrees) % 360;
-          props?.arSceneNavigator.viroAppProps.setInitAngle(angleDiff);
+          setInitAngle?.(angleDiff);
         }
         setPosition([cameraTransform.position[0], cameraTransform.position[1] - 1, cameraTransform.position[2]]);
       }}
     >
-      {/* <ViroBox height={1} length={1} width={1} position={[point.x, -1, point.z]} /> */}
-      {props?.arSceneNavigator.viroAppProps.location && placeARObjects()}
+      {location && placeARObjects()}
       {(point.x !== 0 || point.z !== 0) && (
         <ViroBox
           height={0.001}
@@ -242,15 +148,17 @@ export default () => {
   const { theme } = useAppTheme();
   const { top } = useSafeAreaInsets();
   const { height: screenHeight } = useWindowDimensions();
+  const style = useStyle({ theme });
   const { targetId, POINTS } = useLocalSearchParams<{ targetId: string; POINTS: string }>();
-  const points = POINTS && JSON.parse(POINTS);
+  const points: LatLong[] | undefined = POINTS && JSON.parse(POINTS);
+
   const animatedProps = { duration: 300, easing: Easing.inOut(Easing.quad) };
   const [mapExpand, setMapExpand] = useState<boolean>(false);
   const [initAngle, setInitAngle] = useState<number>(-1);
   const miniMapStyle = useAnimatedStyle(() => {
     var pos = mapExpand
       ? { bottom: 0, right: 0, left: 0, top: undefined }
-      : { top: top + theme.spacing.xs + _style.distanceContainer.height + 34 + theme.spacing.sm, right: 16, left: undefined, bottom: undefined };
+      : { top: top + theme.spacing.xs + style.distanceContainer.height + 34 + theme.spacing.sm, right: 16, left: undefined, bottom: undefined };
 
     return {
       position: mapExpand ? "relative" : "absolute",
@@ -269,11 +177,10 @@ export default () => {
 
   const [nearestPoint, setNearestPoint] = useState<LatLong>();
   const mapRef = createRef<MapView>();
-  // demo
-  const [initLocation, setInitLocation] = useState<Location.LocationObjectCoords>();
+
   const [location, setLocation] = useState<Location.LocationObjectCoords>();
   const [heading, setHeading] = useState<number>();
-  const [nearbyItems, setNearbyItems] = useState<Location.LocationObjectCoords[]>([]);
+  const [nearbyItems, setNearbyItems] = useState<LatLong[]>([]);
 
   // const
   const distanceInterval: number = 25;
@@ -281,10 +188,33 @@ export default () => {
   useEffect(() => {
     let headingListener: Location.LocationSubscription | undefined;
     let locationListener: Location.LocationSubscription | undefined;
+    // init nearby items if points is not undefined
+    if (points) setNearbyItems(points);
     const getCurrentLocation = async () => {
-      // demo setting static init location
-      let loc = await Location.getCurrentPositionAsync();
-      setInitLocation(loc.coords);
+      const { coords: initCoords } = await Location.getCurrentPositionAsync();
+
+      if (!points) {
+        const lat = initCoords.latitude + 8 * Math.pow(10, -5);
+        const lon = initCoords.longitude + Math.pow(10, -5);
+        const locations: Location.LocationObjectCoords[] = [
+          {
+            ...initCoords,
+            latitude: lat,
+            longitude: lon,
+          },
+          {
+            ...initCoords,
+            latitude: 22.282812,
+            longitude: 114.139614,
+          },
+          {
+            ...initCoords,
+            latitude: 22.282812,
+            longitude: 114.139634,
+          },
+        ];
+        setNearbyItems(locations);
+      }
 
       const geoOpt: Location.LocationOptions = {
         accuracy: Location.Accuracy.High,
@@ -295,15 +225,10 @@ export default () => {
         const coords = result.coords;
         if (coords.accuracy && coords.accuracy < 50) {
           setLocation(coords);
-          if (points && targetId) setNearestPoint(getNextPoint(parseInt(targetId), points, coords));
-
-          // Moving map to center user's location
-          mapRef?.current?.animateToRegion({ latitude: coords.latitude, longitude: coords.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 });
         }
       };
 
       locationListener = await Location.watchPositionAsync(geoOpt, geoCallback);
-
       headingListener = await Location.watchHeadingAsync((heading) => {
         setHeading(heading.trueHeading);
       });
@@ -315,56 +240,20 @@ export default () => {
     };
   }, []);
 
+  /** Watch update of location */
   useEffect(() => {
-    getNearbyItems();
-  }, [location]);
+    if (!location) return;
+    mapRef?.current?.animateToRegion({ latitude: location.latitude, longitude: location.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 });
+    if (nearbyItems && nearbyItems.length) {
+      setNearestPoint(getNextPoint(nearbyItems[parseInt(targetId ?? "0")], nearbyItems, location));
+    }
+  }, [location, nearbyItems]);
 
   const handleMapPressed = () => {
     setMapExpand((value) => !value);
   };
 
-  const getNearbyItems = async () => {
-    // demo
-
-    if (initLocation) {
-      if (points && targetId) {
-        setNearestPoint(getNextPoint(parseInt(targetId), points, initLocation));
-      } else {
-        const lat = initLocation.latitude + 8 * Math.pow(10, -5);
-        const lon = initLocation.longitude + Math.pow(10, -5);
-
-        const locations: Location.LocationObjectCoords[] = [
-          {
-            ...initLocation,
-            latitude: lat,
-            longitude: lon,
-          },
-          {
-            ...initLocation,
-            latitude: 22.282812,
-            longitude: 114.139614,
-          },
-          {
-            ...initLocation,
-            latitude: 22.282812,
-            longitude: 114.139634,
-          },
-        ];
-
-        const distances = locations.map((item, index) => [distanceFromLatLonInKm(location, item), index]);
-        if (distances.length !== 0) {
-          const minDist = distances.reduce((previousValue, currentValue) => {
-            return previousValue[0] < currentValue[0] ? previousValue : currentValue;
-          });
-
-          setNearestPoint(locations[minDist[1]]);
-        }
-        setNearbyItems(locations);
-      }
-    }
-  };
-
-  const placeMarkers = () => {
+  const placeMarkers = useCallback(() => {
     if (nearbyItems.length === 0) {
       return undefined;
     }
@@ -372,7 +261,7 @@ export default () => {
       return <Marker key={index} coordinate={{ longitude: item.longitude, latitude: item.latitude }} />;
     });
     return markers;
-  };
+  }, [nearbyItems]);
 
   const getBearingDegree = () => {
     // http://www.movable-type.co.uk/scripts/latlong.html?from=48.9613600,-122.0413400&to=48.965496,-122.072989
@@ -405,7 +294,7 @@ export default () => {
   };
 
   var degree = getBearingDegree();
-  var distance = getNearestDistance();
+  const distanceText = getNearestDistance();
   const loading: boolean = !(location && heading);
 
   return (
@@ -414,19 +303,21 @@ export default () => {
         <ViroARSceneNavigator
           worldAlignment="GravityAndHeading"
           initialScene={{ scene: ARExplorePage }}
-          viroAppProps={{
-            location,
-            nearbyItems,
-            nearestPoint,
-            degree,
-            setInitAngle,
-            initAngle,
-          }}
+          viroAppProps={
+            {
+              location,
+              points: nearbyItems,
+              nearestPoint,
+              degree,
+              setInitAngle,
+              initAngle,
+            } as ARExploreProps
+          }
         />
       </Animated.View>
       <View
         style={[
-          _style.rowLayout,
+          style.rowLayout,
           {
             columnGap: theme.spacing.sm,
             position: "absolute",
@@ -437,20 +328,18 @@ export default () => {
           },
         ]}
       >
-        <IconBtn icon={<ChevronLeftIcon fill={theme.colors.grey1} />} onPress={() => router.back()} />
-        <IconBtn icon={"backpack"} iconProps={{ fill: theme.colors.grey1 }} onPress={() => router.push("/collection")} />
+        <IconBtn icon={<ChevronLeftIcon fill={theme.colors.text} />} onPress={() => router.back()} />
+        <IconBtn icon={"backpack"} iconProps={{ fill: theme.colors.text }} onPress={() => router.push("/collection")} />
       </View>
-      {!!distance && (
-        <View style={[_style.distanceContainer, { top: top + theme.spacing.xs + 34 }]}>
-          <LinearGradient colors={theme.colors.gradientBlack} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={_style.gradient}>
-            <View style={[_style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
-              <ArrowUpIcon fill={theme.colors.grey1} style={{ transform: [{ rotate: `${degree == -1 ? 0 : degree}deg` }], width: 24, height: 24 }} />
-              <View style={_style.columnLayout}>
-                <Text>Destination</Text>
-                <Text>{distance}</Text>
-              </View>
+      {!!distanceText && (
+        <View style={[style.distanceContainer, { top: top + theme.spacing.xs + 34 }]}>
+          <View style={[style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
+            <ArrowUpIcon fill={theme.colors.text} style={{ transform: [{ rotate: `${degree == -1 ? 0 : degree}deg` }], width: 24, height: 24 }} />
+            <View style={style.columnLayout}>
+              <Text>Destination</Text>
+              <Text>{distanceText}</Text>
             </View>
-          </LinearGradient>
+          </View>
         </View>
       )}
       {location && (
@@ -458,7 +347,7 @@ export default () => {
           <TouchableHighlight onPress={handleMapPressed} activeOpacity={1}>
             <MapView
               ref={mapRef}
-              style={_style.miniMap}
+              style={style.miniMap}
               region={{ ...location, latitudeDelta: 0.05, longitudeDelta: 0.05 }}
               showsUserLocation={true}
               showsMyLocationButton={false}
@@ -475,11 +364,13 @@ export default () => {
         </Animated.View>
       )}
       {loading && (
-        <View style={_style.centerContainer}>
-          <Text variant="labelMedium" style={{ color: theme.colors?.primary, textAlign: "center", paddingBottom: theme.spacing.xs }}>
-            {"Waiting\nGPS information"}
-          </Text>
-          <ActivityIndicator size={"large"} animating={true} />
+        <View style={style.centerContainer}>
+          <View style={style.loadingCard}>
+            <Text variant="labelMedium" style={{ color: theme.colors?.primary, textAlign: "center", paddingBottom: theme.spacing.xs }}>
+              {"Waiting\nGPS information"}
+            </Text>
+            <ActivityIndicator size={"large"} animating={true} />
+          </View>
         </View>
       )}
     </MainBody>
@@ -490,17 +381,19 @@ export default () => {
  * Important to wrap the props with arSceneNavigator and viroAppProps, based on the
  * guidance of ViroReact
  */
-interface ARExploreProps {
+interface ViroARSceneProps<T extends unknown> {
   arSceneNavigator: {
-    viroAppProps: {
-      location?: Location.LocationObjectCoords | undefined;
-      nearbyItems: Location.LocationObjectCoords[];
-      nearestPoint: Location.LocationObjectCoords;
-      degree: Float;
-      setInitAngle: Function;
-      initAngle: Number;
-    };
+    viroAppProps: T;
   };
+}
+
+interface ARExploreProps {
+  location?: Location.LocationObjectCoords | undefined;
+  points: LatLong[];
+  nearestPoint: LatLong;
+  degree: Float;
+  setInitAngle: Function;
+  initAngle: Number;
 }
 
 interface LatLong {
@@ -510,70 +403,80 @@ interface LatLong {
   [key: string]: any;
 }
 
-const _style = StyleSheet.create({
-  rowLayout: {
-    flexDirection: "row",
-    alignItems: "center",
-    flexShrink: 0,
-  },
-  columnLayout: {
-    flexDirection: "column",
-    alignContent: "flex-start",
-    alignItems: "flex-start",
-    justifyContent: "center",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
-    overflow: "hidden",
-  },
-  bottomSheetShadow: {
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: -32 },
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-  },
-  centerContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  distanceContainer: {
-    position: "absolute",
-    borderTopLeftRadius: 8,
-    borderBottomLeftRadius: 8,
-    right: 0,
-    width: 150,
-    height: 50,
-    overflow: "hidden",
-  },
-  gradient: {
-    flex: 1,
-    flexShrink: 0,
-    display: "flex",
-    alignContent: "center",
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
-  },
-  miniMapContainer: {
-    position: "absolute",
-    right: 16,
-    width: 134,
-    height: 134,
-    borderRadius: 12,
-    borderColor: "white",
-    borderWidth: 2,
-    overflow: "hidden",
-  },
-  miniMap: {
-    height: "100%",
-    width: "100%",
-  },
-});
+const useStyle = ({ theme }: { theme: AppTheme }) =>
+  StyleSheet.create({
+    rowLayout: {
+      flexDirection: "row",
+      alignItems: "center",
+      flexShrink: 0,
+    },
+    columnLayout: {
+      flexDirection: "column",
+      alignContent: "flex-start",
+      alignItems: "flex-start",
+      justifyContent: "center",
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      borderBottomLeftRadius: 32,
+      borderBottomRightRadius: 32,
+      overflow: "hidden",
+    },
+    bottomSheetShadow: {
+      shadowColor: "#000000",
+      shadowOffset: { width: 0, height: -32 },
+      shadowOpacity: 0.2,
+      shadowRadius: 16,
+    },
+    centerContainer: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    distanceContainer: {
+      position: "absolute",
+      borderTopLeftRadius: 8,
+      borderBottomLeftRadius: 8,
+      right: 0,
+      width: 150,
+      height: 50,
+      overflow: "hidden",
+      backgroundColor: theme.colors.container,
+    },
+    gradient: {
+      flex: 1,
+      flexShrink: 0,
+      display: "flex",
+      alignContent: "center",
+      justifyContent: "center",
+      alignItems: "center",
+      textAlign: "center",
+    },
+    miniMapContainer: {
+      position: "absolute",
+      right: 16,
+      width: 134,
+      height: 134,
+      borderRadius: theme.borderRadius.md,
+      borderColor: "white",
+      borderWidth: 2,
+      overflow: "hidden",
+    },
+    miniMap: {
+      height: "100%",
+      width: "100%",
+    },
+    loadingCard: {
+      borderRadius: theme.borderRadius.md,
+      backgroundColor: theme.colors.container.concat("80"),
+      overflow: "hidden",
+      flexDirection: "column",
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
+    },
+  });
