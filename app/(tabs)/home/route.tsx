@@ -18,7 +18,7 @@ export default function Page() {
   const { width: screenWidth } = useWindowDimensions();
   const style = useStyle({ theme, screenWidth });
   /**
-   * @param id refers to the _id of model
+   * @property {string} id refers to the _id of model
    */
   const { id } = useLocalSearchParams<{ id?: string }>();
   const [loaded, setLoaded] = useState(false);

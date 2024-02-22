@@ -16,8 +16,8 @@ export default function Page() {
   const { width: screenWidth } = useWindowDimensions();
   const style = useStyle({ theme, screenWidth });
   /**
-   * @param id refers to the _id of model
-   * @param service refers to the feathers api service's name
+   * @property {string} id refers to the _id of model
+   * @property {string} service refers to the feathers api service's name
    */
   const { id, service } = useLocalSearchParams<{ id?: string; service?: string }>();
   const [loaded, setLoaded] = useState(false);

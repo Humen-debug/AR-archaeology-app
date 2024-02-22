@@ -8,7 +8,7 @@ export class User {
   phone?: string;
   dob?: Date;
 
-  createdAt?: Date = new Date();
+  createdAt: Date = new Date();
 
   bookmarks?: string[];
   collections?: string[];

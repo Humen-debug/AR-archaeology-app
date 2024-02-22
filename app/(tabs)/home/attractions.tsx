@@ -28,11 +28,11 @@ export default function Page() {
   const feathers = useFeathers();
   const { theme } = useAppTheme();
   /**
-   * @param id refers to the _id of model
-   * @param service refers to the feathers api service's name
+   * @property {string} id refers to the _id of model
+   * @property {string} service refers to the feathers api service's name
    */
-  const { type } = useLocalSearchParams<{ type?: AttractionType }>();
-  const _type: AttractionType = type ?? "Attraction";
+  const { type = "Attraction" } = useLocalSearchParams<{ type?: AttractionType }>();
+
   const [attractions, setAttractions] = useState<Attraction[]>([]);
   /** initial loading */
   const [loaded, setLoaded] = useState(false);
@@ -55,7 +55,7 @@ export default function Page() {
   }, []);
 
   async function syncData() {
-    const query = { $skip: cursor.current, $sort: "order", type: _type };
+    const query = { $skip: cursor.current, $sort: "order", type: type };
     const res: Paginated<Attraction> = await feathers.service("attractions").find({
       query: query,
     });
@@ -83,7 +83,7 @@ export default function Page() {
 
   return (
     <MainBody padding={{ top: 0 }}>
-      <AppBar title={mappingDesc[_type].title} showBack />
+      <AppBar title={mappingDesc[type].title} showBack />
       <FlatList
         onScroll={onScroll}
         onEndReached={loadMore}
@@ -112,7 +112,7 @@ export default function Page() {
           return (
             <View style={{ paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.lg, paddingTop: theme.spacing.md }}>
               <Text variant="bodyMedium" style={{ color: theme.colors.grey2 }}>
-                {mappingDesc[_type].desc}
+                {mappingDesc[type].desc}
               </Text>
             </View>
           );

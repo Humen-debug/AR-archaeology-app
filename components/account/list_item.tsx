@@ -4,7 +4,12 @@ import { Icons } from "@components";
 import { Text } from "react-native-paper";
 import { ChevronRightSharpIcon } from "../icons";
 
-/** @param prefix and suffix typeof string is referring to the keys in Icons components */
+/**
+ * @property {string} prefix refers to the keys in Icons components.
+ * The key can either be in the full name (e.g. StarIcon) or brief name without Icon at the end (e.g. start).
+ * @property {string} suffix determines the suffix icon in the list tile. Typeof string functions as same as prefix.
+ * Default as ChevronRightSharpIcon.
+ */
 export interface Props {
   prefix?: string | React.ReactNode | ((props: Icons.IconProps) => React.ReactNode);
   label: string;

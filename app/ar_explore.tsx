@@ -192,7 +192,7 @@ export default () => {
     if (points) setNearbyItems(points);
     const getCurrentLocation = async () => {
       const { coords: initCoords } = await Location.getCurrentPositionAsync();
-
+      // generate dummy points if no default points in params
       if (!points) {
         const lat = initCoords.latitude + 8 * Math.pow(10, -5);
         const lon = initCoords.longitude + Math.pow(10, -5);
@@ -245,7 +245,7 @@ export default () => {
     if (!location) return;
     mapRef?.current?.animateToRegion({ latitude: location.latitude, longitude: location.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 });
     if (nearbyItems && nearbyItems.length) {
-      setNearestPoint(getNextPoint(nearbyItems[parseInt(targetId ?? "0")], nearbyItems, location));
+      setNearestPoint(getNextPoint(parseInt(targetId ?? "0"), nearbyItems, location));
     }
   }, [location, nearbyItems]);
 

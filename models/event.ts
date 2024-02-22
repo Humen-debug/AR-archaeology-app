@@ -12,5 +12,5 @@ export class Event extends Model {
   endDate: Date;
 
   order: number;
-  createdDat: Date;
+  createdAt: Date;
 }
