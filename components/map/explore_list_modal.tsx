@@ -1,15 +1,22 @@
 import { Text, Searchbar, Divider } from "react-native-paper";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
-import { useAppTheme } from "@providers/style_provider";
+import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { useRef, useMemo, useCallback, useState, useEffect } from "react";
 import { BottomSheetModal, BottomSheetScrollView, BottomSheetScrollViewMethods } from "@gorhom/bottom-sheet";
 import { SearchIcon } from "@components/icons";
 import ExploreItem from "./explore_item";
+import { GeoPoint } from "@/models";
 
-export default function ExploreListModal({ open, setOpen, data }: { open: boolean; setOpen: (open: boolean) => void; data: any[] }) {
+interface Props<T extends GeoPoint> {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  data: T[];
+}
+
+export default function ExploreListModal<T extends GeoPoint>({ open, setOpen, data }: Props<T>) {
   const { theme } = useAppTheme();
   const _style = useStyle({
-    spacing: theme.spacing,
+    theme,
   });
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
@@ -67,17 +74,17 @@ export default function ExploreListModal({ open, setOpen, data }: { open: boolea
             icon={() => null}
             elevation={0}
             style={_style.searchbar}
-            iconColor={theme.colors.grey1}
-            traileringIconColor={theme.colors.grey1}
-            traileringIcon={({ color }) => <SearchIcon fill={color || theme.colors.grey1} />}
+            iconColor={theme.colors.text}
+            traileringIconColor={theme.colors.text}
+            traileringIcon={({ color }) => <SearchIcon fill={color || theme.colors.text} />}
           />
-          <Divider style={{ backgroundColor: theme.colors.grey1, marginHorizontal: -theme.spacing.lg }} />
+          <Divider style={{ backgroundColor: theme.colors.grey3, marginHorizontal: -theme.spacing.lg }} />
         </View>
         <BottomSheetScrollView contentContainerStyle={{ flex: 1 }} showsVerticalScrollIndicator={false}>
           <View style={_style.list}>
-            {data.map(({ name, length, save, images, id }, index) => (
-              <View key={index}>
-                <ExploreItem title={name} length={length} isSaved={save} images={images} points={data} id={index} modalCLose={modalCLose} />
+            {data.map(({ save, _id }) => (
+              <View key={_id}>
+                <ExploreItem isSaved={save} points={data} id={_id} modalCLose={modalCLose} />
                 <Divider style={{ backgroundColor: theme.colors.grey1, marginHorizontal: -theme.spacing.lg }} />
               </View>
             ))}
@@ -88,15 +95,15 @@ export default function ExploreListModal({ open, setOpen, data }: { open: boolea
   );
 }
 
-const useStyle = ({ spacing }: any) =>
+const useStyle = ({ theme }: { theme: AppTheme }) =>
   StyleSheet.create({
     searchbar: {
       flexGrow: 1,
       flexShrink: 1,
-      backgroundColor: "#6D6D6D33",
+      backgroundColor: theme.colors.container,
       borderRadius: 4,
-      marginHorizontal: spacing.lg,
-      marginBottom: spacing.lg,
+      marginHorizontal: theme.spacing.lg,
+      marginBottom: theme.spacing.lg,
     },
     fill: {
       height: "100%",
@@ -108,7 +115,7 @@ const useStyle = ({ spacing }: any) =>
       flexDirection: "column",
     },
     item: {
-      paddingVertical: spacing.md,
-      paddingHorizontal: spacing.lg,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
     },
   });

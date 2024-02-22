@@ -51,7 +51,13 @@ export default function ExploreModal({ open, setOpen, data }: ExploreModalProps)
         {data && (
           <BottomSheetScrollView style={style.container}>
             <Text variant="headlineSmall">{data.name || data.title}</Text>
-            <ScrollView horizontal style={{ paddingVertical: theme.spacing.sm }}>
+            <ScrollView
+              alwaysBounceHorizontal={false}
+              alwaysBounceVertical={false}
+              bounces={false}
+              horizontal
+              style={{ paddingVertical: theme.spacing.sm }}
+            >
               <View style={[style.row, { columnGap: theme.spacing.sm }]}>
                 <Button
                   textColor={theme.colors.grey1}

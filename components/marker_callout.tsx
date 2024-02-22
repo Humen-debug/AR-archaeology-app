@@ -1,4 +1,4 @@
-import { Image, StyleSheet, View, Dimensions } from "react-native";
+import { Image, Platform, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Callout } from "react-native-maps";
 import { Text } from "react-native-paper";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
@@ -12,7 +12,7 @@ export interface Props {
 
 export default function MarkerCallout({ title, desc, image, onPress }: Props) {
   const { theme } = useAppTheme();
-  const screenWidth = Dimensions.get("window").width;
+  const screenWidth = useWindowDimensions().width;
   const style = useStyle(theme, screenWidth);
   return (
     <Callout tooltip onPress={onPress}>
@@ -35,17 +35,18 @@ export default function MarkerCallout({ title, desc, image, onPress }: Props) {
   );
 }
 
-const useStyle = (theme: AppTheme, screenWidth?: number) =>
-  StyleSheet.create({
+const useStyle = (theme: AppTheme, screenWidth?: number) => {
+  const dialogWidth = Platform.OS === "ios" ? 300 : (screenWidth || 375) * 0.8;
+  return StyleSheet.create({
     container: {
       backgroundColor: theme.colors.container + "e9",
-      width: (screenWidth || 200) * 0.8,
+      width: dialogWidth,
       flexDirection: "row",
       overflow: "hidden",
       borderRadius: 12,
     },
     triangle: {
-      left: ((screenWidth || 200) * 0.8) / 2 - 10,
+      left: dialogWidth / 2 - 10,
       width: 0,
       height: 0,
       backgroundColor: "transparent",
@@ -60,3 +61,4 @@ const useStyle = (theme: AppTheme, screenWidth?: number) =>
       borderLeftColor: "transparent",
     },
   });
+};

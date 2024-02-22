@@ -1,9 +1,9 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, View, FlatList, Platform } from "react-native";
-import MapView, { LatLng, Marker, Polyline } from "react-native-maps";
+import MapView, { LatLng, MapMarker, Marker, Polyline } from "react-native-maps";
 import { Dimensions } from "react-native";
 import { MainBody, IconBtn, MarkerCallout } from "@components";
-import { createRef, useEffect, useMemo, useRef, useState } from "react";
+import React, { createRef, useEffect, useMemo, useRef, useState } from "react";
 import ExploreListModal from "@components/map/explore_list_modal";
 import ExploreItem from "@components/map/explore_item";
 import ExploreModal from "@components/map/explore_modal";
@@ -48,7 +48,8 @@ export default function Explore() {
     };
   });
 
-  const [isAnimate, setIsAnimate] = useState(false);
+  const isAnimate = useRef(false);
+  const isIOS = Platform.OS === "ios";
 
   const bound = useMemo(() => getBoundaries(points), [points]);
 
@@ -84,18 +85,19 @@ export default function Explore() {
   // Watch focusPoint
   useEffect(() => {
     if (mapRef.current && focusPoint) {
-      if (isAnimate) return;
+      if (isAnimate.current) return;
 
       if (focusIndex !== -1) {
         const focus = points[focusIndex];
-        setIsAnimate(true);
+
+        isAnimate.current = true;
         mapRef.current.animateToRegion({
           latitude: focus?.latitude,
           longitude: focus?.longitude,
           latitudeDelta: 0.004,
           longitudeDelta: 0.004,
         });
-        setIsAnimate(false);
+        isAnimate.current = false;
       }
     }
     if (routeListRef.current && focusPoint) {
@@ -106,9 +108,9 @@ export default function Explore() {
   // Watch init latitude and longitude
   useEffect(() => {
     if (mapRef.current && focusPoint) {
-      if (isAnimate) return;
+      if (isAnimate.current) return;
       if (!!latitude && !!longitude) {
-        setIsAnimate(true);
+        isAnimate.current = true;
         try {
           mapRef.current.animateToRegion({
             latitude: Number(latitude),
@@ -117,7 +119,7 @@ export default function Explore() {
             longitudeDelta: 0.004,
           });
         } finally {
-          setIsAnimate(false);
+          isAnimate.current = false;
         }
       }
     }
@@ -155,7 +157,7 @@ export default function Explore() {
             minZoomLevel={10}
             onPress={onMapPress}
             onRegionChangeComplete={(region) => {
-              if (!isAnimate && Platform.OS == "ios") {
+              if (!isAnimate.current && isIOS) {
                 let needUpdate = false;
                 const newRegion = { ...region };
                 if (region.latitude > bound.northEast.latitude) {
@@ -176,22 +178,23 @@ export default function Explore() {
                 }
 
                 if (mapRef.current && needUpdate) {
-                  setIsAnimate(true);
+                  isAnimate.current = true;
+
                   mapRef.current.animateToRegion(newRegion);
                 }
-              } else setIsAnimate(false);
+              } else {
+                isAnimate.current = false;
+              }
             }}
           >
             {points.map((point) => (
-              <Marker key={point._id} coordinate={{ latitude: point.latitude, longitude: point.longitude }} onPress={() => setFocusPoint(point._id)}>
-                <MarkerCallout
-                  title={point.name}
-                  desc={point.desc}
-                  image={point.images?.[0]}
-                  onPress={() => {
-                    setDetailOpen(true);
-                  }}
-                />
+              <Marker
+                key={point._id}
+                coordinate={{ latitude: point.latitude, longitude: point.longitude }}
+                onPress={() => setFocusPoint(point._id)}
+                onCalloutPress={() => setDetailOpen(true)}
+              >
+                <MarkerCallout title={point.name} desc={point.desc} image={point.images?.[0]} />
               </Marker>
             ))}
             <Polyline coordinates={points.map((point) => point as LatLng)} strokeWidth={6} strokeColor={theme.colors.tertiary} />
@@ -208,7 +211,7 @@ export default function Explore() {
                 ItemSeparatorComponent={() => <View style={{ width: ITEM_SPACING }} />}
                 data={points}
                 keyExtractor={(item) => item._id}
-                renderItem={({ item }) => <ExploreItem title={item.name} points={points} id={item._id} />}
+                renderItem={({ item }) => <ExploreItem points={points} id={item._id} />}
                 onMomentumScrollEnd={getItemId}
                 contentContainerStyle={style.listContainer}
                 onScrollToIndexFailed={(info) => {
@@ -238,7 +241,6 @@ export default function Explore() {
           contentContainerStyle={style.listContainer}
         /> */}
           <View style={style.buttonsContainer}>
-            <IconBtn style={style.iconButton} icon="locate" iconProps={{ fill: theme.colors.text }} onPress={() => {}} />
             <IconBtn
               style={style.iconButton}
               icon="createAR"

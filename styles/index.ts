@@ -1,4 +1,4 @@
-import { MD3LightTheme, configureFonts, MD3DarkTheme, shadow } from "react-native-paper";
+import { MD3LightTheme, configureFonts, MD3DarkTheme } from "react-native-paper";
 
 export const customFonts = {
   "Poppins-Bold": require("@assets/fonts/Poppins-Bold.ttf"),

@@ -60,7 +60,7 @@ export default function RegisterPage() {
 
   return (
     <MainBody padding={{ top: 0 }}>
-      <AppBar title="Sign up" showDrawer={false} showBack={true} />
+      <AppBar title="Sign up" showBack={true} />
       <ScrollView contentContainerStyle={{ padding: theme.spacing.lg, flexGrow: 1 }}>
         <Form
           setValid={setFormValid}

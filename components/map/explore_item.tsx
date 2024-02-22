@@ -3,27 +3,55 @@ import { StyleSheet, View, FlatList, Image } from "react-native";
 import { useAppTheme } from "@providers/style_provider";
 import { GPSIcon, BookmarkIcon, BookmarkOutlineIcon } from "@components/icons";
 import { useRouter } from "expo-router";
+import { GeoPoint } from "@/models";
+import { distanceFromLatLonInKm } from "@/plugins/geolocation";
 
-interface ItemProps {
-  title: string;
-  length?: number; // in km
+/**
+ * @property {T[]} points is a list of locations in which the target point exits.
+ * @property {string} id determines the _id of target point in points.
+ * @property {function(T): string[] | string | undefined } getImage determines the function to retain images from target.
+ * @property {string | undefined} titleKey determines the key to retain title from target. Default is "name"
+ */
+interface ItemProps<T extends GeoPoint> {
+  points: T[];
+  id: string;
   isSaved?: boolean;
-  images?: string[] | null;
-  points: any[];
-  id: number;
+
+  getImages?: (item: T) => string[] | string | undefined;
+  titleKey?: string;
+
   modalCLose?: () => void;
 }
 
-export default function ExploreItem(item: ItemProps) {
-  const { title, length = 10, isSaved, images, modalCLose } = item;
+export default function ExploreItem<T extends GeoPoint>(item: ItemProps<T>) {
+  const { isSaved, modalCLose, points, id, getImages, titleKey = "name" } = item;
+  if (points.length === 0) throw new Error("points in ExploreItem cannot be empty.");
+
   const router = useRouter();
   const { theme } = useAppTheme();
+
+  const targetIndex = points.findIndex((it) => it._id === id);
+  const point = points[targetIndex];
+  const title = point[titleKey];
+  let images = getImages?.(point);
+  if (typeof images === "string") images = [images];
+
+  let length: number | undefined;
+  if (points.length > 1) {
+    length = 0;
+    for (let i = 1; i < points.length; i++) {
+      const prev = points[i - 1];
+      const cur = points[i];
+      length += distanceFromLatLonInKm(prev, cur);
+    }
+    length = Math.ceil(length * 20) / 20;
+  }
 
   const _style = useStyle({
     backgroundColor: theme.colors.container + "e9",
     labelGrey: theme.colors.text,
     spacing: theme.spacing,
-    withImage: !!images,
+    withImage: !!getImages && !!images && images.length,
   });
 
   const fetchNextPoints = () => {
@@ -31,7 +59,7 @@ export default function ExploreItem(item: ItemProps) {
     const POINTSString = item.points.map(({ _id, latitude, longitude }) => {
       return { _id, latitude, longitude }; // Removed desc and title as it is unused
     });
-    router.push({ pathname: "/ar_explore", params: { POINTS: JSON.stringify(POINTSString), targetId: item.id } });
+    router.push({ pathname: "/ar_explore", params: { POINTS: JSON.stringify(POINTSString), targetId: targetIndex } });
   };
 
   return (
@@ -54,22 +82,22 @@ export default function ExploreItem(item: ItemProps) {
           />
         )}
       </>
-      <View style={{ display: "flex", flexDirection: "row", columnGap: theme.spacing.xs }}>
+      <View style={{ display: "flex", flexDirection: "row", columnGap: theme.spacing.xs, marginTop: theme.spacing.xs }}>
         <Button
           compact
-          style={[_style.button, { borderRadius: 999 }]}
+          style={{ borderRadius: 999 }}
+          contentStyle={_style.button}
           textColor={theme.colors.textOnPrimary}
           mode="contained"
-          icon={() => <GPSIcon fill={theme.colors.textOnPrimary} style={_style.icon} />}
+          icon={() => <GPSIcon fill={theme.colors.textOnPrimary} style={[_style.icon, { maxHeight: 18 }]} />}
           onPress={fetchNextPoints}
         >
-          <Text variant="labelLarge" style={{ color: theme.colors.textOnPrimary }}>
-            Start
-          </Text>
+          Start
         </Button>
         <Button
           compact
-          style={{ borderWidth: 2, borderRadius: 999, borderColor: theme.colors.primary }}
+          style={[{ borderWidth: 2, borderRadius: 999, borderColor: theme.colors.primary }]}
+          contentStyle={_style.button}
           mode="outlined"
           icon={() =>
             isSaved ? (
@@ -78,11 +106,8 @@ export default function ExploreItem(item: ItemProps) {
               <BookmarkOutlineIcon style={_style.icon} fill={theme.colors.primary} />
             )
           }
-          contentStyle={_style.button}
         >
-          <Text variant="labelLarge" style={{ color: theme.colors.primary }}>
-            {isSaved ? "Saved" : "Save"}
-          </Text>
+          {isSaved ? "Saved" : "Save"}
         </Button>
       </View>
     </View>
@@ -109,14 +134,9 @@ const useStyle = ({ backgroundColor, spacing, labelGrey, withImage, itemWidth }:
     },
     button: {
       paddingHorizontal: 16,
-      flexDirection: "row",
-      alignContent: "center",
-      justifyContent: "center",
-      alignItems: "center",
     },
     icon: {
-      // maxHeight: 16,
-      // marginHorizontal: -6,
+      marginHorizontal: -6,
     },
     lengthText: {
       color: labelGrey,

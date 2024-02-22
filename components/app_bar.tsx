@@ -1,11 +1,9 @@
-import { useDrawerContext } from "@providers/drawer_provider";
 import { useAppTheme } from "@providers/style_provider";
 import { router } from "expo-router";
 import { Appbar, AppbarActionProps } from "react-native-paper";
 
 export interface Props {
   title?: string;
-  showDrawer?: boolean;
   showBack?: boolean;
   actions?: AppbarActionProps[];
   backgroundColor?: string;
@@ -21,7 +19,6 @@ export default function AppBar(props: Props) {
       {(props.actions || []).map((actionProps, index) => (
         <Appbar.Action key={index} {...actionProps} />
       ))}
-      {!!props.showDrawer && <Appbar.Action icon="menu" onPress={useDrawerContext().toggle} />}
     </Appbar.Header>
   );
 }

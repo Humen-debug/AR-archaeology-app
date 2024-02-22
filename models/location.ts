@@ -3,6 +3,7 @@ import { Content, Model } from "./utils";
 export interface GeoPoint extends Model {
   latitude: number;
   longitude: number;
+  [key: string]: any;
 }
 
 export class Location extends Model {
