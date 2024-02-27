@@ -3,12 +3,21 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "ios": {}
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {},
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://tests-server.serveo.net"
+      }
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://tests-server.serveo.net"
       },
       "ios": {}
     },

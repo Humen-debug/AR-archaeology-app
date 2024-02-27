@@ -71,7 +71,7 @@ export const DrawerProvider = ({ children }: { children: JSX.Element | JSX.Eleme
                 <Drawer.Item
                   label="Profile"
                   onPress={() => {
-                    router.push("/profile");
+                    router.push("/account/profile");
                   }}
                 />
                 <Drawer.Item label="Settings" />

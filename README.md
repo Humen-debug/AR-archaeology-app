@@ -1,4 +1,4 @@
-# XR+archaeology
+# XR-archaeology
 
 2023-2024 FYP in collaboration with Ararat Plain Southeast Archaeological Project
 
@@ -16,9 +16,11 @@ For better type annotation, typescript is recommended.
   - [iOS]: <https://getupdraft.com/blog/how-enable-ios-developer-mode-iphone-or-ipad>.
 - Depends on your development environment, run `yarn android` or `yarn ios` for running on your mobile.
 
-### Notes
+### Remarks
 
 The app has been migrated from Realm api to our own [server and apis](https://github.com/Humen-debug/XR-archaeology-server/tree/main). Before running the app, please create a `.env` file and configure the server api uri as `EXPO_PUBLIC_API_URL`. After running the server, the connection uri should be your **hosting device ip with port _3002_**.
+
+If you want to run the app with a data base that already had data, please contact @Humen-debug to get the public API url.
 
 ## Folder structure
 

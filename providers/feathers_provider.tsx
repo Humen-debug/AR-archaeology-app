@@ -37,8 +37,6 @@ function createClient(baseURL?: string) {
   // Set up Socket.io client with the socket. Timeout as 3 minutes
   let app: Application = feathers().configure(fio(socket, { timeout: 1800000 }));
 
-  // TODO add authentication
-
   app.post = async function (url: string, data: any, params: any) {
     // authentication with token in header
     return fetch(`${apiURL}/${url}`, {

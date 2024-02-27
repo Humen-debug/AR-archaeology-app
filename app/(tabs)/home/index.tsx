@@ -46,7 +46,7 @@ export default function Home() {
         <View style={style.appBarDecorateBox} />
         <View style={{ flexDirection: "column", paddingTop: theme.spacing.md, paddingBottom: theme.spacing.xs, paddingHorizontal: theme.spacing.lg }}>
           <Text variant="titleMedium" style={{ color: theme.colors.background }}>
-            {authenticated ? "Let’s have fun in Vedi Valley!" : "Welcome to Vedi Valley"}
+            {authenticated ? "Let’s have fun in the Vedi Valley!" : "Welcome to the Vedi Valley"}
           </Text>
         </View>
 

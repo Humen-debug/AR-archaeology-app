@@ -64,3 +64,4 @@ buck-out/
 
 # Important and private variable
 .env
+.env*
