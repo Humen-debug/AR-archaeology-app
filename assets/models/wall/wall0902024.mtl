@@ -1,0 +1,45 @@
+# Rhino
+newmtl /stone material (3)
+Ka 0.0000 0.0000 0.0000
+Kd 0.4118 0.4118 0.4118
+Ks 1.0000 1.0000 1.0000
+Tf 0.0000 0.0000 0.0000
+d 1.0000
+Ns 0.0000
+map_Kd rdk$0200-0200-3DDA9900.tiff
+map_Bump WallMedieval003_NRM_3K.jpg
+newmtl /stone material (1)
+Ka 0.0000 0.0000 0.0000
+Kd 0.4118 0.4118 0.4118
+Ks 1.0000 1.0000 1.0000
+Tf 0.0000 0.0000 0.0000
+d 1.0000
+Ns 0.0000
+map_Kd rdk$0200-0200-3DDA9900.tiff
+map_Bump WallMedieval003_NRM_3K.jpg
+newmtl /stone material
+Ka 0.0000 0.0000 0.0000
+Kd 0.4118 0.4118 0.4118
+Ks 1.0000 1.0000 1.0000
+Tf 0.0000 0.0000 0.0000
+d 1.0000
+Ns 0.0000
+map_Kd rdk$0200-0200-3DDA9900.tiff
+map_Bump WallMedieval003_NRM_3K.jpg
+newmtl /stone material (2)
+Ka 0.0000 0.0000 0.0000
+Kd 0.4118 0.4118 0.4118
+Ks 1.0000 1.0000 1.0000
+Tf 0.0000 0.0000 0.0000
+d 1.0000
+Ns 0.0000
+map_Kd rdk$0200-0200-3DDA9900.tiff
+map_Bump WallMedieval003_NRM_3K.jpg
+newmtl /MaquetteWood_B01_12cm
+Ka 0.0000 0.0000 0.0000
+Kd 0.0000 0.0000 0.0000
+Ks 1.0000 1.0000 1.0000
+Tf 0.0000 0.0000 0.0000
+d 1.0000
+Ns 0.0000
+map_Kd Maquette_Wood_B_Diff.jpg

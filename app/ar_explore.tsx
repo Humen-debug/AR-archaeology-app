@@ -70,11 +70,10 @@ function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
       const scale = Math.min(Math.abs(Math.round(15 / coords.z)), 0.5);
 
       return (
-        <ViroNode key={index} scale={[scale, scale, scale]} rotation={[0, 0, 0]} position={[coords.x, 0, coords.z]}>
+        <ViroNode key={index} scale={[scale, scale, scale]} position={[coords.x, 0, coords.z]}>
           <ViroAmbientLight intensity={2000} color={"white"} />
           <Viro3DObject
             source={require("@assets/models/star/star.obj")}
-            resources={[require("@assets/models/star/starMat.mtl")]}
             type="OBJ"
             onError={handleError}
             shadowCastingBitMask={2}
@@ -87,7 +86,6 @@ function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
             resources={[require("@assets/models/circle/circle.mtl")]}
             type="OBJ"
             onError={handleError}
-            rotation={[0, 0, 0]}
             position={[0, -5, 0]}
             materials={["area"]}
           />
@@ -107,39 +105,40 @@ function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
   return (
     <ViroARScene
       onCameraTransformUpdate={(cameraTransform) => {
-        if (initAngle == -1 && bearingDegree && bearingDegree !== -1) {
-          // Convert Euler angle from cameraTransform with order XYZ to quaternion to avoid gimbal lock
-          const q = new THREE.Quaternion().setFromEuler(
-            new THREE.Euler(
-              cameraTransform.rotation[0] * (Math.PI / 180),
-              cameraTransform.rotation[1] * (Math.PI / 180),
-              cameraTransform.rotation[2] * (Math.PI / 180)
-            )
-          );
-
-          // Calculate compass heading in radians and convert to degrees
-          const headingDegrees = Math.atan2(1 - 2 * (q.y * q.y + q.z * q.z), 2 * (q.x * q.y + q.z * q.w)) * (180 / Math.PI);
-
-          // need better cal but my brain no longer function anymore, will update tmr
-          const angleDiff = (360 + bearingDegree - headingDegrees) % 360;
-          setInitAngle?.(angleDiff);
-        }
         setPosition([cameraTransform.position[0], cameraTransform.position[1] - 1, cameraTransform.position[2]]);
       }}
     >
-      {location && placeARObjects()}
+      {/* {props?.arSceneNavigator.viroAppProps.location && placeARObjects()} */}
       {(point.x !== 0 || point.z !== 0) && (
-        <ViroBox
-          height={0.001}
-          length={0.1}
-          width={0.6}
-          scalePivot={[0, 0, -0.05]}
-          scale={[1, 1, distance > 20 ? 20 * 10 : distance * 10]}
-          materials={"path"}
-          position={position}
-          rotation={[0, degree, 0]}
-        />
+        <>
+          <ViroBox
+            height={0.001}
+            length={0.1}
+            width={0.6}
+            scalePivot={[0, 0, -0.05]}
+            scale={[1, 1, distance > 20 ? 20 * 10 : distance * 10]}
+            materials={"path"}
+            position={position}
+            rotation={[0, degree, 0]}
+          />
+          <ViroNode rotation={[0, 0, 0]} position={[point.x, 0, point.z]}>
+            <ViroAmbientLight intensity={2000} color={"white"} />
+            <Viro3DObject
+              source={require("@assets/models/location_pin/object.obj")}
+              type="OBJ"
+              onError={handleError}
+              // shadowCastingBitMask={2}
+            />
+          </ViroNode>
+        </>
       )}
+      <Viro3DObject
+        position={[-350, -960, 30]}
+        source={require("@assets/models/wall/wall.obj")}
+        type="OBJ"
+        onError={handleError}
+        shadowCastingBitMask={2}
+      />
     </ViroARScene>
   );
 }
