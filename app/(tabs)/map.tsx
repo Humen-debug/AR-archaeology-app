@@ -11,8 +11,9 @@ import Animated, { useAnimatedStyle, withTiming } from "react-native-reanimated"
 import { useAppTheme } from "@providers/style_provider";
 import { getBoundaries } from "@/plugins/geolocation";
 import { useFeathers } from "@/providers/feathers_provider";
-import { Location } from "@/models";
+import { Location, Route } from "@/models";
 import { ActivityIndicator } from "react-native-paper";
+import { getCurrentPositionAsync } from "expo-location";
 
 const ITEM_WIDTH = 300;
 const ITEM_SPACING = 10;
@@ -23,6 +24,7 @@ export default function Explore() {
   const router = useRouter();
   const { id, latitude, longitude } = useLocalSearchParams<{ id?: string; latitude?: string; longitude?: string }>();
   const [points, setPoints] = useState<Location[]>([]);
+  const [routes, setRoutes] = useState<Route[]>([]);
   const initPoint = {
     latitude: !!latitude ? Number(latitude) : 39.92634215565024,
     longitude: !!longitude ? Number(longitude) : 44.74058628178656,
@@ -69,6 +71,22 @@ export default function Explore() {
           }
         }
         setPoints(points);
+        const routeIds = Array.from(new Set(points.map((point) => point.route)));
+
+        let routes: Route[] = [];
+        res = await feathers.service("routes").find({ query: { _id: { $in: routeIds } }, paginate: false });
+        if (Array.isArray(res)) {
+          routes = res;
+        } else if (res.data) {
+          var total = res.total;
+          while (total > routes.length) {
+            res = await feathers.service("routes").find({ query: { _id: { $in: routeIds }, $skip: routes.length } });
+            if (res.data.length === 0) break;
+            routes.push(...res.data);
+          }
+        }
+        setRoutes(routes);
+
         if (mapRef.current && Platform.OS !== "ios") {
           const bound = getBoundaries(points);
           mapRef.current.setMapBoundaries?.(bound.northEast, bound.southWest);
@@ -176,10 +194,8 @@ export default function Explore() {
                   newRegion.longitude = bound.southWest.longitude + 0.00001;
                   needUpdate = true;
                 }
-
                 if (mapRef.current && needUpdate) {
                   isAnimate.current = true;
-
                   mapRef.current.animateToRegion(newRegion);
                 }
               } else {
@@ -197,7 +213,14 @@ export default function Explore() {
                 <MarkerCallout title={point.name} desc={point.desc} image={point.images?.[0]} />
               </Marker>
             ))}
-            <Polyline coordinates={points.map((point) => point as LatLng)} strokeWidth={6} strokeColor={theme.colors.tertiary} />
+            {routes.map((route) => (
+              <Polyline
+                key={route._id}
+                coordinates={points.filter((point) => point.route === route._id).map((point) => point as LatLng)}
+                strokeWidth={6}
+                strokeColor={theme.colors.tertiary}
+              />
+            ))}
           </MapView>
           {/* Point pickers */}
           {points.length && (
@@ -211,7 +234,7 @@ export default function Explore() {
                 ItemSeparatorComponent={() => <View style={{ width: ITEM_SPACING }} />}
                 data={points}
                 keyExtractor={(item) => item._id}
-                renderItem={({ item }) => <ExploreItem points={points} id={item._id} />}
+                renderItem={({ item }) => <ExploreItem points={points.filter((point) => point.route === item.route)} id={item._id} />}
                 onMomentumScrollEnd={getItemId}
                 contentContainerStyle={style.listContainer}
                 onScrollToIndexFailed={(info) => {
@@ -229,18 +252,51 @@ export default function Explore() {
           )}
 
           {/* Path pickers */}
-          {/* <FlatList
-          snapToInterval={270 + itemSpacing}
-          pagingEnabled={true}
-          decelerationRate={"fast"}
-          horizontal
-          ItemSeparatorComponent={() => <View style={{ width: itemSpacing }} />}
-          style={style.list}
-          data={DATA}
-          renderItem={({ item }) => <ExploreItem title={item.title} length={item.length} isSaved={item.save} />}
-          contentContainerStyle={style.listContainer}
-        /> */}
+          {/* {points.length && routes.length && (
+            <FlatList
+              ref={routeListRef}
+              snapToInterval={ITEM_WIDTH + ITEM_SPACING}
+              pagingEnabled={true}
+              decelerationRate={"fast"}
+              horizontal
+              ItemSeparatorComponent={() => <View style={{ width: ITEM_SPACING }} />}
+              data={routes}
+              renderItem={({ item }) => <ExploreItem points={points.filter((point) => point.route === item._id)} id={item._id} />}
+              onMomentumScrollEnd={getItemId}
+              contentContainerStyle={style.listContainer}
+              onScrollToIndexFailed={(info) => {
+                const wait = new Promise((resolve) => setTimeout(resolve, 500));
+                wait.then(() => {
+                  routeListRef.current?.scrollToIndex({
+                    index: info.index,
+                    animated: false,
+                  });
+                });
+              }}
+              showsHorizontalScrollIndicator={false}
+            />
+          )} */}
           <View style={style.buttonsContainer}>
+            <IconBtn
+              style={style.iconButton}
+              icon="location"
+              iconProps={{ fill: theme.colors.text }}
+              onPress={async () => {
+                if (!mapRef.current) return;
+                const { coords } = await getCurrentPositionAsync();
+                isAnimate.current = true;
+                try {
+                  mapRef.current.animateToRegion({
+                    latitude: coords.latitude,
+                    longitude: coords.longitude,
+                    latitudeDelta: 0.004,
+                    longitudeDelta: 0.004,
+                  });
+                } finally {
+                  isAnimate.current = false;
+                }
+              }}
+            />
             <IconBtn
               style={style.iconButton}
               icon="createAR"

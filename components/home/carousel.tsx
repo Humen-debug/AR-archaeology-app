@@ -1,6 +1,5 @@
 import { getThumb } from "@/plugins/utils";
 import { useAppTheme, AppTheme } from "@/providers/style_provider";
-import { act } from "@react-three/fiber";
 import _ from "lodash";
 import { createRef, useEffect, useLayoutEffect, useState } from "react";
 import { FlatList, Image, ImageStyle, StyleSheet, View, ViewStyle, useWindowDimensions } from "react-native";
@@ -50,7 +49,7 @@ export default function Carousel({ images, hideIndicators, imageStyle, ...props 
   }
 
   return (
-    <View style={{ flexDirection: "column" }}>
+    <View style={{ position: "relative" }}>
       <FlatList
         ref={ref}
         horizontal
@@ -72,18 +71,20 @@ export default function Carousel({ images, hideIndicators, imageStyle, ...props 
         )}
       />
       {!!!hideIndicators && images.length > 1 && (
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            alignContent: "center",
-            columnGap: theme.spacing.xxs,
-            marginVertical: theme.spacing.xxs,
-          }}
-        >
-          {images.map((it, index) => (
-            <View key={it} style={[style.indicator, { backgroundColor: index === activeIndex ? theme.colors.primary : theme.colors.grey3 }]} />
-          ))}
+        <View style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignContent: "center",
+              columnGap: theme.spacing.xxs,
+              marginVertical: theme.spacing.xxs,
+            }}
+          >
+            {images.map((it, index) => (
+              <View key={it} style={[style.indicator, { backgroundColor: index === activeIndex ? theme.colors.primary : theme.colors.grey3 }]} />
+            ))}
+          </View>
         </View>
       )}
     </View>

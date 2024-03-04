@@ -47,7 +47,6 @@ function StackLayout() {
         <Stack.Screen name="ar_placement" />
         <Stack.Screen name="ar_explore" />
         <Stack.Screen name="collection" />
-        <Stack.Screen name="profile" />
       </Stack>
       <StatusBar style={style === "dark" ? "light" : "dark"} />
     </>

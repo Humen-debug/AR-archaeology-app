@@ -46,7 +46,7 @@ export default function Home() {
         <View style={style.appBarDecorateBox} />
         <View style={{ flexDirection: "column", paddingTop: theme.spacing.md, paddingBottom: theme.spacing.xs, paddingHorizontal: theme.spacing.lg }}>
           <Text variant="titleMedium" style={{ color: theme.colors.background }}>
-            {authenticated ? "Let’s have fun in the Vedi Valley!" : "Welcome to the Vedi Valley"}
+            Welcome to the Vedi Valley!
           </Text>
         </View>
 
@@ -66,7 +66,7 @@ export default function Home() {
           <Link href="/home/history" asChild>
             <Pressable style={{ elevation: 12 }}>
               <ImageBackground source={require("@assets/images/vedi.jpg")} style={[style.thumbnail]} imageStyle={style.image}>
-                <View style={{ top: theme.spacing.sm, left: theme.spacing.sm, position: "absolute" }}>
+                <View style={{ bottom: theme.spacing.sm, left: theme.spacing.sm, position: "absolute" }}>
                   <Text variant="labelLarge" style={style.label}>
                     Explore the History
                   </Text>
@@ -100,7 +100,7 @@ export default function Home() {
             </Link>
             <Link href="/home/hiking" asChild>
               <Pressable style={style.subThumbContainer}>
-                <ImageBackground source={require("@assets/images/hiking.png")} imageStyle={style.image}>
+                <ImageBackground source={require("@assets/images/hiking.jpg")} imageStyle={style.image}>
                   <View style={style.subThumb}>
                     <Text variant="labelLarge" style={[style.label, { bottom: theme.spacing.xxs, left: theme.spacing.xs, position: "absolute" }]}>
                       Hiking

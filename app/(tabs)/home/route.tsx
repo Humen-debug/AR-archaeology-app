@@ -37,15 +37,17 @@ export default function Page() {
       try {
         if (!id) return;
         const res = await feathers.service("routes").get(id);
-        setRoute(res);
+
         while (total.current > points.current.length) {
           const locations: Paginated<GeoPoint> = await feathers.service("locations").find({
             query: { route: id, $sort: "order", $select: ["latitude", "longitude"], $skip: points.current.length },
           });
+
           total.current = locations.total;
           if (locations.total === 0 || locations.data.length === 0) break;
           points.current = [...points.current, ...locations.data];
         }
+
         if (points.current.length > 1) {
           var sum = 0;
           for (let i = 1; i < points.current.length; i++) {
@@ -55,24 +57,27 @@ export default function Page() {
           }
           // round up to nearest 0.05
           const distance = Math.ceil(sum * 20) / 20;
-          setDistance((_) => {
-            if (distance < 1) {
-              return `${distance * 1000} m`;
-            } else {
-              return `${distance} km`;
-            }
-          });
+          var text = "";
+          if (distance < 1) {
+            text = `${distance * 1000} m`;
+          } else {
+            text = `${distance} km`;
+          }
+          setDistance(text);
           const duration = Math.ceil(sum / avgKmPerHour);
-          setDuration((_) => {
-            if (duration < 1) {
-              return `~${duration * 60} minutes`;
-            } else if (duration > 1) {
-              return `${duration} hours`;
-            } else {
-              return "1 hour";
-            }
-          });
+          if (duration < 1) {
+            text = `~${duration * 60} minutes`;
+          } else if (duration > 1) {
+            text = `${duration} hours`;
+          } else {
+            text = "1 hour";
+          }
+          setDuration(text);
         }
+
+        setRoute(res);
+      } catch (error) {
+        console.warn(error);
       } finally {
         setLoaded(true);
       }
@@ -141,7 +146,7 @@ export default function Page() {
             {route.desc}
           </Text>
 
-          {points.current.length && (
+          {points.current && points.current.length ? (
             <View style={{ flexDirection: "column" }}>
               <Text variant="titleMedium" style={{ color: theme.colors.text, paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.xs }}>
                 Explore the area
@@ -179,15 +184,15 @@ export default function Page() {
                 </Button>
               </View>
             </View>
-          )}
+          ) : null}
 
-          {route.content && (
+          {route.content ? (
             <View style={{ flexDirection: "column", rowGap: 1.5 * theme.spacing.xl }}>
               {route.content.map((item, index) => (
                 <ContentItem content={item} key={index} imageStyle={{ marginHorizontal: theme.spacing.lg, borderRadius: theme.spacing.xs }} />
               ))}
             </View>
-          )}
+          ) : null}
         </ScrollView>
       ) : (
         <View style={style.center}>
