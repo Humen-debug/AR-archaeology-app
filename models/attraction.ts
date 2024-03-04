@@ -1,3 +1,4 @@
+import { Tag } from "./tag";
 import { Content, Model } from "./utils";
 
 export type Weekday = "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday";
@@ -17,6 +18,9 @@ export class Attraction extends Model {
   content?: Content[];
   thumbnails?: string[];
   contact?: string;
+  // string for _id, Tag for entire object fetched by using "$populate"
+  tags?: (string | Tag)[];
+  entranceFee: number;
 
   order: number;
 

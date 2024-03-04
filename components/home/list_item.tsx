@@ -6,6 +6,7 @@ import { Image, StyleSheet, View } from "react-native";
 import { Text, TouchableRipple } from "react-native-paper";
 import IconBtn from "../icon_btn";
 import { Href } from "expo-router/build/link/href";
+import { Tag } from "@/models";
 
 export interface Props {
   name: string;
@@ -17,6 +18,7 @@ export interface Props {
   showNavigate?: boolean;
   latitude?: number;
   longitude?: number;
+  tags?: string | (string | Tag)[];
 }
 
 export default function ListItem({ name, briefDesc, images, href, showNavigate, latitude, longitude, ...props }: Props) {
@@ -92,6 +94,13 @@ export default function ListItem({ name, briefDesc, images, href, showNavigate, 
 
   function render2() {
     const image: string | undefined = images?.[0];
+    let tags = "";
+    if (Array.isArray(props.tags)) {
+      if (props.tags.length > 0) {
+        if (typeof props.tags[0] === "string") tags = props.tags.join(", ");
+        else tags = props.tags.map((tag) => (tag as Tag).name).join(", ");
+      }
+    } else if (typeof props.tags === "string") tags = props.tags;
     return (
       <TouchableRipple onPress={onPress}>
         <View style={{ backgroundColor: theme.colors.container, elevation: 2 }}>
@@ -130,6 +139,11 @@ export default function ListItem({ name, briefDesc, images, href, showNavigate, 
                 {briefDesc && (
                   <Text variant="bodyMedium" style={{ color: theme.colors.text }}>
                     {briefDesc}
+                  </Text>
+                )}
+                {tags.length > 0 && (
+                  <Text variant="bodyMedium" style={{ color: theme.colors.primary }}>
+                    {tags}
                   </Text>
                 )}
               </View>

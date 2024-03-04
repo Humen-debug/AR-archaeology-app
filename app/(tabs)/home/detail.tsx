@@ -1,7 +1,7 @@
 import { AppBar, Carousel, ContentItem, MainBody, NAVBAR_HEIGHT } from "@/components";
 import MapPreview from "@/components/map/map_preview";
 import { BookmarkOutlineIcon, CompassIcon, LocationIcon } from "@components/icons";
-import { Attraction, GeoPoint } from "@models";
+import { Attraction, GeoPoint, Tag } from "@models";
 import { useFeathers } from "@providers/feathers_provider";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { router, useLocalSearchParams } from "expo-router";
@@ -31,7 +31,7 @@ export default function Page() {
         return;
       }
       try {
-        const res = await feathers.service(service).get(id);
+        const res = await feathers.service(service).get(id, { query: { $populate: ["tags"] } });
         const { latitude, longitude } = res;
 
         setCanNavigate(typeof latitude === "number" && typeof longitude === "number");
@@ -58,6 +58,9 @@ export default function Page() {
             <Text variant="headlineSmall" style={{ color: theme.colors.text }}>
               {item.name}
             </Text>
+            {item.tags && item.tags.length > 0 && (
+              <Text style={{ color: theme.colors.primary }}>{item.tags?.map((tag) => (tag as Tag).name).join(", ")}</Text>
+            )}
             {item.desc ? (
               <Text variant="bodyMedium" style={{ color: theme.colors.text }}>
                 {item.desc}
@@ -70,7 +73,23 @@ export default function Page() {
               )
             )}
           </View>
-
+          {/* Fee */}
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              paddingHorizontal: theme.spacing.lg,
+              paddingBottom: theme.spacing.xl,
+              columnGap: theme.spacing.xs,
+            }}
+          >
+            <Text variant="titleMedium" style={{ color: theme.colors.text }}>
+              Entrance Fee:
+            </Text>
+            <Text variant="labelLarge" style={{ color: theme.colors.primary }}>
+              {item.entranceFee ?? "Free"}
+            </Text>
+          </View>
           {/* Map */}
           {canNavigate && (
             <View style={{ flexDirection: "column" }}>

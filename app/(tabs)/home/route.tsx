@@ -47,33 +47,32 @@ export default function Page() {
           if (locations.total === 0 || locations.data.length === 0) break;
           points.current = [...points.current, ...locations.data];
         }
-
+        var sum = 0;
         if (points.current.length > 1) {
-          var sum = 0;
           for (let i = 1; i < points.current.length; i++) {
             const prev = points.current[i - 1];
             const cur = points.current[i];
             sum += distanceFromLatLonInKm(prev, cur);
           }
-          // round up to nearest 0.05
-          const distance = Math.ceil(sum * 20) / 20;
-          var text = "";
-          if (distance < 1) {
-            text = `${distance * 1000} m`;
-          } else {
-            text = `${distance} km`;
-          }
-          setDistance(text);
-          const duration = Math.ceil(sum / avgKmPerHour);
-          if (duration < 1) {
-            text = `~${duration * 60} minutes`;
-          } else if (duration > 1) {
-            text = `${duration} hours`;
-          } else {
-            text = "1 hour";
-          }
-          setDuration(text);
         }
+        // round up to nearest 0.05
+        const distance = Math.ceil(sum * 20) / 20;
+        var text = "";
+        if (distance < 1) {
+          text = `${distance * 1000} m`;
+        } else {
+          text = `${distance} km`;
+        }
+        setDistance(text);
+        const duration = Number((sum / avgKmPerHour).toFixed(2));
+        if (duration < 1) {
+          text = `~${duration * 60} minutes`;
+        } else if (duration > 1) {
+          text = `${duration} hours`;
+        } else {
+          text = "1 hour";
+        }
+        setDuration(text);
 
         setRoute(res);
       } catch (error) {

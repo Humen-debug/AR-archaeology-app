@@ -55,10 +55,11 @@ export default function Page() {
   }, []);
 
   async function syncData() {
-    const query = { $skip: cursor.current, $sort: "order", type: type };
+    const query = { $skip: cursor.current, $sort: "order", type: type, $populate: ["tags"] };
     const res: Paginated<Attraction> = await feathers.service("attractions").find({
       query: query,
     });
+
     if (res.total != total.current) total.current = res.total;
     let count: number = res.data.length;
 
@@ -101,6 +102,7 @@ export default function Page() {
             showNavigate: true,
             latitude: item.latitude,
             longitude: item.longitude,
+            tags: item.tags,
             href: {
               pathname: "/home/detail",
               params: { id: item._id, service: "attractions" },

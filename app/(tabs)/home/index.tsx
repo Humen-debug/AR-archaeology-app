@@ -78,7 +78,7 @@ export default function Home() {
           <View style={{ columnGap: theme.spacing.md, rowGap: theme.spacing.sm, flexDirection: "row", flexWrap: "wrap" }}>
             <Link href={{ pathname: "/home/attractions", params: { type: "Attraction" } }} asChild>
               <Pressable style={style.subThumbContainer}>
-                <ImageBackground source={require("@assets/images/attractions.png")} imageStyle={style.image}>
+                <ImageBackground source={require("@assets/images/attraction.jpg")} imageStyle={style.image}>
                   <View style={style.subThumb}>
                     <Text variant="labelLarge" style={[style.label, { top: theme.spacing.xxs, left: theme.spacing.xs, position: "absolute" }]}>
                       Attractions
