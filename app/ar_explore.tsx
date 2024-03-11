@@ -13,7 +13,7 @@ import { MainBody, IconBtn } from "@components";
 import { ChevronLeftIcon, ArrowUpIcon } from "@components/icons";
 import * as Location from "expo-location";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState, useEffect, createRef, useCallback } from "react";
+import { useState, useEffect, createRef, useCallback, useRef } from "react";
 import { View, StyleSheet, useWindowDimensions } from "react-native";
 import _ from "lodash";
 import { ActivityIndicator, Text } from "react-native-paper";
@@ -22,13 +22,12 @@ import Animated, { Easing, useAnimatedStyle, withTiming } from "react-native-rea
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
-import { THREE } from "expo-three";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { distanceFromLatLonInKm, bearingBetweenTwoPoints, transformGpsToAR, getNextPoint } from "@/plugins/geolocation";
-import { useFeathers } from "@/providers/feathers_provider";
+import ParticlesEffect from "@/components/particles_effect";
 
 function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
-  const { location, points, nearestPoint, setInitAngle, initAngle, degree: bearingDegree } = props?.arSceneNavigator?.viroAppProps ?? {};
+  const { location, points, nearestPoint } = props?.arSceneNavigator?.viroAppProps ?? {};
 
   ViroAnimations.registerAnimations({
     rotation: {
@@ -154,6 +153,7 @@ export default () => {
   const animatedProps = { duration: 300, easing: Easing.inOut(Easing.quad) };
   const [mapExpand, setMapExpand] = useState<boolean>(false);
   const [initAngle, setInitAngle] = useState<number>(-1);
+  const [animate, setAnimate] = useState<number>(0);
   const miniMapStyle = useAnimatedStyle(() => {
     var pos = mapExpand
       ? { bottom: 0, right: 0, left: 0, top: undefined }
@@ -244,9 +244,20 @@ export default () => {
     if (!location) return;
     mapRef?.current?.animateToRegion({ latitude: location.latitude, longitude: location.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 });
     if (nearbyItems && nearbyItems.length) {
-      setNearestPoint(getNextPoint(parseInt(targetId ?? "0"), nearbyItems, location));
+      const { currentAnimate, closestPoint } = getNextPoint(parseInt(targetId ?? "0"), nearbyItems, location);
+      setAnimate(currentAnimate);
+      setNearestPoint(closestPoint);
     }
   }, [location, nearbyItems]);
+
+  useEffect(() => {
+    if (animate == 0) return;
+
+    // End animate after 2 sec
+    setTimeout(() => {
+      setAnimate(0);
+    }, 2000);
+  }, [animate]);
 
   const handleMapPressed = () => {
     setMapExpand((value) => !value);
@@ -370,6 +381,14 @@ export default () => {
             </Text>
             <ActivityIndicator size={"large"} animating={true} />
           </View>
+        </View>
+      )}
+      <View style={style.centerContainer}>
+        <ParticlesEffect playing={animate} />
+      </View>
+      {animate !== 0 && (
+        <View style={style.centerContainer}>
+          <Text>{animate == 1 ? "You are getting too far from path!" : "You have reached a way point!"} </Text>
         </View>
       )}
     </MainBody>
