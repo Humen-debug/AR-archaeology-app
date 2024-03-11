@@ -141,6 +141,7 @@ export const getClosestPointOnPath = (point: LatLng, ...path: [LatLng, LatLng]) 
 export const getNextPoint = (targetIndex: number, points: LatLng[], location: LatLng, threshold: number = 0.025) => {
   let closestPoint = points[0];
   let closestDistance = -1;
+  let currentAnimate = 0;
 
   if (points.length > 1) {
     for (let i = 0; i < points.length - 1; i++) {
@@ -149,15 +150,18 @@ export const getNextPoint = (targetIndex: number, points: LatLng[], location: La
       if (closestDistance == -1 || closestDistance > d) {
         closestDistance = d;
 
-        if (d > threshold) closestPoint = p;
-        else
-          closestPoint =
-            distanceFromLatLonInKm(points[i], points[targetIndex]) < distanceFromLatLonInKm(points[i + 1], points[targetIndex])
-              ? points[i]
-              : points[i + 1];
+        if (d > threshold) {
+          currentAnimate = 1; // Getting far from path
+          closestPoint = p;
+        } else if (distanceFromLatLonInKm(points[i], points[targetIndex]) < distanceFromLatLonInKm(points[i + 1], points[targetIndex])) {
+          closestPoint = points[i];
+        } else {
+          currentAnimate = 2; // Getting to point
+          closestPoint = points[i + 1];
+        }
       }
     }
   }
 
-  return closestPoint;
+  return { currentAnimate, closestPoint: closestPoint };
 };
