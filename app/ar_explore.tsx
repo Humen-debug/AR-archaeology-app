@@ -388,7 +388,9 @@ export default () => {
       </View>
       {animate !== 0 && (
         <View style={style.centerContainer}>
-          <Text>{animate == 1 ? "You are getting too far from path!" : "You have reached a way point!"} </Text>
+          <View style={{ width: "100%", paddingVertical: 16 }}>
+            <Text>{animate == 1 ? "You are getting too far from path!" : "You have reached a way point!"} </Text>
+          </View>
         </View>
       )}
     </MainBody>
