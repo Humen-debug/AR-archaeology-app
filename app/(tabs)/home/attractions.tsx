@@ -55,6 +55,7 @@ export default function Page() {
   }, []);
 
   async function syncData() {
+    if (cursor.current != 0 && cursor.current >= total.current) return;
     const query = { $skip: cursor.current, $sort: "order", type: type, $populate: ["tags"] };
     const res: Paginated<Attraction> = await feathers.service("attractions").find({
       query: query,

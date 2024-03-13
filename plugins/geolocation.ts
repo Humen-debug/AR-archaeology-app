@@ -161,3 +161,7 @@ export const getNextPoint = (targetIndex: number, points: LatLng[], location: La
 
   return closestPoint;
 };
+
+export const isNear = (location: LatLng, target: LatLng, threshold: number = 0.001) => {
+  return distanceFromLatLonInKm(location, target) <= threshold;
+};

@@ -58,14 +58,22 @@ export default function Explore() {
   useEffect(() => {
     async function init() {
       try {
-        let res = await feathers.service("locations").find({ paginate: false });
+        let res = await feathers.service("locations").find({
+          paginate: false,
+          query: { $sort: { route: 1, order: 1 } },
+        });
         let points: Location[] = [];
         if (Array.isArray(res)) {
           points = res;
         } else if (res.data) {
           var total = res.total;
           while (total > points.length) {
-            res = await feathers.service("locations").find({ query: { $skip: points.length } });
+            res = await feathers.service("locations").find({
+              query: {
+                $sort: { route: 1, order: 1 },
+                $skip: points.length,
+              },
+            });
             if (res.data.length === 0) break;
             points = [...points, ...res.data];
           }

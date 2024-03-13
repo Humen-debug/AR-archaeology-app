@@ -16,7 +16,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useState, useEffect, createRef, useCallback } from "react";
 import { View, StyleSheet, useWindowDimensions } from "react-native";
 import _ from "lodash";
-import { ActivityIndicator, Text } from "react-native-paper";
+import { ActivityIndicator, Button, Text } from "react-native-paper";
 import MapView, { Marker } from "react-native-maps";
 import Animated, { Easing, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { TouchableHighlight } from "react-native-gesture-handler";
@@ -24,7 +24,7 @@ import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/Vi
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import { THREE } from "expo-three";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
-import { distanceFromLatLonInKm, bearingBetweenTwoPoints, transformGpsToAR, getNextPoint } from "@/plugins/geolocation";
+import { distanceFromLatLonInKm, bearingBetweenTwoPoints, transformGpsToAR, getNextPoint, isNear } from "@/plugins/geolocation";
 import { useFeathers } from "@/providers/feathers_provider";
 
 function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
@@ -151,6 +151,8 @@ export default () => {
   const style = useStyle({ theme });
   const { targetId, POINTS } = useLocalSearchParams<{ targetId: string; POINTS: string }>();
   const points: LatLong[] | undefined = POINTS && JSON.parse(POINTS);
+  const [targetIndex, setTargetIndex] = useState(targetId ? parseInt(targetId) : 0);
+  const [showSuggest, setShowSuggest] = useState(false);
 
   const animatedProps = { duration: 300, easing: Easing.inOut(Easing.quad) };
   const [mapExpand, setMapExpand] = useState<boolean>(false);
@@ -245,9 +247,26 @@ export default () => {
     if (!location) return;
     mapRef?.current?.animateToRegion({ latitude: location.latitude, longitude: location.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 });
     if (nearbyItems && nearbyItems.length) {
-      setNearestPoint(getNextPoint(parseInt(targetId ?? "0"), nearbyItems, location));
+      setNearestPoint(getNextPoint(targetIndex, nearbyItems, location));
     }
-  }, [location, nearbyItems]);
+    if (targetIndex < nearbyItems.length && isNear(location, nearbyItems[targetIndex])) {
+      // show suggestion to move to next point
+      setShowSuggest(true);
+    }
+  }, [location, nearbyItems, targetIndex]);
+
+  const cancelSuggest = () => {
+    setShowSuggest(false);
+  };
+
+  const confirmSuggest = () => {
+    if (nearbyItems && nearbyItems.length) {
+      if (targetIndex + 1 < nearbyItems.length) {
+        setTargetIndex((index) => index + 1);
+      }
+    }
+    setShowSuggest(false);
+  };
 
   const handleMapPressed = () => {
     setMapExpand((value) => !value);
@@ -371,6 +390,42 @@ export default () => {
             </Text>
             <ActivityIndicator size={"large"} animating={true} />
           </View>
+        </View>
+      )}
+      {showSuggest && (
+        <View style={style.centerContainer}>
+          {targetIndex < nearbyItems.length - 1 ? (
+            <View style={style.loadingCard}>
+              <Text variant="labelMedium" style={{ color: theme.colors?.primary, textAlign: "center", paddingBottom: theme.spacing.xs }}>
+                {`You've arrived the target. Do you want to go to the next location on route?`}
+              </Text>
+              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end", gap: theme.spacing.xs }}>
+                <Button mode="text" onPress={confirmSuggest}>
+                  <Text variant="labelLarge" style={{ color: theme.colors.primary, fontWeight: "bold" }}>
+                    Yes
+                  </Text>
+                </Button>
+                <Button mode="text" onPress={cancelSuggest}>
+                  <Text variant="labelLarge" style={{ color: theme.colors.grey2, fontWeight: "bold" }}>
+                    No
+                  </Text>
+                </Button>
+              </View>
+            </View>
+          ) : (
+            <View style={style.loadingCard}>
+              <Text variant="labelMedium" style={{ color: theme.colors?.primary, textAlign: "center", paddingBottom: theme.spacing.xs }}>
+                {`You've arrived the last location.`}
+              </Text>
+              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end" }}>
+                <Button mode="text" onPress={cancelSuggest}>
+                  <Text variant="labelLarge" style={{ color: theme.colors.primary, fontWeight: "bold" }}>
+                    OK
+                  </Text>
+                </Button>
+              </View>
+            </View>
+          )}
         </View>
       )}
     </MainBody>
