@@ -27,6 +27,7 @@
     "@use-gesture/react": "^10.3.0",
     "@viro-community/react-viro": "^2.23.1",
     "expo": "^49.0.0",
+    "expo-av": "^13.10.5",
     "expo-file-system": "~15.4.4",
     "expo-font": "~11.4.0",
     "expo-gl": "~13.0.1",

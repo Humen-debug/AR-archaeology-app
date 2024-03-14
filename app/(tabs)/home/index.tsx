@@ -201,8 +201,8 @@ const useStyle = ({ theme, screenWidth }: { theme: AppTheme; screenWidth: number
     subThumbContainer: {
       borderRadius: theme.spacing.xs,
       overflow: "hidden",
-      height: (((screenWidth - theme.spacing.lg * 2 - theme.spacing.md) / 2) * 9) / 16,
-      width: (screenWidth - theme.spacing.lg * 2 - theme.spacing.md) / 2,
+      height: Math.round((((screenWidth - theme.spacing.lg * 2 - theme.spacing.md) / 2) * 9) / 16),
+      width: Math.round((screenWidth - theme.spacing.lg * 2 - theme.spacing.md) / 2 - 1),
       position: "relative",
       elevation: 8,
     },
