@@ -14,7 +14,7 @@ import { ChevronLeftIcon, ArrowUpIcon } from "@components/icons";
 import * as Location from "expo-location";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, useEffect, createRef, useCallback } from "react";
-import { View, StyleSheet, useWindowDimensions } from "react-native";
+import { View, StyleSheet, useWindowDimensions, Platform } from "react-native";
 import _ from "lodash";
 import { ActivityIndicator, Button, Text } from "react-native-paper";
 import MapView, { Marker } from "react-native-maps";
@@ -28,7 +28,7 @@ import { distanceFromLatLonInKm, bearingBetweenTwoPoints, transformGpsToAR, getN
 import { useFeathers } from "@/providers/feathers_provider";
 
 function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
-  const { location, points, nearestPoint, setInitAngle, initAngle, degree: bearingDegree } = props?.arSceneNavigator?.viroAppProps ?? {};
+  const { location, points, nearestPoint, degree: bearingDegree, targetIndex, setShowSuggest } = props?.arSceneNavigator?.viroAppProps ?? {};
 
   ViroAnimations.registerAnimations({
     rotation: {
@@ -62,8 +62,9 @@ function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
     if (!points) {
       return undefined;
     }
-
-    const ARObjects = points.map((item, index) => {
+    // basically object 50m far away from location cannot be shown in AR scene
+    const filterPoints = points.filter((point) => distanceFromLatLonInKm(point, location) <= 0.03);
+    const ARObjects = filterPoints.map((item, index) => {
       const coords = transformGpsToAR(location, item);
       if (!coords) return undefined;
 
@@ -98,6 +99,7 @@ function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
   }, [location, points]);
 
   const [position, setPosition] = useState<Viro3DPoint>([0, 0, 0]);
+  const [initAngle, setInitAngle] = useState<number>(-1);
   const calPoint = nearestPoint && transformGpsToAR(location, nearestPoint);
   const point = { x: calPoint?.x || 0, z: calPoint?.z || 0 };
 
@@ -122,9 +124,21 @@ function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
 
           // need better cal but my brain no longer function anymore, will update tmr
           const angleDiff = (360 + bearingDegree - headingDegrees) % 360;
-          setInitAngle?.(angleDiff);
+          setInitAngle(angleDiff);
         }
         setPosition([cameraTransform.position[0], cameraTransform.position[1] - 1, cameraTransform.position[2]]);
+        if (points && targetIndex && targetIndex < points.length - 1) {
+          const point = points[targetIndex];
+          const arLoc = transformGpsToAR(location, point);
+
+          if (arLoc) {
+            // distance in meter
+            const dist = Math.sqrt(Math.pow(cameraTransform.position[0] - arLoc.x, 2) + Math.pow(cameraTransform.position[2] - arLoc.z, 2));
+            if (dist <= 5) {
+              setShowSuggest?.(true);
+            }
+          }
+        }
       }}
     >
       {location && placeARObjects()}
@@ -156,7 +170,7 @@ export default () => {
 
   const animatedProps = { duration: 300, easing: Easing.inOut(Easing.quad) };
   const [mapExpand, setMapExpand] = useState<boolean>(false);
-  const [initAngle, setInitAngle] = useState<number>(-1);
+
   const miniMapStyle = useAnimatedStyle(() => {
     var pos = mapExpand
       ? { bottom: 0, right: 0, left: 0, top: undefined }
@@ -183,6 +197,7 @@ export default () => {
   const [location, setLocation] = useState<Location.LocationObjectCoords>();
   const [heading, setHeading] = useState<number>();
   const [nearbyItems, setNearbyItems] = useState<LatLong[]>([]);
+  const [initHeading, setInitHeading] = useState<number>(-1);
 
   // const
   const distanceInterval: number = 25;
@@ -217,6 +232,8 @@ export default () => {
         ];
         setNearbyItems(locations);
       }
+      const { trueHeading } = await Location.getHeadingAsync();
+      setInitHeading(trueHeading);
 
       const geoOpt: Location.LocationOptions = {
         accuracy: Location.Accuracy.High,
@@ -249,11 +266,14 @@ export default () => {
     if (nearbyItems && nearbyItems.length) {
       setNearestPoint(getNextPoint(targetIndex, nearbyItems, location));
     }
-    if (targetIndex < nearbyItems.length && isNear(location, nearbyItems[targetIndex])) {
-      // show suggestion to move to next point
-      setShowSuggest(true);
+    if (targetIndex < nearbyItems.length - 1) {
+      const point = nearbyItems[targetIndex];
+
+      if (isNear(point, location, 0.005)) {
+        setShowSuggest(true);
+      }
     }
-  }, [location, nearbyItems, targetIndex]);
+  }, [location, nearbyItems]);
 
   const cancelSuggest = () => {
     setShowSuggest(false);
@@ -288,15 +308,19 @@ export default () => {
     // Accurate bearing degree
     const bearing = bearingBetweenTwoPoints(location, nearestPoint);
     if (heading && heading > -1) {
-      return (360 - heading - bearing) % 360;
+      if (Platform.OS === "android") {
+        console.log("bearing", bearing);
+        return (360 + initHeading - heading - bearing) % 360;
+      } else return (360 - heading - bearing) % 360;
     }
     return bearing;
   };
 
   const getNearestDistance = () => {
-    if (!nearestPoint) return undefined;
+    if (!nearbyItems || !nearbyItems.length) return undefined;
+    const point = nearbyItems[targetIndex];
     // convert km to m
-    const distance = distanceFromLatLonInKm(location, nearestPoint) * 1000;
+    const distance = distanceFromLatLonInKm(location, point) * 1000;
     if (distance > 99) {
       return ">100m";
     } else if (distance > 49) {
@@ -328,8 +352,8 @@ export default () => {
               points: nearbyItems,
               nearestPoint,
               degree,
-              setInitAngle,
-              initAngle,
+              targetIndex,
+              setShowSuggest,
             } as ARExploreProps
           }
         />
@@ -361,6 +385,7 @@ export default () => {
           </View>
         </View>
       )}
+
       {location && (
         <Animated.View style={miniMapStyle}>
           <TouchableHighlight onPress={handleMapPressed} activeOpacity={1}>
@@ -371,7 +396,7 @@ export default () => {
               showsUserLocation={true}
               showsMyLocationButton={false}
               zoomControlEnabled={false}
-              zoomEnabled={false}
+              zoomEnabled={mapExpand}
               rotateEnabled={false}
               pitchEnabled={false}
               scrollEnabled={false}
@@ -381,6 +406,27 @@ export default () => {
             </MapView>
           </TouchableHighlight>
         </Animated.View>
+      )}
+      {location && (
+        <View
+          style={[
+            style.distanceContainer,
+            { top: top + theme.spacing.xs + style.distanceContainer.height + 34 * 2 + 134 + theme.spacing.sm, height: 150 },
+          ]}
+        >
+          <View style={[style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
+            <View style={style.columnLayout}>
+              <Text>lat:{location.latitude}</Text>
+              <Text>lon:{location.longitude}</Text>
+              <Text>location's heading:{location.heading}</Text>
+              <Text>heading:{heading}</Text>
+              <Text>initHeading: {initHeading}</Text>
+              {/* <Text>
+                camera: {cameraTransform[0].toFixed(5)}, {cameraTransform[1].toFixed(5)}, {cameraTransform[2].toFixed(5)}
+              </Text> */}
+            </View>
+          </View>
+        </View>
       )}
       {loading && (
         <View style={style.centerContainer}>
@@ -447,8 +493,8 @@ interface ARExploreProps {
   points: LatLong[];
   nearestPoint: LatLong;
   degree: Float;
-  setInitAngle: Function;
-  initAngle: Number;
+  setShowSuggest: Function;
+  targetIndex: number;
 }
 
 interface LatLong {

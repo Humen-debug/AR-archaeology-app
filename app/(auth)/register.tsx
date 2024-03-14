@@ -82,17 +82,17 @@ export default function RegisterPage() {
               onChange: setUsername,
               label: "Username",
             },
-            {
-              value: dob,
-              onChange: (value: string) => {
-                if (value.length === 2 || value.length === 5) value += "/";
-                setDob(value);
-              },
-              validator: rules.birthday,
-              label: "Birthday (DD/MM/YYYY)",
-              keyboardType: "number-pad",
-              maxLength: 10,
-            },
+            // {
+            //   value: dob,
+            //   onChange: (value: string) => {
+            //     if (value.length === 2 || value.length === 5) value += "/";
+            //     setDob(value);
+            //   },
+            //   validator: rules.birthday,
+            //   label: "Birthday (DD/MM/YYYY)",
+            //   keyboardType: "number-pad",
+            //   maxLength: 10,
+            // },
             {
               inner: [
                 {

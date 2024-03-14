@@ -56,7 +56,7 @@ export default function Page() {
 
   async function syncData() {
     if (cursor.current != 0 && cursor.current >= total.current) return;
-    const query = { $skip: cursor.current, $sort: "order", type: type, $populate: ["tags"] };
+    const query = { $skip: cursor.current, $sort: { order: 1 }, type: type, $populate: ["tags"] };
     const res: Paginated<Attraction> = await feathers.service("attractions").find({
       query: query,
     });
@@ -74,7 +74,7 @@ export default function Page() {
 
   async function loadMore() {
     if (!hasScrolled) return null;
-    if (attractions.length >= total.current) return;
+    if (attractions.length >= total.current || loading) return;
     setLoading(true);
     try {
       await syncData();
@@ -96,9 +96,12 @@ export default function Page() {
         contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.lg }}
         contentInset={{ bottom: theme.spacing.lg }}
         renderItem={({ item }) => {
+          let brief = item.briefDesc;
+
+          if (brief && item.contact) brief += `\nContact no.: ${item.contact}`;
           const props: ListItemProps = {
             name: item.name,
-            briefDesc: item.briefDesc,
+            briefDesc: brief,
             images: item.thumbnails,
             showNavigate: true,
             latitude: item.latitude,
