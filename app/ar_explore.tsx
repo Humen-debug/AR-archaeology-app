@@ -14,7 +14,7 @@ import { ChevronLeftIcon, ArrowUpIcon } from "@components/icons";
 import * as Location from "expo-location";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, useEffect, createRef, useCallback, useRef } from "react";
-import { View, StyleSheet, useWindowDimensions } from "react-native";
+import { View, StyleSheet, useWindowDimensions, Platform } from "react-native";
 import _ from "lodash";
 import { ActivityIndicator, Text } from "react-native-paper";
 import MapView, { Marker } from "react-native-maps";
@@ -27,7 +27,7 @@ import { distanceFromLatLonInKm, bearingBetweenTwoPoints, transformGpsToAR, getN
 import ParticlesEffect from "@/components/particles_effect";
 
 function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
-  const { location, points, nearestPoint } = props?.arSceneNavigator?.viroAppProps ?? {};
+  const { location, points, nearestPoint, initHeading } = props?.arSceneNavigator?.viroAppProps ?? {};
 
   ViroAnimations.registerAnimations({
     rotation: {
@@ -94,8 +94,22 @@ function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
     return ARObjects;
   }, [location, points]);
 
+  function rotateObject(point: { x: number; z: number } | undefined) {
+    if (Platform.OS === "android") {
+      // return point;
+      if (point && initHeading) {
+        let newRotatedX = point.x * Math.cos(initHeading) - point.z * Math.sin(initHeading);
+        let newRotatedZ = point.z * Math.cos(initHeading) + point.z * Math.sin(initHeading);
+
+        return { x: newRotatedX, z: newRotatedZ };
+      }
+    } else {
+      return point;
+    }
+  }
+
   const [position, setPosition] = useState<Viro3DPoint>([0, 0, 0]);
-  const calPoint = nearestPoint && transformGpsToAR(location, nearestPoint);
+  const calPoint = nearestPoint && rotateObject(transformGpsToAR(location, nearestPoint));
   const point = { x: calPoint?.x || 0, z: calPoint?.z || 0 };
 
   const degree = (Math.atan2(point.x - position[0], point.z - position[2]) * 180) / Math.PI;
@@ -131,13 +145,13 @@ function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
           </ViroNode>
         </>
       )}
-      <Viro3DObject
+      {/* <Viro3DObject
         position={[-350, -960, 30]}
         source={require("@assets/models/wall/wall.obj")}
         type="OBJ"
         onError={handleError}
         shadowCastingBitMask={2}
-      />
+      /> */}
     </ViroARScene>
   );
 }
@@ -152,7 +166,7 @@ export default () => {
 
   const animatedProps = { duration: 300, easing: Easing.inOut(Easing.quad) };
   const [mapExpand, setMapExpand] = useState<boolean>(false);
-  const [initAngle, setInitAngle] = useState<number>(-1);
+
   const [animate, setAnimate] = useState<number>(0);
   const miniMapStyle = useAnimatedStyle(() => {
     var pos = mapExpand
@@ -179,6 +193,7 @@ export default () => {
 
   const [location, setLocation] = useState<Location.LocationObjectCoords>();
   const [heading, setHeading] = useState<number>();
+  const [initHeading, setInitHeading] = useState<number>();
   const [nearbyItems, setNearbyItems] = useState<LatLong[]>([]);
 
   // const
@@ -214,6 +229,8 @@ export default () => {
         ];
         setNearbyItems(locations);
       }
+      const { trueHeading } = await Location.getHeadingAsync();
+      setInitHeading(trueHeading);
 
       const geoOpt: Location.LocationOptions = {
         accuracy: Location.Accuracy.High,
@@ -279,7 +296,11 @@ export default () => {
     // Accurate bearing degree
     const bearing = bearingBetweenTwoPoints(location, nearestPoint);
     if (heading && heading > -1) {
-      return (360 - heading - bearing) % 360;
+      if (Platform.OS === "android") {
+        return (360 - heading - bearing) % 360;
+      } else {
+        return (360 - heading - bearing) % 360;
+      }
     }
     return bearing;
   };
@@ -319,8 +340,7 @@ export default () => {
               points: nearbyItems,
               nearestPoint,
               degree,
-              setInitAngle,
-              initAngle,
+              initHeading,
             } as ARExploreProps
           }
         />
@@ -361,8 +381,8 @@ export default () => {
               region={{ ...location, latitudeDelta: 0.05, longitudeDelta: 0.05 }}
               showsUserLocation={true}
               showsMyLocationButton={false}
-              zoomControlEnabled={false}
-              zoomEnabled={false}
+              zoomControlEnabled={true}
+              zoomEnabled={true}
               rotateEnabled={false}
               pitchEnabled={false}
               scrollEnabled={false}
@@ -373,6 +393,7 @@ export default () => {
           </TouchableHighlight>
         </Animated.View>
       )}
+
       {loading && (
         <View style={style.centerContainer}>
           <View style={style.loadingCard}>
@@ -383,9 +404,7 @@ export default () => {
           </View>
         </View>
       )}
-      <View style={style.centerContainer}>
-        <ParticlesEffect playing={animate} />
-      </View>
+      <View style={style.centerContainer}>{/* <ParticlesEffect playing={animate} /> */}</View>
       {animate !== 0 && (
         <View style={style.centerContainer}>
           <View style={{ width: "100%", paddingVertical: 16 }}>
@@ -412,8 +431,7 @@ interface ARExploreProps {
   points: LatLong[];
   nearestPoint: LatLong;
   degree: Float;
-  setInitAngle: Function;
-  initAngle: Number;
+  initHeading: number;
 }
 
 interface LatLong {
