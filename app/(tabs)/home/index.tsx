@@ -168,7 +168,7 @@ export default function Home() {
 
         {/* Map */}
         <View style={[{ flexGrow: 0, flexShrink: 1 }, ...[isPortrait(orientation) ? {} : { minHeight: 100 }]]}>
-          <MapPreview points={[]} style={[style.mapContainer, style.fill]} />
+          <MapPreview points={[]} style={[style.mapContainer, style.fill]} mapType="satellite" />
           <View style={{ position: "absolute", top: theme.spacing.md, right: theme.spacing.sm }}>
             <Text variant="titleMedium" style={style.mapLabel}>
               Map of Valley
@@ -201,8 +201,8 @@ const useStyle = ({ theme, screenWidth }: { theme: AppTheme; screenWidth: number
     subThumbContainer: {
       borderRadius: theme.spacing.xs,
       overflow: "hidden",
-      height: (((screenWidth - theme.spacing.lg * 2 - theme.spacing.md) / 2) * 9) / 16,
-      width: (screenWidth - theme.spacing.lg * 2 - theme.spacing.md) / 2,
+      height: Math.round((((screenWidth - theme.spacing.lg * 2 - theme.spacing.md) / 2) * 9) / 16),
+      width: Math.round((screenWidth - theme.spacing.lg * 2 - theme.spacing.md) / 2 - 1),
       position: "relative",
       elevation: 8,
     },

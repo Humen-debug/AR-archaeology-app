@@ -4,7 +4,8 @@ import { useAppTheme } from "@/providers/style_provider";
 import { router } from "expo-router";
 import { createRef, useEffect, useMemo, useState } from "react";
 import { Platform, StyleProp, View, ViewStyle } from "react-native";
-import MapView, { LatLng, Marker, Region } from "react-native-maps";
+import MapView, { LatLng, MapType, Marker, Region } from "react-native-maps";
+import ArrowLine from "./arrow_line";
 
 export interface Props {
   points: GeoPoint[];
@@ -12,12 +13,13 @@ export interface Props {
   onMapPress?: () => void;
   initialRegion?: Region;
   miniZoomLevel?: number;
+  mapType?: MapType;
 }
 
-export default function MapPreview({ points, style, onMapPress, initialRegion, miniZoomLevel = 15 }: Props) {
+export default function MapPreview({ points, style, onMapPress, initialRegion, miniZoomLevel = 15, mapType = "standard" }: Props) {
   const ref = createRef<MapView>();
   const [isAnimate, setIsAnimate] = useState(false);
-  const { style: appStyle } = useAppTheme();
+  const { style: appStyle, theme } = useAppTheme();
 
   const bound = useMemo(() => getBoundaries(points), [points]);
   useEffect(() => {
@@ -34,7 +36,7 @@ export default function MapPreview({ points, style, onMapPress, initialRegion, m
         ref={ref}
         style={{ width: "100%", height: "100%" }}
         initialRegion={initialRegion ?? { ...(points?.[0] ?? vediFortress), latitudeDelta: 0.009, longitudeDelta: 0.009 }}
-        mapType="satellite"
+        mapType={mapType}
         minZoomLevel={miniZoomLevel}
         rotateEnabled={false}
         userInterfaceStyle={appStyle}
@@ -79,6 +81,7 @@ export default function MapPreview({ points, style, onMapPress, initialRegion, m
           } else setIsAnimate(false);
         }}
       >
+        <ArrowLine coordinates={points} strokeWidth={6} strokeColor={theme.colors.tertiary} arrowSize={20} />
         {(points || []).map((point) => (
           <Marker
             key={point._id}
@@ -92,6 +95,7 @@ export default function MapPreview({ points, style, onMapPress, initialRegion, m
                 },
               });
             }}
+            zIndex={10}
           />
         ))}
       </MapView>

@@ -1,7 +1,7 @@
-import { AppBar, ContentItem, MainBody, NAVBAR_HEIGHT } from "@/components";
+import { AppBar, Carousel, ContentItem, MainBody, NAVBAR_HEIGHT } from "@/components";
 import { CompassIcon, FootStepsIcon, LocationIcon, MountainIcon, TimeOutlineIcon } from "@/components/icons";
 import MapPreview from "@/components/map/map_preview";
-import { GeoPoint, Route } from "@/models";
+import { GeoPoint, Location, Route } from "@/models";
 import { distanceFromLatLonInKm } from "@/plugins/geolocation";
 import { getThumb } from "@/plugins/utils";
 import { Paginated, useFeathers } from "@/providers/feathers_provider";
@@ -23,7 +23,7 @@ export default function Page() {
   const { id } = useLocalSearchParams<{ id?: string }>();
   const [loaded, setLoaded] = useState(false);
   const [route, setRoute] = useState<Route>();
-  const points = useRef<GeoPoint[]>([]);
+  const [points, setPoints] = useState<Location[]>([]);
   const total = useRef(1); // used to fetch all related points in route
 
   const [distance, setDistance] = useState("");
@@ -37,21 +37,22 @@ export default function Page() {
       try {
         if (!id) return;
         const res = await feathers.service("routes").get(id);
-
-        while (total.current > points.current.length) {
-          const locations: Paginated<GeoPoint> = await feathers.service("locations").find({
-            query: { route: id, $sort: "order", $select: ["latitude", "longitude"], $skip: points.current.length },
+        const locations: Location[] = [];
+        while (total.current > locations.length) {
+          const results: Paginated<Location> = await feathers.service("locations").find({
+            query: { route: id, $sort: "order", $skip: locations.length },
           });
 
-          total.current = locations.total;
-          if (locations.total === 0 || locations.data.length === 0) break;
-          points.current = [...points.current, ...locations.data];
+          total.current = results.total;
+          if (results.total === 0 || results.data.length === 0) break;
+          //  locations = [...points, ...locations.data];
+          locations.push(...results.data);
         }
         var sum = 0;
-        if (points.current.length > 1) {
-          for (let i = 1; i < points.current.length; i++) {
-            const prev = points.current[i - 1];
-            const cur = points.current[i];
+        if (locations.length > 1) {
+          for (let i = 1; i < locations.length; i++) {
+            const prev = locations[i - 1];
+            const cur = locations[i];
             sum += distanceFromLatLonInKm(prev, cur);
           }
         }
@@ -73,7 +74,7 @@ export default function Page() {
           text = "1 hour";
         }
         setDuration(text);
-
+        setPoints(locations);
         setRoute(res);
       } catch (error) {
         console.warn(error);
@@ -145,12 +146,12 @@ export default function Page() {
             {route.desc}
           </Text>
 
-          {points.current && points.current.length ? (
+          {points && points.length ? (
             <View style={{ flexDirection: "column" }}>
               <Text variant="titleMedium" style={{ color: theme.colors.text, paddingHorizontal: theme.spacing.lg, paddingBottom: theme.spacing.xs }}>
                 Explore the area
               </Text>
-              <MapPreview points={points.current} style={style.map} />
+              <MapPreview points={points} style={style.map} />
               <View
                 style={{
                   flexDirection: "row",
@@ -161,12 +162,11 @@ export default function Page() {
               >
                 <Button
                   mode="contained"
-                  onPress={() =>
-                    router.replace({ pathname: "/map", params: { latitude: points.current[0].latitude, longitude: points.current[0].longitude } })
-                  }
+                  onPress={() => router.replace({ pathname: "/map", params: { latitude: points[0].latitude, longitude: points[0].longitude } })}
                   textColor={theme.colors.textOnPrimary}
                   style={style.button}
-                  icon={() => <LocationIcon fill={theme.colors.textOnPrimary} size={20} />}
+                  labelStyle={style.buttonLabelStyle}
+                  // icon={() => <LocationIcon fill={theme.colors.textOnPrimary} size={20} />}
                 >
                   <Text variant="labelMedium" style={{ color: theme.colors.textOnPrimary, textAlignVertical: "center" }}>
                     View in a map
@@ -175,7 +175,8 @@ export default function Page() {
                 <Button
                   mode="outlined"
                   style={[style.button, { borderWidth: 2, borderColor: theme.colors.primary }]}
-                  icon={() => <CompassIcon fill={theme.colors.primary} size={20} />}
+                  labelStyle={style.buttonLabelStyle}
+                  // icon={() => <CompassIcon fill={theme.colors.primary} size={20} />}
                 >
                   <Text variant="labelMedium" style={{ color: theme.colors.primary }}>
                     Start AR tour
@@ -192,6 +193,45 @@ export default function Page() {
               ))}
             </View>
           ) : null}
+
+          <View style={{ flexDirection: "column", rowGap: theme.spacing.xl, marginTop: theme.spacing.xl * 1.5 }}>
+            {points
+              ? points.map((point, index) => (
+                  <View key={point._id} style={{ flexDirection: "column", rowGap: theme.spacing.md }}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        columnGap: theme.spacing.xs,
+                        paddingHorizontal: theme.spacing.lg,
+                      }}
+                    >
+                      <Text variant="titleMedium" style={{ color: theme.colors.text }}>
+                        {index + 1}. {point.name}
+                      </Text>
+                      <Button mode="contained" textColor={theme.colors.textOnPrimary} style={style.button} labelStyle={style.buttonLabelStyle}>
+                        <Text variant="labelMedium" style={{ color: theme.colors.textOnPrimary, textAlignVertical: "center" }}>
+                          Start AR tour
+                        </Text>
+                      </Button>
+                    </View>
+
+                    {point.images && <Carousel images={point.images} />}
+
+                    <Text
+                      variant="bodyMedium"
+                      style={{
+                        color: theme.colors.text,
+                        paddingHorizontal: theme.spacing.lg,
+                      }}
+                    >
+                      {point.desc || ""}
+                    </Text>
+                  </View>
+                ))
+              : null}
+          </View>
         </ScrollView>
       ) : (
         <View style={style.center}>
@@ -226,5 +266,10 @@ const useStyle = ({ theme, screenWidth }: { theme: AppTheme; screenWidth: number
       borderRadius: theme.borderRadius.xs,
       flexDirection: "row",
       alignContent: "center",
+      padding: 0,
+    },
+    buttonLabelStyle: {
+      marginHorizontal: theme.spacing.md,
+      marginVertical: theme.spacing.xs,
     },
   });

@@ -2,7 +2,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, View, FlatList, Platform } from "react-native";
 import MapView, { LatLng, MapMarker, Marker, Polyline } from "react-native-maps";
 import { Dimensions } from "react-native";
-import { MainBody, IconBtn, MarkerCallout } from "@components";
+import { MainBody, IconBtn, MarkerCallout, ArrowLine } from "@components";
 import React, { createRef, useEffect, useMemo, useRef, useState } from "react";
 import ExploreListModal from "@components/map/explore_list_modal";
 import ExploreItem from "@components/map/explore_item";
@@ -42,6 +42,7 @@ export default function Explore() {
   const [focusPoint, setFocusPoint] = useState<string | undefined>(id);
   const focusIndex = useMemo(() => points.findIndex((point) => point._id === focusPoint), [focusPoint]);
   const mapRef = createRef<MapView>();
+  const [heading, setHeading] = useState(0);
   const routeListRef = createRef<FlatList>();
   const cardListStyle = useAnimatedStyle(() => {
     return {
@@ -95,9 +96,12 @@ export default function Explore() {
         }
         setRoutes(routes);
 
-        if (mapRef.current && Platform.OS !== "ios") {
-          const bound = getBoundaries(points);
-          mapRef.current.setMapBoundaries?.(bound.northEast, bound.southWest);
+        if (mapRef.current) {
+          if (Platform.OS !== "ios") {
+            const bound = getBoundaries(points);
+            mapRef.current.setMapBoundaries?.(bound.northEast, bound.southWest);
+          }
+          mapRef.current.getCamera().then((camera) => setHeading(camera.heading));
         }
       } catch (error) {
         console.warn("init map error:", error);
@@ -182,6 +186,10 @@ export default function Explore() {
             userInterfaceStyle="dark"
             minZoomLevel={10}
             onPress={onMapPress}
+            showsCompass
+            showsUserLocation
+            showsMyLocationButton={false}
+            rotateEnabled={false}
             onRegionChangeComplete={(region) => {
               if (!isAnimate.current && isIOS) {
                 let needUpdate = false;
@@ -211,23 +219,26 @@ export default function Explore() {
               }
             }}
           >
+            {routes.map((route) => (
+              <ArrowLine
+                key={route._id}
+                coordinates={points.filter((point) => point.route === route._id)}
+                strokeWidth={6}
+                strokeColor={theme.colors.tertiary}
+                arrowSize={20}
+                heading={heading}
+              />
+            ))}
             {points.map((point) => (
               <Marker
                 key={point._id}
                 coordinate={{ latitude: point.latitude, longitude: point.longitude }}
                 onPress={() => setFocusPoint(point._id)}
                 onCalloutPress={() => setDetailOpen(true)}
+                zIndex={10}
               >
                 <MarkerCallout title={point.name} desc={point.desc} image={point.images?.[0]} />
               </Marker>
-            ))}
-            {routes.map((route) => (
-              <Polyline
-                key={route._id}
-                coordinates={points.filter((point) => point.route === route._id).map((point) => point as LatLng)}
-                strokeWidth={6}
-                strokeColor={theme.colors.tertiary}
-              />
             ))}
           </MapView>
           {/* Point pickers */}
@@ -259,31 +270,6 @@ export default function Explore() {
             </Animated.View>
           )}
 
-          {/* Path pickers */}
-          {/* {points.length && routes.length && (
-            <FlatList
-              ref={routeListRef}
-              snapToInterval={ITEM_WIDTH + ITEM_SPACING}
-              pagingEnabled={true}
-              decelerationRate={"fast"}
-              horizontal
-              ItemSeparatorComponent={() => <View style={{ width: ITEM_SPACING }} />}
-              data={routes}
-              renderItem={({ item }) => <ExploreItem points={points.filter((point) => point.route === item._id)} id={item._id} />}
-              onMomentumScrollEnd={getItemId}
-              contentContainerStyle={style.listContainer}
-              onScrollToIndexFailed={(info) => {
-                const wait = new Promise((resolve) => setTimeout(resolve, 500));
-                wait.then(() => {
-                  routeListRef.current?.scrollToIndex({
-                    index: info.index,
-                    animated: false,
-                  });
-                });
-              }}
-              showsHorizontalScrollIndicator={false}
-            />
-          )} */}
           <View style={style.buttonsContainer}>
             <IconBtn
               style={style.iconButton}

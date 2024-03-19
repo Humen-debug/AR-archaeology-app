@@ -12,7 +12,9 @@
     "build:ios": "eas build -p ios --profile preview",
     "postinstall": "patch-package",
     "pod-install": "cd ios && pod install",
-    "clean": "yarn cache clean && rm -rf node_modules ios android .expo yarn.lock "
+    "clean": "yarn cache clean && rm -rf node_modules ios android .expo yarn.lock ",
+    "log:android": "react-native log-android",
+    "log:ios": "react-native log-ios"
   },
   "dependencies": {
     "@feathersjs/feathers": "^5.0.21",
@@ -20,10 +22,14 @@
     "@gorhom/bottom-sheet": "^4.5.1",
     "@react-spring/three": "^9.7.3",
     "@react-three/fiber": "^8.14.2",
+    "@tsparticles/engine": "^3.3.0",
+    "@tsparticles/preset-confetti": "^3.0.2",
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.3.0",
     "@use-gesture/react": "^10.3.0",
     "@viro-community/react-viro": "^2.23.1",
     "expo": "^49.0.0",
-    "expo-av": "~13.4.1",
+    "expo-av": "^13.10.5",
     "expo-file-system": "~15.4.4",
     "expo-font": "~11.4.0",
     "expo-gl": "~13.0.1",
