@@ -1,3 +1,4 @@
+import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
 import { LatLng } from "react-native-maps";
 
 export function distanceFromLatLonInKm(p1?: LatLng, p2?: LatLng) {
@@ -14,8 +15,25 @@ export function distanceFromLatLonInKm(p1?: LatLng, p2?: LatLng) {
   return d;
 }
 
-function deg2rad(deg: number) {
+export function deg2rad(deg: number): number {
   return deg * (Math.PI / 180);
+}
+
+export function rad2deg(rad: number): number {
+  return rad * (180 / Math.PI);
+}
+
+export function degree360(deg: number): number {
+  if (deg < 0) return 360 + deg;
+  return deg;
+}
+
+export function degBetweenPoints(x1: number, x2: number, y1: number, y2: number): number {
+  const dy: number = y2 - y1;
+  const dx: number = x2 - x1;
+  // rads to degs, range (-180, 180]
+  const deg = rad2deg(Math.atan2(dy, dx));
+  return degree360(deg);
 }
 
 export function getBoundaries(points: LatLng[]) {
@@ -67,13 +85,13 @@ export const latLongToMerc = (latDeg: number, longDeg: number) => {
  * @link
  * http://www.movable-type.co.uk/scripts/latlong.html?from=48.9613600,-122.0413400&to=48.965496,-122.072989.
  */
-export const bearingBetweenTwoPoints = (p1: LatLng | undefined, p2: LatLng | undefined) => {
+export const bearingBetweenTwoPoints = (p1: LatLng | undefined, p2: LatLng | undefined): number => {
   if (!p1 || !p2) return 0;
 
   const y = Math.sin(p2.longitude - p1.longitude) * Math.cos(p2.latitude);
   const x = Math.cos(p1.latitude) * Math.sin(p2.latitude) - Math.sin(p1.latitude) * Math.cos(p2.latitude) * Math.cos(p2.longitude - p1.longitude);
   const theta = Math.atan2(y, x);
-  const bearing = ((theta * 180) / Math.PI + 360) % 360; // in degrees
+  const bearing = degree360(rad2deg(theta)); // in degrees
 
   return bearing;
 };
@@ -84,15 +102,16 @@ export const bearingBetweenTwoPoints = (p1: LatLng | undefined, p2: LatLng | und
  * @param objLoc the latitude and longitude of target object.
  * @returns local coordinates {x, z} of `objLoc` in viro AR spaces
  */
-export const transformGpsToAR = (deviceLoc: LatLng | undefined, objLoc: LatLng | undefined) => {
+export const transformGpsToAR = (deviceLoc: LatLng | undefined, objLoc: LatLng | undefined): Viro3DPoint | undefined => {
   if (!deviceLoc || !objLoc) return undefined;
 
   const objPoint = latLongToMerc(objLoc.latitude, objLoc.longitude);
   const devicePoint = latLongToMerc(deviceLoc.latitude, deviceLoc.longitude);
   var objDeltaX = objPoint.x - devicePoint.x;
-  var objDeltaY = devicePoint.y - objPoint.y;
+  var objDeltaY = objPoint.y - devicePoint.y;
 
-  return { x: objDeltaX, z: objDeltaY };
+  // flip z because Viro use -z as the north.
+  return [objDeltaX, 0, -objDeltaY];
 };
 
 /**

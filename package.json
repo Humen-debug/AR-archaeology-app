@@ -12,7 +12,9 @@
     "build:ios": "eas build -p ios --profile preview",
     "postinstall": "patch-package",
     "pod-install": "cd ios && pod install",
-    "clean": "yarn cache clean && rm -rf node_modules ios android .expo yarn.lock "
+    "clean": "yarn cache clean && rm -rf node_modules ios android .expo yarn.lock ",
+    "log:android": "react-native log-android",
+    "log:ios": "react-native log-ios"
   },
   "dependencies": {
     "@feathersjs/feathers": "^5.0.21",

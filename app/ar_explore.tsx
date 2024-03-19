@@ -15,7 +15,7 @@ import * as Location from "expo-location";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, useEffect, createRef, useCallback, useRef } from "react";
 import { View, StyleSheet, useWindowDimensions, Platform } from "react-native";
-import _ from "lodash";
+import _, { head } from "lodash";
 import { ActivityIndicator, Text } from "react-native-paper";
 import MapView, { Marker } from "react-native-maps";
 import Animated, { Easing, useAnimatedStyle, withTiming } from "react-native-reanimated";
@@ -23,11 +23,10 @@ import { TouchableHighlight } from "react-native-gesture-handler";
 import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
-import { distanceFromLatLonInKm, bearingBetweenTwoPoints, transformGpsToAR, getNextPoint } from "@/plugins/geolocation";
-import ParticlesEffect from "@/components/particles_effect";
+import { distanceFromLatLonInKm, bearingBetweenTwoPoints, transformGpsToAR, getNextPoint, degBetweenPoints, degree360 } from "@/plugins/geolocation";
 
 function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
-  const { location, points, nearestPoint, initHeading } = props?.arSceneNavigator?.viroAppProps ?? {};
+  const { initLocation, location, points, nearestPoint, initHeading, targetIndex } = props?.arSceneNavigator?.viroAppProps ?? {};
 
   ViroAnimations.registerAnimations({
     rotation: {
@@ -57,72 +56,47 @@ function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
     console.log("OBJ loading failed with error: " + event.nativeEvent.error);
   }
 
-  const placeARObjects = useCallback(() => {
-    if (!points) {
-      return undefined;
-    }
-
-    const ARObjects = points.map((item, index) => {
-      const coords = transformGpsToAR(location, item);
-      if (!coords) return undefined;
-
-      const scale = Math.min(Math.abs(Math.round(15 / coords.z)), 0.5);
-
-      return (
-        <ViroNode key={index} scale={[scale, scale, scale]} position={[coords.x, 0, coords.z]}>
-          <ViroAmbientLight intensity={2000} color={"white"} />
-          <Viro3DObject
-            source={require("@assets/models/star/star.obj")}
-            type="OBJ"
-            onError={handleError}
-            shadowCastingBitMask={2}
-            animation={{ name: "rotation", run: true, loop: true }}
-            onClick={() => {}}
-          />
-          {/* Default 2.5m radius */}
-          <Viro3DObject
-            source={require("@assets/models/circle/object.obj")}
-            resources={[require("@assets/models/circle/circle.mtl")]}
-            type="OBJ"
-            onError={handleError}
-            position={[0, -5, 0]}
-            materials={["area"]}
-          />
-        </ViroNode>
-      );
-    });
-    return ARObjects;
-  }, [location, points]);
-
-  function rotateObject(point: { x: number; z: number } | undefined) {
+  function rotateObject(point: Viro3DPoint | undefined): Viro3DPoint {
     if (Platform.OS === "android") {
-      // return point;
       if (point && initHeading) {
-        let newRotatedX = point.x * Math.cos(initHeading) - point.z * Math.sin(initHeading);
-        let newRotatedZ = point.z * Math.cos(initHeading) + point.z * Math.sin(initHeading);
+        let angle = initHeading;
+        const z = -point[2];
+        const x = point[0];
+        let newRotatedX = x * Math.cos(angle) - z * Math.sin(angle);
+        let newRotatedZ = z * Math.cos(angle) + x * Math.sin(angle);
 
-        return { x: newRotatedX, z: newRotatedZ };
+        return [newRotatedX, 0, -newRotatedZ];
       }
-    } else {
-      return point;
     }
+    return point || [0, 0, 0];
   }
 
   const [position, setPosition] = useState<Viro3DPoint>([0, 0, 0]);
-  const calPoint = nearestPoint && rotateObject(transformGpsToAR(location, nearestPoint));
-  const point = { x: calPoint?.x || 0, z: calPoint?.z || 0 };
 
-  const degree = (Math.atan2(point.x - position[0], point.z - position[2]) * 180) / Math.PI;
-  const distance = Math.sqrt((point.z - position[2]) ** 2 + (point.x - position[0]) ** 2);
+  const calPoint = rotateObject(transformGpsToAR(initLocation, nearestPoint));
+  const targetPoint = points && typeof targetIndex === "number" ? points[targetIndex] : undefined;
+  var calTarget = rotateObject(transformGpsToAR(initLocation, targetPoint));
+
+  const degree = degBetweenPoints(calPoint[0], position[0], calPoint[2], position[2]);
+  const distance = Math.hypot(calPoint[2] - position[2], calPoint[0] - position[0]);
+
+  useEffect(() => {
+    if (!nearestPoint) return;
+
+    console.log("ar rotated point:", calPoint.toString());
+    console.log("origin point:", transformGpsToAR(initLocation, nearestPoint));
+    console.log("ar degree:", degree);
+  }, [nearestPoint]);
 
   return (
     <ViroARScene
       onCameraTransformUpdate={(cameraTransform) => {
-        setPosition([cameraTransform.position[0], cameraTransform.position[1] - 1, cameraTransform.position[2]]);
+        const { position: cameraPos, rotation } = cameraTransform;
+        setPosition([cameraPos[0], cameraPos[1] - 1, cameraPos[2]]);
       }}
     >
       {/* {props?.arSceneNavigator.viroAppProps.location && placeARObjects()} */}
-      {(point.x !== 0 || point.z !== 0) && (
+      {calPoint && (
         <>
           <ViroBox
             height={0.001}
@@ -134,14 +108,9 @@ function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
             position={position}
             rotation={[0, degree, 0]}
           />
-          <ViroNode rotation={[0, 0, 0]} position={[point.x, 0, point.z]}>
+          <ViroNode rotation={[0, 0, 0]} position={calPoint}>
             <ViroAmbientLight intensity={2000} color={"white"} />
-            <Viro3DObject
-              source={require("@assets/models/location_pin/object.obj")}
-              type="OBJ"
-              onError={handleError}
-              // shadowCastingBitMask={2}
-            />
+            <Viro3DObject source={require("@assets/models/location_pin/object.obj")} type="OBJ" onError={handleError} />
           </ViroNode>
         </>
       )}
@@ -162,6 +131,7 @@ export default () => {
   const { height: screenHeight } = useWindowDimensions();
   const style = useStyle({ theme });
   const { targetId, POINTS } = useLocalSearchParams<{ targetId: string; POINTS: string }>();
+  const [targetIndex, setTargetIndex] = useState(parseInt(targetId ?? "0"));
   const points: LatLong[] | undefined = POINTS && JSON.parse(POINTS);
 
   const animatedProps = { duration: 300, easing: Easing.inOut(Easing.quad) };
@@ -192,6 +162,7 @@ export default () => {
   const mapRef = createRef<MapView>();
 
   const [location, setLocation] = useState<Location.LocationObjectCoords>();
+  const [initLocation, setInitLocation] = useState<Location.LocationObjectCoords>();
   const [heading, setHeading] = useState<number>();
   const [initHeading, setInitHeading] = useState<number>();
   const [nearbyItems, setNearbyItems] = useState<LatLong[]>([]);
@@ -205,50 +176,63 @@ export default () => {
     // init nearby items if points is not undefined
     if (points) setNearbyItems(points);
     const getCurrentLocation = async () => {
-      const { coords: initCoords } = await Location.getCurrentPositionAsync();
-      // generate dummy points if no default points in params
-      if (!points) {
-        const lat = initCoords.latitude + 8 * Math.pow(10, -5);
-        const lon = initCoords.longitude + Math.pow(10, -5);
-        const locations: Location.LocationObjectCoords[] = [
-          {
-            ...initCoords,
-            latitude: lat,
-            longitude: lon,
-          },
-          {
-            ...initCoords,
-            latitude: 22.282812,
-            longitude: 114.139614,
-          },
-          {
-            ...initCoords,
-            latitude: 22.282812,
-            longitude: 114.139634,
-          },
-        ];
-        setNearbyItems(locations);
-      }
-      const { trueHeading } = await Location.getHeadingAsync();
-      setInitHeading(trueHeading);
-
       const geoOpt: Location.LocationOptions = {
         accuracy: Location.Accuracy.High,
         distanceInterval: distanceInterval, // update for each 25 meters
       };
 
+      var headingInit: boolean = false;
+      var locationInit: boolean = false;
+
       const geoCallback = async (result: Location.LocationObject) => {
         const coords = result.coords;
+
         if (coords.accuracy && coords.accuracy < 50) {
           setLocation(coords);
+          if (!locationInit) {
+            setInitLocation(coords);
+            // generate dummy points if no default points in params
+            if (!points) {
+              const lat = coords.latitude + 8 * Math.pow(10, -5);
+              const lon = coords.longitude + Math.pow(10, -5);
+              const locations: Location.LocationObjectCoords[] = [
+                {
+                  ...coords,
+                  latitude: lat,
+                  longitude: lon,
+                },
+                {
+                  ...coords,
+                  latitude: 22.282812,
+                  longitude: 114.139614,
+                },
+                {
+                  ...coords,
+                  latitude: 22.282812,
+                  longitude: 114.139634,
+                },
+              ];
+              setNearbyItems(locations);
+            }
+            locationInit = true;
+          }
         }
       };
 
-      locationListener = await Location.watchPositionAsync(geoOpt, geoCallback);
       headingListener = await Location.watchHeadingAsync((heading) => {
-        setHeading(heading.trueHeading);
+        const { trueHeading } = heading;
+        if (trueHeading < 0) return;
+        if (heading.accuracy > 1) {
+          if (!headingInit) {
+            headingInit = true;
+            setInitHeading(trueHeading);
+          }
+        }
+        setHeading(trueHeading);
       });
+      locationListener = await Location.watchPositionAsync(geoOpt, geoCallback);
     };
+
     getCurrentLocation();
     return () => {
       locationListener?.remove();
@@ -259,9 +243,9 @@ export default () => {
   /** Watch update of location */
   useEffect(() => {
     if (!location) return;
-    mapRef?.current?.animateToRegion({ latitude: location.latitude, longitude: location.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 });
+
     if (nearbyItems && nearbyItems.length) {
-      const { currentAnimate, closestPoint } = getNextPoint(parseInt(targetId ?? "0"), nearbyItems, location);
+      const { currentAnimate, closestPoint } = getNextPoint(targetIndex, nearbyItems, location);
       setAnimate(currentAnimate);
       setNearestPoint(closestPoint);
     }
@@ -292,15 +276,11 @@ export default () => {
 
   const getBearingDegree = () => {
     // http://www.movable-type.co.uk/scripts/latlong.html?from=48.9613600,-122.0413400&to=48.965496,-122.072989
-    if (!nearestPoint || !location) return -1;
+    if (!nearestPoint || !location) return 0;
     // Accurate bearing degree
     const bearing = bearingBetweenTwoPoints(location, nearestPoint);
     if (heading && heading > -1) {
-      if (Platform.OS === "android") {
-        return (360 - heading - bearing) % 360;
-      } else {
-        return (360 - heading - bearing) % 360;
-      }
+      return (360 - heading - bearing) % 360;
     }
     return bearing;
   };
@@ -324,27 +304,41 @@ export default () => {
     }
   };
 
-  var degree = getBearingDegree();
+  const degree = getBearingDegree();
   const distanceText = getNearestDistance();
-  const loading: boolean = !(location && heading);
+  const loading: boolean = !(initLocation && initHeading);
 
   return (
     <MainBody>
-      <Animated.View style={ARsceneStyle}>
-        <ViroARSceneNavigator
-          worldAlignment="GravityAndHeading"
-          initialScene={{ scene: ARExplorePage }}
-          viroAppProps={
-            {
-              location,
-              points: nearbyItems,
-              nearestPoint,
-              degree,
-              initHeading,
-            } as ARExploreProps
-          }
-        />
-      </Animated.View>
+      {loading ? (
+        <View style={[style.centerContainer, { backgroundColor: theme.colors.secondary }]}>
+          <View style={style.loadingCard}>
+            <Text variant="labelMedium" style={{ color: theme.colors?.primary, textAlign: "center", paddingBottom: theme.spacing.xs }}>
+              {"Waiting\nGPS information.\nPlease stand still."}
+            </Text>
+            <ActivityIndicator size={"large"} animating={true} />
+          </View>
+        </View>
+      ) : (
+        <Animated.View style={ARsceneStyle}>
+          <ViroARSceneNavigator
+            worldAlignment="GravityAndHeading"
+            initialScene={{ scene: ARExplorePage }}
+            viroAppProps={
+              {
+                initLocation,
+                location,
+                points: nearbyItems,
+                nearestPoint,
+                degree,
+                initHeading,
+                targetIndex,
+              } as ARExploreProps
+            }
+          />
+        </Animated.View>
+      )}
+
       <View
         style={[
           style.rowLayout,
@@ -359,12 +353,11 @@ export default () => {
         ]}
       >
         <IconBtn icon={<ChevronLeftIcon fill={theme.colors.text} />} onPress={() => router.back()} />
-        <IconBtn icon={"backpack"} iconProps={{ fill: theme.colors.text }} onPress={() => router.push("/collection")} />
       </View>
       {!!distanceText && (
         <View style={[style.distanceContainer, { top: top + theme.spacing.xs + 34 }]}>
           <View style={[style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
-            <ArrowUpIcon fill={theme.colors.text} style={{ transform: [{ rotate: `${degree == -1 ? 0 : degree}deg` }], width: 24, height: 24 }} />
+            <ArrowUpIcon fill={theme.colors.text} style={{ transform: [{ rotate: `${degree}deg` }], width: 24, height: 24 }} />
             <View style={style.columnLayout}>
               <Text>Destination</Text>
               <Text>{distanceText}</Text>
@@ -380,31 +373,41 @@ export default () => {
               style={style.miniMap}
               region={{ ...location, latitudeDelta: 0.05, longitudeDelta: 0.05 }}
               showsUserLocation={true}
+              showsCompass={true}
+              followsUserLocation={true}
               showsMyLocationButton={false}
               zoomControlEnabled={true}
               zoomEnabled={true}
               rotateEnabled={false}
               pitchEnabled={false}
               scrollEnabled={false}
-              minZoomLevel={15}
+              minZoomLevel={16}
             >
               {placeMarkers()}
             </MapView>
           </TouchableHighlight>
         </Animated.View>
       )}
-
-      {loading && (
-        <View style={style.centerContainer}>
-          <View style={style.loadingCard}>
-            <Text variant="labelMedium" style={{ color: theme.colors?.primary, textAlign: "center", paddingBottom: theme.spacing.xs }}>
-              {"Waiting\nGPS information"}
-            </Text>
-            <ActivityIndicator size={"large"} animating={true} />
+      {__DEV__ && location && (
+        <View
+          style={[
+            style.distanceContainer,
+            { top: top + theme.spacing.xs + style.distanceContainer.height + 34 * 2 + (mapExpand ? 0 : 134) + theme.spacing.sm, height: 150 },
+          ]}
+        >
+          <View style={[style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
+            <View style={style.columnLayout}>
+              <Text>lat:{location.latitude}</Text>
+              <Text>lon:{location.longitude}</Text>
+              <Text>init lat: {initLocation?.latitude}</Text>
+              <Text>init lon: {initLocation?.longitude}</Text>
+              <Text>heading:{heading}</Text>
+              <Text>initHeading: {initHeading}</Text>
+            </View>
           </View>
         </View>
       )}
-      <View style={style.centerContainer}>{/* <ParticlesEffect playing={animate} /> */}</View>
+      {/* <View style={style.centerContainer}><ParticlesEffect playing={animate} /></View> */}
       {animate !== 0 && (
         <View style={style.centerContainer}>
           <View style={{ width: "100%", paddingVertical: 16 }}>
@@ -427,11 +430,13 @@ interface ViroARSceneProps<T extends unknown> {
 }
 
 interface ARExploreProps {
-  location?: Location.LocationObjectCoords | undefined;
+  initLocation?: Location.LocationObjectCoords;
+  location?: Location.LocationObjectCoords;
   points: LatLong[];
   nearestPoint: LatLong;
   degree: Float;
   initHeading: number;
+  targetIndex: number;
 }
 
 interface LatLong {
@@ -511,7 +516,7 @@ const useStyle = ({ theme }: { theme: AppTheme }) =>
     },
     loadingCard: {
       borderRadius: theme.borderRadius.md,
-      backgroundColor: theme.colors.container.concat("80"),
+      backgroundColor: theme.colors.container,
       overflow: "hidden",
       flexDirection: "column",
       paddingHorizontal: theme.spacing.lg,

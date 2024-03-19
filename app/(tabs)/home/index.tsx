@@ -168,7 +168,7 @@ export default function Home() {
 
         {/* Map */}
         <View style={[{ flexGrow: 0, flexShrink: 1 }, ...[isPortrait(orientation) ? {} : { minHeight: 100 }]]}>
-          <MapPreview points={[]} style={[style.mapContainer, style.fill]} />
+          <MapPreview points={[]} style={[style.mapContainer, style.fill]} mapType="satellite" />
           <View style={{ position: "absolute", top: theme.spacing.md, right: theme.spacing.sm }}>
             <Text variant="titleMedium" style={style.mapLabel}>
               Map of Valley
