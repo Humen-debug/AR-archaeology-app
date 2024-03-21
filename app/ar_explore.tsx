@@ -15,15 +15,24 @@ import * as Location from "expo-location";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, useEffect, createRef, useCallback, useRef } from "react";
 import { View, StyleSheet, useWindowDimensions, Platform } from "react-native";
-import _, { head } from "lodash";
+import _ from "lodash";
 import { ActivityIndicator, Text } from "react-native-paper";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { LatLng, Marker } from "react-native-maps";
 import Animated, { Easing, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
-import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
-import { distanceFromLatLonInKm, bearingBetweenTwoPoints, transformGpsToAR, getNextPoint, degBetweenPoints, degree360 } from "@/plugins/geolocation";
+import {
+  distanceFromLatLonInKm,
+  bearingBetweenTwoPoints,
+  transformGpsToAR,
+  getNextPoint,
+  degBetweenPoints,
+  degree360,
+  deg2rad,
+} from "@/plugins/geolocation";
+import { GeoPoint } from "@/models";
+import { Paginated, useFeathers } from "@/providers/feathers_provider";
 
 function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
   const { initLocation, location, points, nearestPoint, initHeading, targetIndex } = props?.arSceneNavigator?.viroAppProps ?? {};
@@ -56,46 +65,34 @@ function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
     console.log("OBJ loading failed with error: " + event.nativeEvent.error);
   }
 
-  function rotateObject(point: Viro3DPoint | undefined): Viro3DPoint {
-    if (Platform.OS === "android") {
-      if (point && initHeading) {
-        let angle = initHeading;
-        const z = -point[2];
-        const x = point[0];
-        let newRotatedX = x * Math.cos(angle) - z * Math.sin(angle);
-        let newRotatedZ = z * Math.cos(angle) + x * Math.sin(angle);
-
-        return [newRotatedX, 0, -newRotatedZ];
-      }
-    }
-    return point || [0, 0, 0];
-  }
+  const isAndroid: boolean = Platform.OS === "android";
 
   const [position, setPosition] = useState<Viro3DPoint>([0, 0, 0]);
+  const [rotation, setRotation] = useState<Viro3DPoint>([0, 0, 0]);
+  const [init, setInit] = useState(false);
 
-  const calPoint = rotateObject(transformGpsToAR(initLocation, nearestPoint));
-  const targetPoint = points && typeof targetIndex === "number" ? points[targetIndex] : undefined;
-  var calTarget = rotateObject(transformGpsToAR(initLocation, targetPoint));
-
-  const degree = degBetweenPoints(calPoint[0], position[0], calPoint[2], position[2]);
-  const distance = Math.hypot(calPoint[2] - position[2], calPoint[0] - position[0]);
-
-  useEffect(() => {
-    if (!nearestPoint) return;
-
-    console.log("ar rotated point:", calPoint.toString());
-    console.log("origin point:", transformGpsToAR(initLocation, nearestPoint));
-    console.log("ar degree:", degree);
-  }, [nearestPoint]);
+  const calPoint = transformGpsToAR(initLocation, nearestPoint, initHeading);
+  const degree = calPoint ? degBetweenPoints(position, calPoint) : 180;
+  const distance = calPoint ? Math.hypot(calPoint[2] - position[2], calPoint[0] - position[0]) : 1;
 
   return (
     <ViroARScene
+      onTrackingUpdated={() => {
+        console.log("init ar scene");
+        if (!init) setInit(true);
+        else {
+          console.log("ar rotated point:", calPoint?.toString());
+          console.log("ar degree:", degree, ", distance:", distance);
+          console.log("camera position:", position.toString());
+          console.log("camera rotation:", rotation.toString());
+        }
+      }}
       onCameraTransformUpdate={(cameraTransform) => {
         const { position: cameraPos, rotation } = cameraTransform;
+        setRotation(rotation);
         setPosition([cameraPos[0], cameraPos[1] - 1, cameraPos[2]]);
       }}
     >
-      {/* {props?.arSceneNavigator.viroAppProps.location && placeARObjects()} */}
       {calPoint && (
         <>
           <ViroBox
@@ -108,19 +105,12 @@ function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
             position={position}
             rotation={[0, degree, 0]}
           />
-          <ViroNode rotation={[0, 0, 0]} position={calPoint}>
+          <ViroNode rotation={[0, 0, 0]} position={calPoint} scale={[2, 2, 2]}>
             <ViroAmbientLight intensity={2000} color={"white"} />
             <Viro3DObject source={require("@assets/models/location_pin/object.obj")} type="OBJ" onError={handleError} />
           </ViroNode>
         </>
       )}
-      {/* <Viro3DObject
-        position={[-350, -960, 30]}
-        source={require("@assets/models/wall/wall.obj")}
-        type="OBJ"
-        onError={handleError}
-        shadowCastingBitMask={2}
-      /> */}
     </ViroARScene>
   );
 }
@@ -128,12 +118,14 @@ function ARExplorePage(props?: ViroARSceneProps<ARExploreProps>) {
 export default () => {
   const { theme } = useAppTheme();
   const { top } = useSafeAreaInsets();
+  const feathers = useFeathers();
   const { height: screenHeight } = useWindowDimensions();
   const style = useStyle({ theme });
-  const { targetId, POINTS } = useLocalSearchParams<{ targetId: string; POINTS: string }>();
+  const { targetId = "0", idString, service = "locations" } = useLocalSearchParams<{ targetId: string; idString: string; service: string }>();
+  const ids: string[] | undefined = idString && JSON.parse(idString);
 
-  const points: LatLong[] | undefined = POINTS && JSON.parse(POINTS);
-  const [targetIndex, setTargetIndex] = useState(targetId ? parseInt(targetId) : 0);
+  const [points, setPoints] = useState<GeoPoint[]>([]);
+  const [targetIndex, setTargetIndex] = useState(parseInt(targetId));
   const [showSuggest, setShowSuggest] = useState(false);
 
   const animatedProps = { duration: 300, easing: Easing.inOut(Easing.quad) };
@@ -160,82 +152,104 @@ export default () => {
     return { height: withTiming(mapExpand ? screenHeight - 200 : screenHeight, animatedProps) };
   });
 
-  const [nearestPoint, setNearestPoint] = useState<LatLong>();
+  const [nearestPoint, setNearestPoint] = useState<LatLng>();
   const mapRef = createRef<MapView>();
 
   const [location, setLocation] = useState<Location.LocationObjectCoords>();
   const [initLocation, setInitLocation] = useState<Location.LocationObjectCoords>();
   const [heading, setHeading] = useState<number>();
-  const [nearbyItems, setNearbyItems] = useState<LatLong[]>([]);
-  const [initHeading, setInitHeading] = useState<number>(-1);
+  const [initHeading, setInitHeading] = useState<number>();
 
   // const
   const distanceInterval: number = 25;
 
   useEffect(() => {
+    const points: GeoPoint[] = [];
+
+    const fetchData = async () => {
+      var total = 1;
+      if (!ids || ids.length === 0) return;
+      while (total > points.length) {
+        const results: Paginated<GeoPoint> = await feathers.service(service).find({
+          query: {
+            _id: { $in: ids },
+            latitude: { $exists: true },
+            longitude: { $exists: true },
+            $sort: { order: 1 },
+            $skip: points.length,
+          },
+        });
+
+        if (total != results.total) total = results.total;
+        if (results.total === 0 || results.data.length === 0) break;
+        points.push(...results.data);
+      }
+
+      setPoints(points);
+    };
+    var headingAccuracyThreshold = 3;
+    var headingInit: boolean = false;
+    var locationInit: boolean = false;
+    var timer: NodeJS.Timeout;
+
     let headingListener: Location.LocationSubscription | undefined;
     let locationListener: Location.LocationSubscription | undefined;
-    // init nearby items if points is not undefined
-    if (points) setNearbyItems(points);
+
+    const adjustAccuracy = async () => {
+      const timeout = 10 * 1000;
+      timer = setInterval(() => {
+        if (headingAccuracyThreshold > 0) {
+          headingAccuracyThreshold--;
+          if (Platform.OS === "android") console.log("decrease heading accuracy after 10 s", headingAccuracyThreshold);
+          else console.warn("decrease heading accuracy after 10 s", headingAccuracyThreshold);
+        } else {
+          timer && clearInterval(timer);
+        }
+      }, timeout);
+    };
+
     const getCurrentLocation = async () => {
       const geoOpt: Location.LocationOptions = {
         accuracy: Location.Accuracy.High,
         distanceInterval: distanceInterval, // update for each 25 meters
       };
 
-      var headingInit: boolean = false;
-      var locationInit: boolean = false;
-
-      const geoCallback = async (result: Location.LocationObject) => {
-        const coords = result.coords;
-
-        if (coords.accuracy && coords.accuracy < 50) {
-          setLocation(coords);
-          if (!locationInit) {
-            setInitLocation(coords);
-            // generate dummy points if no default points in params
-            if (!points) {
-              const lat = coords.latitude + 8 * Math.pow(10, -5);
-              const lon = coords.longitude + Math.pow(10, -5);
-              const locations: Location.LocationObjectCoords[] = [
-                {
-                  ...coords,
-                  latitude: lat,
-                  longitude: lon,
-                },
-                {
-                  ...coords,
-                  latitude: 22.282812,
-                  longitude: 114.139614,
-                },
-                {
-                  ...coords,
-                  latitude: 22.282812,
-                  longitude: 114.139634,
-                },
-              ];
-              setNearbyItems(locations);
-            }
-            locationInit = true;
-          }
-        }
-      };
-
       headingListener = await Location.watchHeadingAsync((heading) => {
         const { trueHeading } = heading;
         if (trueHeading < 0) return;
-        if (heading.accuracy > 1) {
+        if (heading.accuracy >= headingAccuracyThreshold) {
           if (!headingInit) {
             headingInit = true;
             setInitHeading(trueHeading);
+            timer && clearInterval(timer);
           }
         }
-        setHeading(trueHeading);
+        if (Platform.OS !== "android") {
+          setHeading(trueHeading);
+        }
+        if (Platform.OS === "android" && heading.accuracy >= headingAccuracyThreshold) {
+          setHeading(trueHeading);
+        }
       });
-      locationListener = await Location.watchPositionAsync(geoOpt, geoCallback);
+      locationListener = await Location.watchPositionAsync(geoOpt, async (result: Location.LocationObject) => {
+        const coords = result.coords;
+        if (coords.accuracy && coords.accuracy < 50) {
+          if (!locationInit) {
+            setInitLocation(coords);
+            locationInit = true;
+          }
+          setLocation(coords);
+        }
+      });
     };
 
-    getCurrentLocation();
+    const init = async () => {
+      await fetchData();
+      adjustAccuracy();
+      await getCurrentLocation();
+    };
+
+    init();
     return () => {
       locationListener?.remove();
       headingListener?.remove();
@@ -246,12 +260,19 @@ export default () => {
   useEffect(() => {
     if (!location) return;
 
-    if (nearbyItems && nearbyItems.length) {
-      const { currentAnimate, closestPoint } = getNextPoint(targetIndex, nearbyItems, location);
+    if (points.length) {
+      const { currentAnimate, closestPoint } = getNextPoint(targetIndex, points, location);
       setAnimate(currentAnimate);
       setNearestPoint(closestPoint);
     }
-  }, [location, nearbyItems]);
+  }, [location, points]);
+
+  /** Watch update of heading */
+  // useEffect(() => {
+  //   if (mapRef.current) {
+  //     mapRef.current.setCamera({ heading: heading });
+  //   }
+  // }, [heading]);
 
   useEffect(() => {
     if (animate == 0) return;
@@ -267,14 +288,12 @@ export default () => {
   };
 
   const placeMarkers = useCallback(() => {
-    if (nearbyItems.length === 0) {
-      return undefined;
-    }
-    const markers = nearbyItems.map((item, index) => {
+    if (!points.length) return;
+    const markers = points.map((item, index) => {
       return <Marker key={index} coordinate={{ longitude: item.longitude, latitude: item.latitude }} />;
     });
     return markers;
-  }, [nearbyItems]);
+  }, [points]);
 
   const getBearingDegree = () => {
     // http://www.movable-type.co.uk/scripts/latlong.html?from=48.9613600,-122.0413400&to=48.965496,-122.072989
@@ -282,17 +301,14 @@ export default () => {
     // Accurate bearing degree
     const bearing = bearingBetweenTwoPoints(location, nearestPoint);
     if (heading && heading > -1) {
-      if (Platform.OS === "android") {
-        console.log("bearing", bearing);
-        return (360 + initHeading - heading - bearing) % 360;
-      } else return (360 - heading - bearing) % 360;
+      return (360 - heading - bearing) % 360;
     }
     return bearing;
   };
 
   const getNearestDistance = () => {
-    if (!nearbyItems || !nearbyItems.length) return undefined;
-    const point = nearbyItems[targetIndex];
+    if (!points.length) return undefined;
+    const point = points[targetIndex];
     // convert km to m
     const distance = distanceFromLatLonInKm(location, point) * 1000;
     if (distance > 99) {
@@ -334,9 +350,8 @@ export default () => {
               {
                 initLocation,
                 location,
-                points: nearbyItems,
+                points,
                 nearestPoint,
-                degree,
                 initHeading,
                 targetIndex,
               } as ARExploreProps
@@ -360,7 +375,7 @@ export default () => {
       >
         <IconBtn icon={<ChevronLeftIcon fill={theme.colors.text} />} onPress={() => router.back()} />
       </View>
-      {!!distanceText && (
+      {!loading && !!distanceText && (
         <View style={[style.distanceContainer, { top: top + theme.spacing.xs + 34 }]}>
           <View style={[style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
             <ArrowUpIcon fill={theme.colors.text} style={{ transform: [{ rotate: `${degree}deg` }], width: 24, height: 24 }} />
@@ -372,7 +387,7 @@ export default () => {
         </View>
       )}
 
-      {location && (
+      {!loading && location && (
         <Animated.View style={miniMapStyle}>
           <TouchableHighlight onPress={handleMapPressed} activeOpacity={1}>
             <MapView
@@ -383,7 +398,7 @@ export default () => {
               showsCompass={true}
               followsUserLocation={true}
               showsMyLocationButton={false}
-              zoomControlEnabled={true}
+              // zoomControlEnabled={true}
               zoomEnabled={true}
               rotateEnabled={false}
               pitchEnabled={false}
@@ -399,23 +414,24 @@ export default () => {
         <View
           style={[
             style.distanceContainer,
-            { top: top + theme.spacing.xs + style.distanceContainer.height + 34 * 2 + (mapExpand ? 0 : 134) + theme.spacing.sm, height: 150 },
+            {
+              top: top + theme.spacing.xs + style.distanceContainer.height + 34 * 2 + (mapExpand ? 0 : 134) + theme.spacing.sm,
+              height: 150,
+            },
           ]}
         >
           <View style={[style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
             <View style={style.columnLayout}>
               <Text>lat:{location.latitude}</Text>
               <Text>lon:{location.longitude}</Text>
-              <Text>init lat: {initLocation?.latitude}</Text>
-              <Text>init lon: {initLocation?.longitude}</Text>
               <Text>heading:{heading}</Text>
               <Text>initHeading: {initHeading}</Text>
             </View>
           </View>
         </View>
       )}
-      {/* <View style={style.centerContainer}><ParticlesEffect playing={animate} /></View> */}
-      {animate !== 0 && (
+
+      {!loading && animate !== 0 && (
         <View style={style.centerContainer}>
           <View style={{ width: "100%", paddingVertical: 16 }}>
             <Text>{animate == 1 ? "You are getting too far from path!" : "You have reached a way point!"} </Text>
@@ -439,18 +455,10 @@ interface ViroARSceneProps<T extends unknown> {
 interface ARExploreProps {
   initLocation?: Location.LocationObjectCoords;
   location?: Location.LocationObjectCoords;
-  points: LatLong[];
-  nearestPoint: LatLong;
-  degree: Float;
+  points: GeoPoint[];
+  nearestPoint: LatLng;
   initHeading: number;
   targetIndex: number;
-}
-
-interface LatLong {
-  latitude: number;
-  longitude: number;
-  heading?: number | null;
-  [key: string]: any;
 }
 
 const useStyle = ({ theme }: { theme: AppTheme }) =>

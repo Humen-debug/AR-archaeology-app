@@ -1,4 +1,6 @@
 import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
+import { head } from "lodash";
+import { Platform } from "react-native";
 import { LatLng } from "react-native-maps";
 
 export function distanceFromLatLonInKm(p1?: LatLng, p2?: LatLng) {
@@ -25,15 +27,24 @@ export function rad2deg(rad: number): number {
 
 export function degree360(deg: number): number {
   if (deg < 0) return 360 + deg;
-  return deg;
+  return deg % 360;
 }
-
-export function degBetweenPoints(x1: number, x2: number, y1: number, y2: number): number {
-  const dy: number = y2 - y1;
-  const dx: number = x2 - x1;
-  // rads to degs, range (-180, 180]
-  const deg = rad2deg(Math.atan2(dy, dx));
-  return degree360(deg);
+/**
+ *
+ * @param p1 Viro3D vector of point 1
+ * @param p2 Viro3D vector of point 2
+ * @returns Angle measured in the clockwise direction from the north line with `p1` as the origin
+ * the line segment `p1` `p2` in Viro's X-Z plane.
+ *
+ * @link
+ * https://math.stackexchange.com/questions/1596513/find-the-bearing-angle-between-two-points-in-a-2d-space
+ */
+export function degBetweenPoints(p1: Viro3DPoint, p2: Viro3DPoint): number {
+  const [x1, _, z1] = p1;
+  const [x2, __, z2] = p2;
+  // rads to degree, range (-180, 180]
+  const deg = rad2deg(Math.atan2(x2 - x1, z2 - z1));
+  return degree360(deg); // range [0, 360)
 }
 
 export function getBoundaries(points: LatLng[]) {
@@ -60,9 +71,9 @@ export function getBoundaries(points: LatLng[]) {
 }
 
 /**
- * @param latDeg The latitude
- * @param longDeg The longitude
- * @returns conversion of latitude and longitude to device's local coordinates and vice versa.
+ * @param latDeg The latitude of point
+ * @param longDeg The longitude of point
+ * @returns Conversion of latitude and longitude to device's local coordinates and vice versa.
  *
  * @link
  * https://stackoverflow.com/questions/47419496/augmented-reality-with-react-native-points-of-interest-over-the-camera.
@@ -80,10 +91,11 @@ export const latLongToMerc = (latDeg: number, longDeg: number) => {
 };
 
 /**
- * @returns bearing degree from p1 to p2
+ * @returns Bearing degree measured in the clockwise direction from the north line with `p1` as the origin
+ * to `p2`
  *
  * @link
- * http://www.movable-type.co.uk/scripts/latlong.html?from=48.9613600,-122.0413400&to=48.965496,-122.072989.
+ * https://stackoverflow.com/questions/8123049/calculate-bearing-between-two-locations-lat-long
  */
 export const bearingBetweenTwoPoints = (p1: LatLng | undefined, p2: LatLng | undefined): number => {
   if (!p1 || !p2) return 0;
@@ -93,25 +105,42 @@ export const bearingBetweenTwoPoints = (p1: LatLng | undefined, p2: LatLng | und
   const theta = Math.atan2(y, x);
   const bearing = degree360(rad2deg(theta)); // in degrees
 
-  return bearing;
+  return 360 - bearing;
 };
 
 /**
+ * @param deviceLoc The latitude and longitude of user's device.
+ * @param objLoc The latitude and longitude of target object.
+ * @returns Viro's local coordinates [x, y, z] of `objLoc` with `deviceLoc` as the origin
  *
- * @param deviceLoc the latitude and longitude of user's device.
- * @param objLoc the latitude and longitude of target object.
- * @returns local coordinates {x, z} of `objLoc` in viro AR spaces
+ * @link
+ * (viro transform GPS to AR space) https://github.com/viromedia/viro/issues/131.
+ * @link
+ * (convert from global coordinate space to a local space) https://gamedev.stackexchange.com/questions/79765/how-do-i-convert-from-the-global-coordinate-space-to-a-local-space
  */
-export const transformGpsToAR = (deviceLoc: LatLng | undefined, objLoc: LatLng | undefined): Viro3DPoint | undefined => {
+export const transformGpsToAR = (deviceLoc: LatLng | undefined, objLoc: LatLng | undefined, heading: number = 0): Viro3DPoint | undefined => {
   if (!deviceLoc || !objLoc) return undefined;
 
   const objPoint = latLongToMerc(objLoc.latitude, objLoc.longitude);
   const devicePoint = latLongToMerc(deviceLoc.latitude, deviceLoc.longitude);
-  var objDeltaX = objPoint.x - devicePoint.x;
-  var objDeltaY = objPoint.y - devicePoint.y;
+  const dx = objPoint.x - devicePoint.x;
+  const dy = objPoint.y - devicePoint.y;
+  if (Platform.OS === "android") {
+    // convert bearing to angle measured from x-axis to y-axis
+    let angle = 0.0;
+    if (heading <= 90) {
+      angle = 90 - heading;
+    } else {
+      angle = 360 - heading + 90;
+    }
+    // Rotate the system to move the the heading to y-axis
+    let newRotatedX = dx * Math.cos(-angle) - dy * Math.sin(-angle);
+    let newRotatedZ = dx * Math.sin(-angle) + dy * Math.cos(-angle);
+    return [newRotatedX, 0, -newRotatedZ];
+  }
 
   // flip z because Viro use -z as the north.
-  return [objDeltaX, 0, -objDeltaY];
+  return [dx, 0, -dy];
 };
 
 /**

@@ -48,6 +48,7 @@ export default function ExploreListModal<T extends GeoPoint>({ open, setOpen, da
     }
   };
 
+  // TODO
   const onSubmit = () => {
     console.log("filterList", searchText);
   };

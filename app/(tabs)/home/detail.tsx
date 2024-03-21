@@ -19,7 +19,7 @@ export default function Page() {
    * @property {string} id refers to the _id of model
    * @property {string} service refers to the feathers api service's name
    */
-  const { id, service } = useLocalSearchParams<{ id?: string; service?: string }>();
+  const { id, service = "attractions" } = useLocalSearchParams<{ id?: string; service?: string }>();
   const [loaded, setLoaded] = useState(false);
   const [item, setItem] = useState<Attraction>();
   const [canNavigate, setCanNavigate] = useState(false);
@@ -42,6 +42,12 @@ export default function Page() {
     }
     init();
   }, []);
+
+  function startARTour() {
+    if (canNavigate && item) {
+      router.push({ pathname: "/ar_explore", params: { service, idString: JSON.stringify([item._id]) } });
+    }
+  }
 
   return (
     <MainBody padding={{ top: 0 }}>
@@ -120,6 +126,7 @@ export default function Page() {
                   mode="outlined"
                   style={{ borderRadius: theme.borderRadius.xs, borderWidth: 2, borderColor: theme.colors.primary }}
                   icon={() => <CompassIcon fill={theme.colors.primary} size={20} />}
+                  onPress={startARTour}
                 >
                   <Text variant="labelMedium" style={{ color: theme.colors.primary }}>
                     Start AR tour

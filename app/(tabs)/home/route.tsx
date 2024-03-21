@@ -45,7 +45,7 @@ export default function Page() {
 
           total.current = results.total;
           if (results.total === 0 || results.data.length === 0) break;
-          //  locations = [...points, ...locations.data];
+
           locations.push(...results.data);
         }
         var sum = 0;
@@ -84,6 +84,11 @@ export default function Page() {
     }
     init();
   }, []);
+
+  function startARTour(index: number) {
+    const ids = points.map(({ _id }) => _id);
+    router.push({ pathname: "/ar_explore", params: { service: "locations", targetId: index, idString: JSON.stringify(ids) } });
+  }
 
   function renderTopSection() {
     if (!route) return <></>;
@@ -210,7 +215,13 @@ export default function Page() {
                       <Text variant="titleMedium" style={{ color: theme.colors.text }}>
                         {index + 1}. {point.name}
                       </Text>
-                      <Button mode="contained" textColor={theme.colors.textOnPrimary} style={style.button} labelStyle={style.buttonLabelStyle}>
+                      <Button
+                        mode="contained"
+                        textColor={theme.colors.textOnPrimary}
+                        style={style.button}
+                        labelStyle={style.buttonLabelStyle}
+                        onPress={() => startARTour(index)}
+                      >
                         <Text variant="labelMedium" style={{ color: theme.colors.textOnPrimary, textAlignVertical: "center" }}>
                           Start AR tour
                         </Text>
@@ -250,7 +261,7 @@ const useStyle = ({ theme, screenWidth }: { theme: AppTheme; screenWidth: number
     image: { resizeMode: "cover" },
     thumbnail: {
       width: screenWidth,
-      height: (screenWidth * 9) / 16,
+      height: Math.round((screenWidth * 9) / 16),
       position: "relative",
     },
     labelRow: {
@@ -260,7 +271,7 @@ const useStyle = ({ theme, screenWidth }: { theme: AppTheme; screenWidth: number
     },
     map: {
       width: screenWidth,
-      height: (screenWidth * 9) / 32,
+      height: Math.round((screenWidth * 9) / 32),
     },
     button: {
       borderRadius: theme.borderRadius.xs,

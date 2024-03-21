@@ -1,8 +1,7 @@
+import { LatLng } from "react-native-maps";
 import { Content, Model } from "./utils";
 
-export interface GeoPoint extends Model {
-  latitude: number;
-  longitude: number;
+export interface GeoPoint extends Model, LatLng {
   [key: string]: any;
 }
 

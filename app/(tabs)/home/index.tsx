@@ -193,7 +193,7 @@ const useStyle = ({ theme, screenWidth }: { theme: AppTheme; screenWidth: number
       right: 0,
     },
     thumbnail: {
-      height: (screenWidth - theme.spacing.lg * 2) * 0.42,
+      height: Math.round((screenWidth - theme.spacing.lg * 2) * 0.42),
       borderRadius: theme.spacing.xs,
       width: "100%",
       overflow: "hidden",

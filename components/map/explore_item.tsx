@@ -56,10 +56,8 @@ export default function ExploreItem<T extends GeoPoint>(item: ItemProps<T>) {
 
   const fetchNextPoints = () => {
     if (modalCLose) modalCLose();
-    const POINTSString = item.points.map(({ _id, latitude, longitude }) => {
-      return { _id, latitude, longitude }; // Removed desc and title as it is unused
-    });
-    router.push({ pathname: "/ar_explore", params: { POINTS: JSON.stringify(POINTSString), targetId: targetIndex } });
+    const ids = item.points.map(({ _id }) => _id);
+    router.push({ pathname: "/ar_explore", params: { idString: JSON.stringify(ids), targetId: targetIndex } });
   };
 
   return (

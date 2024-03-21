@@ -15,7 +15,7 @@ const calculateRotation = (point: LatLng, prePoint: LatLng, heading: number = 0)
   const { latitude: lat2, longitude: lng2 } = prePoint;
   const rotationFunc = bearingBetweenTwoPoints;
   // count degree counter-clockwise then flip the arrow marker with 180;
-  const flippedRotation = 360 - rotationFunc(point, prePoint) - 180;
+  const flippedRotation = rotationFunc(point, prePoint) - 180;
   return {
     coordinate: { latitude: lat1, longitude: lng1 },
     rotation: flippedRotation - heading || 0,
