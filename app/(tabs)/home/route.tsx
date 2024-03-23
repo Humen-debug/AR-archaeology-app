@@ -67,7 +67,7 @@ export default function Page() {
         setDistance(text);
         const duration = Number((sum / avgKmPerHour).toFixed(2));
         if (duration < 1) {
-          text = `~${duration * 60} minutes`;
+          text = `~${Math.round(duration * 60)} minutes`;
         } else if (duration > 1) {
           text = `${duration} hours`;
         } else {

@@ -170,7 +170,7 @@ export function AuthProvider({ children, fallback }: Props) {
         oldToken = res?.token;
       }
       if (!oldToken) {
-        console.warn(`No access token stored in localStorage`);
+        console.log(`No access token stored in localStorage`);
         return;
       }
       try {

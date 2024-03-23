@@ -1,7 +1,9 @@
 import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
-import { head } from "lodash";
+
 import { Platform } from "react-native";
 import { LatLng } from "react-native-maps";
+import * as Matrix from "./matrix";
+import * as Vector from "./vector";
 
 export function distanceFromLatLonInKm(p1?: LatLng, p2?: LatLng) {
   if (!p1 || !p2) return 0;
@@ -47,6 +49,16 @@ export function degBetweenPoints(p1: Viro3DPoint, p2: Viro3DPoint): number {
   return degree360(deg); // range [0, 360)
 }
 
+export function toViroDegree(deg: number): number {
+  if (deg < 180) {
+    return 180 - deg;
+  } else if (deg <= 270) {
+    return 360 - (deg - 180);
+  } else {
+    return deg - 90;
+  }
+}
+
 export function getBoundaries(points: LatLng[]) {
   let north = -90,
     east = -180;
@@ -82,8 +94,8 @@ export function getBoundaries(points: LatLng[]) {
  */
 export const latLongToMerc = (latDeg: number, longDeg: number) => {
   // From: https://gist.github.com/scaraveos/5409402
-  const longRad = (longDeg / 180.0) * Math.PI;
-  const latRad = (latDeg / 180.0) * Math.PI;
+  const longRad = deg2rad(longDeg);
+  const latRad = deg2rad(latDeg);
   const smA = 6378137.0;
   const xmeters = smA * longRad;
   const ymeters = smA * Math.log((Math.sin(latRad) + 1) / Math.cos(latRad));
@@ -99,13 +111,13 @@ export const latLongToMerc = (latDeg: number, longDeg: number) => {
  */
 export const bearingBetweenTwoPoints = (p1: LatLng | undefined, p2: LatLng | undefined): number => {
   if (!p1 || !p2) return 0;
-
-  const y = Math.sin(p2.longitude - p1.longitude) * Math.cos(p2.latitude);
-  const x = Math.cos(p1.latitude) * Math.sin(p2.latitude) - Math.sin(p1.latitude) * Math.cos(p2.latitude) * Math.cos(p2.longitude - p1.longitude);
+  const dLon = p2.longitude - p1.longitude;
+  const y = Math.sin(dLon) * Math.cos(p2.latitude);
+  const x = Math.cos(p1.latitude) * Math.sin(p2.latitude) - Math.sin(p1.latitude) * Math.cos(p2.latitude) * Math.cos(dLon);
   const theta = Math.atan2(y, x);
   const bearing = degree360(rad2deg(theta)); // in degrees
 
-  return 360 - bearing;
+  return 360 - ((bearing + 360) % 360);
 };
 
 /**
@@ -125,22 +137,15 @@ export const transformGpsToAR = (deviceLoc: LatLng | undefined, objLoc: LatLng |
   const devicePoint = latLongToMerc(deviceLoc.latitude, deviceLoc.longitude);
   const dx = objPoint.x - devicePoint.x;
   const dy = objPoint.y - devicePoint.y;
-  if (Platform.OS === "android") {
-    // convert bearing to angle measured from x-axis to y-axis
-    let angle = 0.0;
-    if (heading <= 90) {
-      angle = 90 - heading;
-    } else {
-      angle = 360 - heading + 90;
-    }
-    // Rotate the system to move the the heading to y-axis
-    let newRotatedX = dx * Math.cos(-angle) - dy * Math.sin(-angle);
-    let newRotatedZ = dx * Math.sin(-angle) + dy * Math.cos(-angle);
-    return [newRotatedX, 0, -newRotatedZ];
-  }
 
   // flip z because Viro use -z as the north.
-  return [dx, 0, -dy];
+  let result: Viro3DPoint = [dx, 0, -dy];
+  if (Platform.OS === "android" && heading > 0) {
+    const rotated: number[][] = Matrix.rotate3D(Vector.toMatrix(result), heading, "y");
+    return Matrix.toVector(rotated) as Viro3DPoint;
+  }
+
+  return result;
 };
 
 /**
@@ -187,17 +192,15 @@ export const getClosestPointOnPath = (point: LatLng, ...path: [LatLng, LatLng]) 
  * @returns The next closest point between user's `location` and the `points[targetIndex]`.
  */
 export const getNextPoint = (targetIndex: number, points: LatLng[], location: LatLng, threshold: number = 0.025) => {
-  let closestPoint = points[0];
+  let closestPoint = points[targetIndex];
   let closestDistance = -1;
   let currentAnimate = 0;
-
   if (points.length > 1) {
-    for (let i = 0; i < points.length - 1; i++) {
+    for (let i = targetIndex; i < points.length - 1; i++) {
       const p = getClosestPointOnPath(location, points[i], points[i + 1]);
       const d = distanceFromLatLonInKm(p, location);
       if (closestDistance == -1 || closestDistance > d) {
         closestDistance = d;
-
         if (d > threshold) {
           currentAnimate = 1; // Getting far from path
           closestPoint = p;
@@ -211,7 +214,7 @@ export const getNextPoint = (targetIndex: number, points: LatLng[], location: La
     }
   }
 
-  return { currentAnimate, closestPoint: closestPoint };
+  return { currentAnimate, closestPoint };
 };
 
 export const isNear = (location: LatLng, target: LatLng, threshold: number = 0.001) => {
