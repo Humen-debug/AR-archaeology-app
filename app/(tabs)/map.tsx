@@ -225,14 +225,16 @@ export default function Explore() {
               mapRef.current.animateCamera?.({ center: coords });
             }}
           />
-          <IconBtn
-            style={style.iconButton}
-            icon="createAR"
-            iconProps={{ fill: theme.colors.text }}
-            onPress={() => {
-              router.push("/ar_explore");
-            }}
-          />
+          {__DEV__ && (
+            <IconBtn
+              style={style.iconButton}
+              icon="createAR"
+              iconProps={{ fill: theme.colors.text }}
+              onPress={() => {
+                router.push("/ar_explore");
+              }}
+            />
+          )}
           <IconBtn
             square
             style={style.iconButton}

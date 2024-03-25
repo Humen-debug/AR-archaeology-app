@@ -49,16 +49,6 @@ export function degBetweenPoints(p1: Viro3DPoint, p2: Viro3DPoint): number {
   return degree360(deg); // range [0, 360)
 }
 
-export function toViroDegree(deg: number): number {
-  if (deg < 180) {
-    return 180 - deg;
-  } else if (deg <= 270) {
-    return 360 - (deg - 180);
-  } else {
-    return deg - 90;
-  }
-}
-
 export function getBoundaries(points: LatLng[]) {
   let north = -90,
     east = -180;
@@ -90,10 +80,9 @@ export function getBoundaries(points: LatLng[]) {
  * @link
  * https://stackoverflow.com/questions/47419496/augmented-reality-with-react-native-points-of-interest-over-the-camera.
  * https://github.com/ViroCommunity/geoar/blob/master/App.js for coding.
- *
+ * https://gist.github.com/scaraveos/5409402
  */
 export const latLongToMerc = (latDeg: number, longDeg: number) => {
-  // From: https://gist.github.com/scaraveos/5409402
   const longRad = deg2rad(longDeg);
   const latRad = deg2rad(latDeg);
   const smA = 6378137.0;
@@ -130,7 +119,12 @@ export const bearingBetweenTwoPoints = (p1: LatLng | undefined, p2: LatLng | und
  * @link
  * (convert from global coordinate space to a local space) https://gamedev.stackexchange.com/questions/79765/how-do-i-convert-from-the-global-coordinate-space-to-a-local-space
  */
-export const transformGpsToAR = (deviceLoc: LatLng | undefined, objLoc: LatLng | undefined, heading: number = 0): Viro3DPoint | undefined => {
+export const transformGpsToAR = (
+  deviceLoc: LatLng | undefined,
+  objLoc: LatLng | undefined,
+  heading: number = 0,
+  toDigit?: number | undefined
+): Viro3DPoint | undefined => {
   if (!deviceLoc || !objLoc) return undefined;
 
   const objPoint = latLongToMerc(objLoc.latitude, objLoc.longitude);
@@ -138,13 +132,15 @@ export const transformGpsToAR = (deviceLoc: LatLng | undefined, objLoc: LatLng |
   const dx = objPoint.x - devicePoint.x;
   const dy = objPoint.y - devicePoint.y;
 
-  // flip z because Viro use -z as the north.
+  // flip z because Viro use -z as the north. (Right-handed coordinate)
   let result: Viro3DPoint = [dx, 0, -dy];
   if (Platform.OS === "android" && heading > 0) {
     const rotated: number[][] = Matrix.rotate3D(Vector.toMatrix(result), heading, "y");
-    return Matrix.toVector(rotated) as Viro3DPoint;
+    result = Matrix.toVector(rotated) as Viro3DPoint;
   }
-
+  if (toDigit) {
+    return result.map((value) => Math.round(value * 10 ** toDigit) / 10 ** toDigit) as Viro3DPoint;
+  }
   return result;
 };
 
@@ -188,7 +184,8 @@ export const getClosestPointOnPath = (point: LatLng, ...path: [LatLng, LatLng]) 
  * @param points A list of points representing a path.
  * @param location User's current location.
  * @param threshold A number representing distance range in km to determine whether return the orthogonal closest point
- * between two points in `points` or the closer point between itself and `points[targetIndex]`. Default is 0.025.
+ * between two points in `points` or the closer point between itself and `points[targetIndex]`.
+ * @default threshold 0.025
  * @returns The next closest point between user's `location` and the `points[targetIndex]`.
  */
 export const getNextPoint = (targetIndex: number, points: LatLng[], location: LatLng, threshold: number = 0.025) => {
@@ -196,7 +193,7 @@ export const getNextPoint = (targetIndex: number, points: LatLng[], location: La
   let closestDistance = -1;
   let currentAnimate = 0;
   if (points.length > 1) {
-    for (let i = targetIndex; i < points.length - 1; i++) {
+    for (let i = 0; i < points.length - 1; i++) {
       const p = getClosestPointOnPath(location, points[i], points[i + 1]);
       const d = distanceFromLatLonInKm(p, location);
       if (closestDistance == -1 || closestDistance > d) {
@@ -217,6 +214,15 @@ export const getNextPoint = (targetIndex: number, points: LatLng[], location: La
   return { currentAnimate, closestPoint };
 };
 
-export const isNear = (location: LatLng, target: LatLng, threshold: number = 0.001) => {
-  return distanceFromLatLonInKm(location, target) <= threshold;
+/**
+ *
+ * @param location
+ * @param target
+ * @param threshold
+ * @returns Whether user is within distance in `threshold` meters  with `target`.
+ */
+export const isNear = (location: LatLng, target: LatLng, threshold: number = 10, round: boolean = true) => {
+  let distance = distanceFromLatLonInKm(location, target) * 1000;
+  if (round) distance = Math.round(distance);
+  return distance <= threshold;
 };

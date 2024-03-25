@@ -28,6 +28,18 @@ export const subtract = (...vectors: Vector[]) => {
   return result;
 };
 
+export const distance = (v1: Vector, v2: Vector) => {
+  return Math.hypot(...subtract(v1, v2));
+};
+
+export const equal = (v1: Vector, v2: Vector) => {
+  if (v1.length != v2.length) return false;
+  for (let i = 0; i < v1.length; i++) {
+    if (v1[i] !== v2[i]) return false;
+  }
+  return true;
+};
+
 export const toMatrix = (v: Vector) => {
   const row = v.length;
   let result: number[][] = [];
