@@ -2,7 +2,7 @@ import { AppBar, ContentItem, MainBody, NAVBAR_HEIGHT } from "@/components";
 import { useFeathers } from "@/providers/feathers_provider";
 import { useAppTheme } from "@/providers/style_provider";
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
+import { Image, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
 import { ActivityIndicator, Text } from "react-native-paper";
 import type { Document } from "@/models";
 
@@ -42,6 +42,14 @@ export default function HistoryPage() {
               <ContentItem content={content} key={index} />
             ))}
           </View>
+          <Text variant="titleMedium" style={{ paddingHorizontal: theme.spacing.lg }}>
+            Timeline
+          </Text>
+          <Image
+            source={require("@assets/images/timeline.jpeg")}
+            style={{ width: screenWidth, height: screenWidth * Math.round(screenWidth / 235) }}
+            resizeMode="contain"
+          />
         </ScrollView>
       ) : (
         <View style={style.center}>

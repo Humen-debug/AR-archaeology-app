@@ -93,7 +93,7 @@ export default function ARExplorePage(props?: Props<ARExploreProps>) {
       const distance = Vector.distance(cameraPos, prePosition.current);
       // TODO 1. add smoothing animation even with noise filter
       // Filter distance delta smaller than 0.5 meters in order to lift burden of React native
-      if (distance >= (speed ? Math.min(2, Math.max(speed, 0.5)) : 0.5)) {
+      if (distance >= 0.5) {
         setPosition(cameraPos);
         prePosition.current = cameraPos;
       }
