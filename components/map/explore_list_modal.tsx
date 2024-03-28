@@ -7,13 +7,17 @@ import { SearchIcon } from "@components/icons";
 import ExploreItem from "./explore_item";
 import { GeoPoint } from "@/models";
 
+/**
+ * @property {boolean} isGrouped determines whether the data is shown as a path (if isGrouped true) or a point. Default is true.
+ */
 interface Props<T extends GeoPoint> {
   open: boolean;
   setOpen: (open: boolean) => void;
   data: T[];
+  isGrouped?: boolean;
 }
 
-export default function ExploreListModal<T extends GeoPoint>({ open, setOpen, data }: Props<T>) {
+export default function ExploreListModal<T extends GeoPoint>({ open, setOpen, data, isGrouped = true }: Props<T>) {
   const { theme } = useAppTheme();
   const _style = useStyle({
     theme,
@@ -83,9 +87,9 @@ export default function ExploreListModal<T extends GeoPoint>({ open, setOpen, da
         </View>
         <BottomSheetScrollView contentContainerStyle={{ flex: 1 }} showsVerticalScrollIndicator={false}>
           <View style={_style.list}>
-            {data.map(({ save, _id }) => (
-              <View key={_id}>
-                <ExploreItem isSaved={save} points={data} id={_id} modalCLose={modalCLose} />
+            {data.map((point) => (
+              <View key={point._id}>
+                <ExploreItem isSaved={point.save} points={isGrouped ? data : [point]} id={point._id} modalCLose={modalCLose} />
                 <Divider style={{ backgroundColor: theme.colors.grey1, marginHorizontal: -theme.spacing.lg }} />
               </View>
             ))}

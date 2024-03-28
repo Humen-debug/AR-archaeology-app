@@ -1,7 +1,6 @@
-import { MainBody } from "@components";
+import { LoadingPage, MainBody } from "@components";
 import { Redirect, useRootNavigation, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Text } from "react-native-paper";
 import * as Location from "expo-location";
 import { Alert, Linking, Platform } from "react-native";
 import * as IntentLauncher from "expo-intent-launcher";
@@ -51,7 +50,7 @@ export default function App() {
   else
     return (
       <MainBody>
-        <ActivityIndicator size={"large"} />
+        <LoadingPage />
       </MainBody>
     );
 }

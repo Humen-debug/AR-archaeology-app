@@ -1,4 +1,4 @@
-import { AppBar, Carousel, MainBody, NAVBAR_HEIGHT, Icons, NumInput } from "@/components";
+import { AppBar, Carousel, MainBody, NAVBAR_HEIGHT, Icons, NumInput, ErrorPage, LoadingPage } from "@/components";
 import { CalendarIcon, CalendarOutlinedIcon, LocationIcon, ProfileIcon } from "@/components/icons";
 import { Event } from "@/models";
 import { useAuth } from "@/providers/auth_provider";
@@ -70,9 +70,7 @@ export default function Page() {
     <MainBody padding={{ top: 0 }}>
       <AppBar showBack />
       {!loaded ? (
-        <View style={style.center}>
-          <ActivityIndicator size={"large"} />
-        </View>
+        <LoadingPage />
       ) : event ? (
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.md }}>
           {event.images && <Carousel images={event.images} />}
@@ -156,11 +154,7 @@ export default function Page() {
           </View>
         </ScrollView>
       ) : (
-        <View style={style.center}>
-          <Text variant="headlineMedium" style={{ color: theme.colors.error, fontWeight: "bold" }}>
-            404 Not Found :(
-          </Text>
-        </View>
+        <ErrorPage />
       )}
     </MainBody>
   );

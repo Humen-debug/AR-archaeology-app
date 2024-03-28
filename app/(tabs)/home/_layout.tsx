@@ -11,6 +11,7 @@ export default function StackLayout() {
       <Stack.Screen name="event" />
       <Stack.Screen name="events" />
       <Stack.Screen name="attractions" />
+      <Stack.Screen name="route_map" />
     </Stack>
   );
 }

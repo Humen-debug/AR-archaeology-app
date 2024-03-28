@@ -1,9 +1,8 @@
 import { Text } from "react-native-paper";
-import { MainBody, IconBtn, AudioPlayer, ModelView } from "@components";
+import { MainBody, IconBtn, AudioPlayer, ModelView, LoadingPage } from "@components";
 import { View, StyleSheet } from "react-native";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
-import { ActivityIndicator } from "react-native";
 import BottomSheet, { BottomSheetScrollView, BottomSheetScrollViewMethods } from "@gorhom/bottom-sheet";
 import { BookmarkIcon, BookmarkOutlineIcon, CreateARIcon, ChevronLeftIcon, ErrorOutlineIcon, ShareIcon } from "@components/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -61,11 +60,7 @@ export default function DetailPage() {
       <>
         <View style={{ flex: 0.5, position: "relative" }}>
           <ModelView style={{ flex: 1 }} setLoading={setLoading} setError={setModelError} />
-          {loading && (
-            <View style={_style.centerContainer}>
-              <ActivityIndicator size="large" animating={loading} />
-            </View>
-          )}
+          {loading && <LoadingPage />}
           {modelError && (
             <View style={_style.centerContainer}>
               <ErrorOutlineIcon fill="white" />

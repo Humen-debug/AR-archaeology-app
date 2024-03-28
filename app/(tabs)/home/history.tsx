@@ -1,4 +1,4 @@
-import { AppBar, ContentItem, MainBody, NAVBAR_HEIGHT } from "@/components";
+import { AppBar, ContentItem, ErrorPage, LoadingPage, MainBody, NAVBAR_HEIGHT } from "@/components";
 import { useFeathers } from "@/providers/feathers_provider";
 import { useAppTheme } from "@/providers/style_provider";
 import { useEffect, useState } from "react";
@@ -32,9 +32,7 @@ export default function HistoryPage() {
     <MainBody padding={{ top: 0 }}>
       <AppBar showBack />
       {loading ? (
-        <View style={style.center}>
-          <ActivityIndicator animating size={"large"} />
-        </View>
+        <LoadingPage />
       ) : doc ? (
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.md, paddingTop: theme.spacing.lg }}>
           <View style={{ flexDirection: "column", rowGap: 1.5 * theme.spacing.xl }}>
@@ -52,11 +50,7 @@ export default function HistoryPage() {
           />
         </ScrollView>
       ) : (
-        <View style={style.center}>
-          <Text variant="headlineMedium" style={{ color: theme.colors.error }}>
-            404 Not Found
-          </Text>
-        </View>
+        <ErrorPage />
       )}
     </MainBody>
   );

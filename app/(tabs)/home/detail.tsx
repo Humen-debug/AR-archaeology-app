@@ -1,4 +1,4 @@
-import { AppBar, Carousel, ContentItem, MainBody, NAVBAR_HEIGHT } from "@/components";
+import { AppBar, Carousel, ContentItem, ErrorPage, LoadingPage, MainBody, NAVBAR_HEIGHT } from "@/components";
 import MapPreview from "@/components/map/map_preview";
 import { BookmarkOutlineIcon, CompassIcon, LocationIcon } from "@components/icons";
 import { Attraction, GeoPoint, Tag } from "@models";
@@ -53,9 +53,7 @@ export default function Page() {
     <MainBody padding={{ top: 0 }}>
       <AppBar showBack actions={[{ icon: (props) => <BookmarkOutlineIcon fill={props.color} size={props.size} /> }]} />
       {!loaded ? (
-        <View style={style.center}>
-          <ActivityIndicator size={"large"} />
-        </View>
+        <LoadingPage />
       ) : item ? (
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.md }}>
           {item.thumbnails && <Carousel images={item.thumbnails} />}
@@ -146,11 +144,7 @@ export default function Page() {
           )}
         </ScrollView>
       ) : (
-        <View style={style.center}>
-          <Text variant="headlineMedium" style={{ color: theme.colors.error, fontWeight: "bold" }}>
-            404 Not Found :(
-          </Text>
-        </View>
+        <ErrorPage />
       )}
     </MainBody>
   );

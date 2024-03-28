@@ -1,4 +1,4 @@
-import { AppBar, EventItem, MainBody, NAVBAR_HEIGHT } from "@/components";
+import { AppBar, EventItem, LoadingPage, MainBody, NAVBAR_HEIGHT } from "@/components";
 import { Event } from "@/models";
 import { Paginated, useFeathers } from "@/providers/feathers_provider";
 import { useAppTheme, AppTheme } from "@/providers/style_provider";
@@ -85,9 +85,7 @@ export default function Page() {
         />
       </View>
       {!loaded ? (
-        <View style={style.center}>
-          <ActivityIndicator size={"large"} />
-        </View>
+        <LoadingPage />
       ) : (
         <FlatList
           contentContainerStyle={{

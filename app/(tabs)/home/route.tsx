@@ -1,4 +1,4 @@
-import { AppBar, Carousel, ContentItem, MainBody, NAVBAR_HEIGHT } from "@/components";
+import { AppBar, Carousel, ContentItem, ErrorPage, LoadingPage, MainBody, NAVBAR_HEIGHT } from "@/components";
 import { CompassIcon, FootStepsIcon, LocationIcon, MountainIcon, TimeOutlineIcon } from "@/components/icons";
 import MapPreview from "@/components/map/map_preview";
 import { GeoPoint, Location, Route } from "@/models";
@@ -138,9 +138,7 @@ export default function Page() {
     <MainBody padding={{ top: 0 }}>
       <AppBar showBack />
       {!loaded ? (
-        <View style={style.center}>
-          <ActivityIndicator size={"large"} />
-        </View>
+        <LoadingPage />
       ) : route ? (
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: NAVBAR_HEIGHT + theme.spacing.md }}>
           {renderTopSection()}
@@ -167,7 +165,12 @@ export default function Page() {
               >
                 <Button
                   mode="contained"
-                  onPress={() => router.replace({ pathname: "/map", params: { latitude: points[0].latitude, longitude: points[0].longitude } })}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/home/route_map",
+                      params: { latitude: points[0].latitude, longitude: points[0].longitude, routeId: route._id },
+                    })
+                  }
                   textColor={theme.colors.textOnPrimary}
                   style={style.button}
                   labelStyle={style.buttonLabelStyle}
@@ -207,12 +210,11 @@ export default function Page() {
                       style={{
                         flexDirection: "row",
                         alignItems: "center",
-                        justifyContent: "space-between",
                         columnGap: theme.spacing.xs,
                         paddingHorizontal: theme.spacing.lg,
                       }}
                     >
-                      <Text variant="titleMedium" style={{ color: theme.colors.text }}>
+                      <Text variant="titleMedium" style={{ color: theme.colors.text, flexGrow: 1, flexShrink: 1 }}>
                         {index + 1}. {point.name}
                       </Text>
                       <Button
@@ -222,7 +224,10 @@ export default function Page() {
                         labelStyle={style.buttonLabelStyle}
                         onPress={() => startARTour(index)}
                       >
-                        <Text variant="labelMedium" style={{ color: theme.colors.textOnPrimary, textAlignVertical: "center" }}>
+                        <Text
+                          variant="labelMedium"
+                          style={{ color: theme.colors.textOnPrimary, textAlignVertical: "center", flexShrink: 1, flexGrow: 0 }}
+                        >
                           Start AR tour
                         </Text>
                       </Button>
@@ -245,11 +250,7 @@ export default function Page() {
           </View>
         </ScrollView>
       ) : (
-        <View style={style.center}>
-          <Text variant="headlineMedium" style={{ color: theme.colors.error }}>
-            404 Not Found
-          </Text>
-        </View>
+        <ErrorPage />
       )}
     </MainBody>
   );

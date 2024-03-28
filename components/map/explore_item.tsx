@@ -3,7 +3,7 @@ import { StyleSheet, View, FlatList, Image } from "react-native";
 import { useAppTheme } from "@providers/style_provider";
 import { GPSIcon, BookmarkIcon, BookmarkOutlineIcon } from "@components/icons";
 import { useRouter } from "expo-router";
-import { GeoPoint } from "@/models";
+import { GeoPoint, Tag } from "@/models";
 import { distanceFromLatLonInKm } from "@/plugins/geolocation";
 
 /**
@@ -47,6 +47,10 @@ export default function ExploreItem<T extends GeoPoint>(item: ItemProps<T>) {
     length = Math.ceil(length * 20) / 20;
   }
 
+  const type: string | undefined = point.type;
+  const tags: string | undefined = point.tags?.map((tag) => (tag as Tag).name).join(", ");
+  const isAttraction = !!type;
+
   const _style = useStyle({
     backgroundColor: theme.colors.container + "e9",
     labelGrey: theme.colors.text,
@@ -57,7 +61,14 @@ export default function ExploreItem<T extends GeoPoint>(item: ItemProps<T>) {
   const fetchNextPoints = () => {
     if (modalCLose) modalCLose();
     const ids = item.points.map(({ _id }) => _id);
-    router.push({ pathname: "/ar_explore", params: { idString: JSON.stringify(ids), targetId: targetIndex } });
+    router.push({
+      pathname: "/ar_explore",
+      params: {
+        idString: JSON.stringify(ids),
+        targetId: targetIndex,
+        service: isAttraction ? "attractions" : "locations",
+      },
+    });
   };
 
   return (
@@ -70,6 +81,19 @@ export default function ExploreItem<T extends GeoPoint>(item: ItemProps<T>) {
           <Text variant="labelMedium" style={_style.lengthText}>
             {length} km
           </Text>
+        )}
+        {type && (
+          <View style={_style.rowLayout}>
+            <Text variant="labelMedium">
+              {type}
+              {tags ? " | " : ""}
+            </Text>
+            {tags && (
+              <Text variant="labelMedium" style={[{ color: theme.colors.primary }]}>
+                {tags}
+              </Text>
+            )}
+          </View>
         )}
         {images && (
           <FlatList
@@ -139,5 +163,9 @@ const useStyle = ({ backgroundColor, spacing, labelGrey, withImage, itemWidth }:
     lengthText: {
       color: labelGrey,
       marginTop: withImage ? 8 : -8,
+    },
+    rowLayout: {
+      flexDirection: "row",
+      alignItems: "center",
     },
   });

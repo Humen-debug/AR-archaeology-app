@@ -48,6 +48,12 @@ export default function MapPreview({ points, style, onMapPress, initialRegion, m
             if (points && points?.[0]) {
               const { latitude, longitude } = points?.[0];
               params = !!latitude && !!longitude ? { latitude, longitude } : {};
+
+              if (points?.[0]?.route) {
+                params = { ...params, routeId: points?.[0].route };
+                router.push({ pathname: "/home/route_map", params: params });
+                return;
+              }
             }
 
             router.replace({ pathname: "/map", params: params });
@@ -87,13 +93,18 @@ export default function MapPreview({ points, style, onMapPress, initialRegion, m
             key={point._id}
             coordinate={point}
             onPress={() => {
-              router.replace({
-                pathname: "/map",
-                params: {
-                  latitude: point.latitude,
-                  longitude: point.longitude,
-                },
-              });
+              let params = { latitude: point.latitude, longitude: point.longitude };
+              if (point?.route) {
+                router.push({
+                  pathname: "/home/route_map",
+                  params: {
+                    ...params,
+                    routeId: point?.route,
+                  },
+                });
+              } else {
+                router.replace({ pathname: "/map", params });
+              }
             }}
             zIndex={10}
           />

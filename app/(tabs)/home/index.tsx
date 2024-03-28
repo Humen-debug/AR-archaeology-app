@@ -1,14 +1,15 @@
 import { Button, Text } from "react-native-paper";
 import { MainBody, NAVBAR_HEIGHT } from "@components";
-import { View, StyleSheet, ImageBackground, useWindowDimensions, Pressable, ScrollView } from "react-native";
+import { View, StyleSheet, ImageBackground, useWindowDimensions, Pressable, ScrollView, Image } from "react-native";
 import { useState } from "react";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { useAuth } from "@providers/auth_provider";
 import { Link, router } from "expo-router";
-import MapPreview from "@/components/map/map_preview";
 import { Orientation, isPortrait, useOrientation } from "@/plugins/orientation";
 
-const DECORATE_BOX_HEIGHT = 114;
+const DECORATE_BOX_HEIGHT = 124;
+const MAP_IMG_HEIGHT = 303;
+const MAP_IMG_WIDTH = 626;
 
 function Layout({ children, orientation }: { children?: JSX.Element | (JSX.Element | undefined | boolean)[]; orientation: Orientation }) {
   if (isPortrait(orientation)) {
@@ -46,7 +47,7 @@ export default function Home() {
         <View style={style.appBarDecorateBox} />
         <View style={{ flexDirection: "column", paddingTop: theme.spacing.md, paddingBottom: theme.spacing.xs, paddingHorizontal: theme.spacing.lg }}>
           <Text variant="titleMedium" style={{ color: theme.colors.background }}>
-            Welcome to the Vedi River Valley!
+            {`Welcome to \nthe Vedi River Valley!`}
           </Text>
         </View>
 
@@ -167,8 +168,13 @@ export default function Home() {
         </View>
 
         {/* Map */}
-        <View style={[{ flexGrow: 0, flexShrink: 1 }, ...[isPortrait(orientation) ? {} : { minHeight: 100 }]]}>
-          <MapPreview points={[]} style={[style.mapContainer, style.fill]} mapType="satellite" />
+        <View
+          style={[
+            { flexGrow: 0, flexShrink: 1 },
+            ...[isPortrait(orientation) ? {} : { minHeight: Math.round(MAP_IMG_HEIGHT * (screenWidth / MAP_IMG_WIDTH)) }],
+          ]}
+        >
+          <Image source={require("@assets/images/vedi_map.jpeg")} style={{ width: "100%", height: "100%" }} />
           <View style={{ position: "absolute", top: theme.spacing.md, right: theme.spacing.sm }}>
             <Text variant="titleMedium" style={style.mapLabel}>
               Map of Valley

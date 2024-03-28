@@ -1,9 +1,11 @@
 export { default as AppBar } from "./app_bar";
 export { default as AudioPlayer } from "./audio_player";
+export { default as ErrorPage } from "./error_page";
 export { default as Form } from "./form";
 export { default as Carousel } from "./home/carousel";
 export { default as IconBtn } from "./icon_btn";
 export { default as ItemCard } from "./item_card";
+export { default as LoadingPage } from "./loading_page";
 export { default as ListItem } from "./home/list_item";
 export { default as MainBody } from "./main_body";
 export { default as MarkerCallout } from "./map/marker_callout";
