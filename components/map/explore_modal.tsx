@@ -1,24 +1,30 @@
 import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useMemo, useRef, useEffect, useCallback } from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { Alert, Dimensions, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button, Text } from "react-native-paper";
 import { ScrollView } from "react-native-gesture-handler";
 import { GPSIcon, BookmarkOutlineIcon } from "@components/icons";
 import { useAppTheme, AppTheme } from "@providers/style_provider";
+import { GeoPoint } from "@/models";
+import { useRouter } from "expo-router";
+import { distanceFromLatLonInKm } from "@/plugins/geolocation";
+import * as ExpoLocation from "expo-location";
 
 interface ExploreModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  data: any;
+  data: GeoPoint[] | GeoPoint;
+  targetIndex?: number;
 }
 
-export default function ExploreModal({ open, setOpen, data }: ExploreModalProps) {
+export default function ExploreModal({ open, setOpen, data, targetIndex = 0 }: ExploreModalProps) {
   const { theme } = useAppTheme();
   const style = useStyle(theme);
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const { top: safeTop } = useSafeAreaInsets();
   const screenHeight = Dimensions.get("window").height;
+  const router = useRouter();
 
   const snapPoints = useMemo(() => ["20%", "50%", screenHeight - safeTop], []);
 
@@ -38,6 +44,34 @@ export default function ExploreModal({ open, setOpen, data }: ExploreModalProps)
     bottomSheetRef.current?.dismiss();
   }, []);
 
+  const point: GeoPoint = Array.isArray(data) ? data[targetIndex] : data;
+
+  async function startARTour() {
+    const isAttraction = !!point.type;
+
+    const ids = Array.isArray(data) ? data.map(({ _id }) => _id) : [point._id];
+    const goTo = () => {
+      modalCLose?.();
+      router.push({
+        pathname: "/ar_explore",
+        params: {
+          idString: JSON.stringify(ids),
+          targetId: targetIndex,
+          service: isAttraction ? "attractions" : "locations",
+        },
+      });
+    };
+    const { coords: position } = await ExpoLocation.getCurrentPositionAsync();
+    if (distanceFromLatLonInKm(position, point) > 5) {
+      Alert.alert("> 5km Distance Alert", "You're too far from the destination.\nDo you still want to proceed with the AR tour?", [
+        { text: "Cancel", style: "cancel" },
+        { text: "Confirm", onPress: goTo },
+      ]);
+    } else {
+      goTo();
+    }
+  }
+
   return (
     <View>
       <BottomSheetModal
@@ -48,9 +82,9 @@ export default function ExploreModal({ open, setOpen, data }: ExploreModalProps)
         snapPoints={snapPoints}
         onDismiss={() => setOpen(false)}
       >
-        {data && (
+        {point && (
           <BottomSheetScrollView style={style.container}>
-            <Text variant="headlineSmall">{data.name || data.title}</Text>
+            <Text variant="headlineSmall">{point.name || point.title}</Text>
             <ScrollView
               alwaysBounceHorizontal={false}
               alwaysBounceVertical={false}
@@ -64,6 +98,7 @@ export default function ExploreModal({ open, setOpen, data }: ExploreModalProps)
                   mode="contained"
                   icon={() => <GPSIcon fill="white" width={14} height={14} />}
                   labelStyle={style.button}
+                  onPress={startARTour}
                 >
                   <Text variant="bodyMedium" style={{ color: theme.colors.textOnPrimary }}>
                     Start
@@ -82,7 +117,7 @@ export default function ExploreModal({ open, setOpen, data }: ExploreModalProps)
               </View>
             </ScrollView>
             <Text variant="bodyMedium" style={{ color: theme.colors.text }}>
-              {data.desc}
+              {point.desc}
             </Text>
           </BottomSheetScrollView>
         )}

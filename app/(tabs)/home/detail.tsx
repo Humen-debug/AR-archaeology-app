@@ -6,9 +6,12 @@ import { useFeathers } from "@providers/feathers_provider";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, View, useWindowDimensions } from "react-native";
+import { Alert, StyleSheet, View, useWindowDimensions } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { ActivityIndicator, Button, Text } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
+import * as Location from "expo-location";
+import { distanceFromLatLonInKm } from "@/plugins/geolocation";
+import { LatLng } from "react-native-maps";
 
 export default function Page() {
   const feathers = useFeathers();
@@ -22,8 +25,8 @@ export default function Page() {
   const { id, service = "attractions" } = useLocalSearchParams<{ id?: string; service?: string }>();
   const [loaded, setLoaded] = useState(false);
   const [item, setItem] = useState<Attraction>();
-  const [canNavigate, setCanNavigate] = useState(false);
 
+  const canNavigate = item?.latitude && item.latitude;
   useEffect(() => {
     async function init() {
       if (!service || !id) {
@@ -32,9 +35,6 @@ export default function Page() {
       }
       try {
         const res = await feathers.service(service).get(id, { query: { $populate: ["tags"] } });
-        const { latitude, longitude } = res;
-
-        setCanNavigate(typeof latitude === "number" && typeof longitude === "number");
         setItem(res);
       } finally {
         setLoaded(true);
@@ -43,9 +43,18 @@ export default function Page() {
     init();
   }, []);
 
-  function startARTour() {
-    if (canNavigate && item) {
-      router.push({ pathname: "/ar_explore", params: { service, idString: JSON.stringify([item._id]) } });
+  async function startARTour() {
+    if (canNavigate) {
+      const goTo = () => router.push({ pathname: "/ar_explore", params: { service, idString: JSON.stringify([item._id]) } });
+      const { coords: position } = await Location.getCurrentPositionAsync();
+      if (distanceFromLatLonInKm(position, item as LatLng) > 5) {
+        Alert.alert("> 5km Distance Alert", "You're too far from the destination.\nDo you still want to proceed with the AR tour?", [
+          { text: "Cancel", style: "cancel" },
+          { text: "Confirm", onPress: goTo },
+        ]);
+      } else {
+        goTo();
+      }
     }
   }
 

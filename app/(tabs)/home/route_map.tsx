@@ -9,11 +9,9 @@ import ExploreItem from "@components/map/explore_item";
 import ExploreModal from "@components/map/explore_modal";
 import Animated, { useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { useAppTheme } from "@providers/style_provider";
-import { getBoundaries } from "@/plugins/geolocation";
 import { Paginated, useFeathers } from "@/providers/feathers_provider";
 import { Location, Route } from "@/models";
 import { getCurrentPositionAsync } from "expo-location";
-import { ActivityIndicator, Text } from "react-native-paper";
 
 const ITEM_WIDTH = 300;
 const ITEM_SPACING = 10;
@@ -202,7 +200,7 @@ export default function Explore() {
               />
             </View>
             <ExploreListModal open={listOpen} setOpen={setListOpen} data={points} />
-            <ExploreModal open={detailOpen} setOpen={setDetailOpen} data={points[focusIndex]} />
+            <ExploreModal open={detailOpen} setOpen={setDetailOpen} data={points} targetIndex={focusIndex} />
           </View>
         ) : (
           <ErrorPage />

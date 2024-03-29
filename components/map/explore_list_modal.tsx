@@ -1,4 +1,4 @@
-import { Text, Searchbar, Divider } from "react-native-paper";
+import { Searchbar, Divider } from "react-native-paper";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { useRef, useMemo, useCallback, useState, useEffect } from "react";

@@ -1,7 +1,7 @@
 import { AppBar, Carousel, ContentItem, ErrorPage, LoadingPage, MainBody, NAVBAR_HEIGHT } from "@/components";
 import { CompassIcon, FootStepsIcon, LocationIcon, MountainIcon, TimeOutlineIcon } from "@/components/icons";
 import MapPreview from "@/components/map/map_preview";
-import { GeoPoint, Location, Route } from "@/models";
+import { Location, Route } from "@/models";
 import { distanceFromLatLonInKm } from "@/plugins/geolocation";
 import { getThumb } from "@/plugins/utils";
 import { Paginated, useFeathers } from "@/providers/feathers_provider";
@@ -9,8 +9,9 @@ import { AppTheme, useAppTheme } from "@/providers/style_provider";
 import { router, useLocalSearchParams } from "expo-router";
 import _ from "lodash";
 import { useEffect, useRef, useState } from "react";
-import { ImageBackground, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
-import { ActivityIndicator, Button, Text } from "react-native-paper";
+import { Alert, ImageBackground, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
+import { Button, Text } from "react-native-paper";
+import * as ExpoLocation from "expo-location";
 
 export default function Page() {
   const feathers = useFeathers();
@@ -85,9 +86,19 @@ export default function Page() {
     init();
   }, []);
 
-  function startARTour(index: number) {
+  async function startARTour(index?: number) {
+    index ??= 0;
     const ids = points.map(({ _id }) => _id);
-    router.push({ pathname: "/ar_explore", params: { service: "locations", targetId: index, idString: JSON.stringify(ids) } });
+    const goTo = () => router.push({ pathname: "/ar_explore", params: { service: "locations", targetId: index, idString: JSON.stringify(ids) } });
+    const { coords: position } = await ExpoLocation.getCurrentPositionAsync();
+    if (distanceFromLatLonInKm(position, points[index]) > 5) {
+      Alert.alert("> 5km Distance Alert", "You're too far from the destination.\nDo you still want to proceed with the AR tour?", [
+        { text: "Cancel", style: "cancel" },
+        { text: "Confirm", onPress: goTo },
+      ]);
+    } else {
+      goTo();
+    }
   }
 
   function renderTopSection() {
@@ -185,6 +196,7 @@ export default function Page() {
                   style={[style.button, { borderWidth: 2, borderColor: theme.colors.primary }]}
                   labelStyle={style.buttonLabelStyle}
                   // icon={() => <CompassIcon fill={theme.colors.primary} size={20} />}
+                  onPress={() => startARTour()}
                 >
                   <Text variant="labelMedium" style={{ color: theme.colors.primary }}>
                     Start AR tour

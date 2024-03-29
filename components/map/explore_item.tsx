@@ -1,10 +1,11 @@
 import { Text, Button } from "react-native-paper";
-import { StyleSheet, View, FlatList, Image } from "react-native";
+import { StyleSheet, View, FlatList, Image, Alert } from "react-native";
 import { useAppTheme } from "@providers/style_provider";
 import { GPSIcon, BookmarkIcon, BookmarkOutlineIcon } from "@components/icons";
 import { useRouter } from "expo-router";
 import { GeoPoint, Tag } from "@/models";
 import { distanceFromLatLonInKm } from "@/plugins/geolocation";
+import * as ExpoLocation from "expo-location";
 
 /**
  * @property {T[]} points is a list of locations in which the target point exits.
@@ -58,17 +59,27 @@ export default function ExploreItem<T extends GeoPoint>(item: ItemProps<T>) {
     withImage: !!getImages && !!images && images.length,
   });
 
-  const fetchNextPoints = () => {
-    if (modalCLose) modalCLose();
-    const ids = item.points.map(({ _id }) => _id);
-    router.push({
-      pathname: "/ar_explore",
-      params: {
-        idString: JSON.stringify(ids),
-        targetId: targetIndex,
-        service: isAttraction ? "attractions" : "locations",
-      },
-    });
+  const startARTour = async () => {
+    modalCLose?.();
+    const ids = points.map(({ _id }) => _id);
+    const goTo = () =>
+      router.push({
+        pathname: "/ar_explore",
+        params: {
+          idString: JSON.stringify(ids),
+          targetId: targetIndex,
+          service: isAttraction ? "attractions" : "locations",
+        },
+      });
+    const { coords: position } = await ExpoLocation.getCurrentPositionAsync();
+    if (distanceFromLatLonInKm(position, point) > 5) {
+      Alert.alert("> 5km Distance Alert", "You're too far from the destination.\nDo you still want to proceed with the AR tour?", [
+        { text: "Cancel", style: "cancel" },
+        { text: "Confirm", onPress: goTo },
+      ]);
+    } else {
+      goTo();
+    }
   };
 
   return (
@@ -112,7 +123,7 @@ export default function ExploreItem<T extends GeoPoint>(item: ItemProps<T>) {
           textColor={theme.colors.textOnPrimary}
           mode="contained"
           icon={() => <GPSIcon fill={theme.colors.textOnPrimary} style={[_style.icon, { maxHeight: 18 }]} />}
-          onPress={fetchNextPoints}
+          onPress={startARTour}
         >
           Start
         </Button>
