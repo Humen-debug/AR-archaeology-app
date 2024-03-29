@@ -61,7 +61,7 @@ export default function Home() {
             flexDirection: "column",
             rowGap: theme.spacing.sm,
             paddingHorizontal: theme.spacing.lg,
-            paddingBottom: theme.spacing.sm,
+            paddingBottom: theme.spacing.lg,
           }}
         >
           <Link href="/home/history" asChild>

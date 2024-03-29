@@ -40,7 +40,7 @@ export default function HistoryPage() {
               <ContentItem content={content} key={index} />
             ))}
           </View>
-          <Text variant="titleMedium" style={{ paddingHorizontal: theme.spacing.lg }}>
+          <Text variant="titleMedium" style={{ paddingHorizontal: theme.spacing.lg, marginTop: theme.spacing.xl }}>
             Timeline
           </Text>
           <Image

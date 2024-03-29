@@ -133,7 +133,7 @@ export default function Explore() {
           }}
           mapType="satellite"
           userInterfaceStyle="dark"
-          minZoomLevel={10}
+          minZoomLevel={5}
           onPress={onMapPress}
           showsCompass
           showsUserLocation
