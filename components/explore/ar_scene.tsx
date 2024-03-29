@@ -3,6 +3,7 @@ import { degBetweenPoints } from "@/plugins/geolocation";
 import {
   Viro3DObject,
   ViroAmbientLight,
+  ViroARPlane,
   ViroARScene,
   ViroARTrackingReasonConstants,
   ViroBox,
@@ -17,7 +18,6 @@ import {
 } from "@viro-community/react-viro";
 import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
 import { createRef, useCallback, useMemo, useRef, useState } from "react";
-import { LatLng } from "react-native-maps";
 import * as Vector from "@/plugins/vector";
 
 export interface Props<T extends unknown> {
@@ -27,7 +27,6 @@ export interface Props<T extends unknown> {
 }
 
 export interface ARExploreProps {
-  location?: LatLng;
   targetPoint: GeoPoint | undefined;
   setARnear?: (value: boolean) => void;
   calTarget?: Viro3DPoint;
@@ -38,21 +37,6 @@ export interface ARExploreProps {
 export default function ARExplorePage(props?: Props<ARExploreProps>) {
   const { targetPoint, setARnear, calPoint: wayPoint, calTarget: target, speed } = props?.arSceneNavigator?.viroAppProps ?? {};
   const sceneRef = createRef<ViroARScene>();
-
-  ViroMaterials.createMaterials({
-    area: {
-      lightingModel: "Constant",
-      diffuseColor: "#DBF43E30",
-      colorWritesMask: "Green",
-      blendMode: "Alpha",
-    },
-    path: {
-      lightingModel: "Constant",
-      diffuseColor: "#DBF43E",
-      diffuseTexture: require("@assets/images/diffuse.png"),
-      blendMode: "Add",
-    },
-  });
 
   function handleError(event) {
     console.log("OBJ loading failed with error: " + event.nativeEvent.error);
@@ -91,9 +75,9 @@ export default function ARExplorePage(props?: Props<ARExploreProps>) {
     (cameraTransform: ViroCameraTransform) => {
       const { position: cameraPos } = cameraTransform;
       const distance = Vector.distance(cameraPos, prePosition.current);
-      // TODO 1. add smoothing animation even with noise filter
-      // Filter distance delta smaller than 0.5 meters in order to lift burden of React native
-      if (distance >= 0.5) {
+
+      // Filter distance delta smaller than speed(i.e. meters per second) in order to lift burden of React native
+      if (distance >= (speed || 0.5)) {
         setPosition(cameraPos);
         prePosition.current = cameraPos;
       }
@@ -104,6 +88,7 @@ export default function ARExplorePage(props?: Props<ARExploreProps>) {
   return (
     <ViroARScene onTrackingUpdated={_onInitialized} onCameraTransformUpdate={_onCameraTransformed} ref={sceneRef}>
       <ViroAmbientLight intensity={2000} color={"white"} />
+
       {init.current && (
         <>
           {calPoint && (
@@ -123,8 +108,9 @@ export default function ARExplorePage(props?: Props<ARExploreProps>) {
                   <ViroText text="Waypoint" color={"#fff"} transformBehaviors={["billboard"]} position={[0, 1, 0]} />
                   <Viro3DObject
                     source={require("@assets/models/location_pin/object.obj")}
-                    transformBehaviors={["billboard"]}
                     type="OBJ"
+                    transformBehaviors={["billboard"]}
+                    materials={"pin"}
                     onError={handleError}
                   />
                 </ViroNode>
@@ -134,10 +120,15 @@ export default function ARExplorePage(props?: Props<ARExploreProps>) {
           {calTarget && (
             <ViroNode position={calTarget}>
               {showDesc && (
-                <ViroFlexView height={1} width={3.5} position={[0, targetScale + 1, 0]} style={{ backgroundColor: "white" }}>
+                <ViroFlexView
+                  height={1}
+                  width={3.5}
+                  position={[0, targetScale + 1, 0]}
+                  style={{ backgroundColor: "#FFF" }}
+                  transformBehaviors={["billboard"]}
+                >
                   <ViroText
                     style={{ flex: 1 }}
-                    transformBehaviors={["billboard"]}
                     textLineBreakMode="CharWrap"
                     textClipMode="None"
                     color={"#000"}
@@ -149,6 +140,7 @@ export default function ARExplorePage(props?: Props<ARExploreProps>) {
                 scale={[targetScale, targetScale, targetScale]}
                 transformBehaviors={["billboard"]}
                 source={require("@assets/models/location_pin/object.obj")}
+                materials={"pin"}
                 type="OBJ"
                 onError={handleError}
               />
@@ -159,3 +151,22 @@ export default function ARExplorePage(props?: Props<ARExploreProps>) {
     </ViroARScene>
   );
 }
+
+ViroMaterials.createMaterials({
+  area: {
+    lightingModel: "Constant",
+    diffuseColor: "#DBF43E30",
+    colorWritesMask: "Green",
+    blendMode: "Alpha",
+  },
+  path: {
+    lightingModel: "Constant",
+    diffuseColor: "#DBF43E",
+    diffuseTexture: require("@assets/images/diffuse.png"),
+    blendMode: "Add",
+  },
+  pin: {
+    lightingModel: "Constant",
+    diffuseColor: "#D81C1C",
+  },
+});

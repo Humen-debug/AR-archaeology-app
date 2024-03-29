@@ -112,11 +112,12 @@ export function AuthProvider({ children, fallback }: Props) {
   const updateUser = useCallback(
     async (user: Partial<User>) => {
       user = _.omit(user, ["_id", "createdAt"]);
+      var newUser: User;
       if (state.user?._id && state.token) {
-        user = await feathers.service("users").patch(state.user._id, user);
+        newUser = await feathers.service("users").patch(state.user._id, user);
         console.log(`patched result`, user);
       }
-      setState((state) => ({ ...state, user: { ...state.user, ...user } }));
+      setState((state) => ({ ...state, user: newUser ?? state.user }));
     },
     [state, setState]
   );
@@ -192,9 +193,8 @@ export function AuthProvider({ children, fallback }: Props) {
       const authRes = await feathers.service("authentication").remove(null);
       authPromise.current = null;
       authenticated.current = false;
-      // todo need discussion on bookmarks and collections
-      // should they be cached in local devices even when user logout or switch account?
-      setState((state) => ({ user: { bookmarks: state.user?.bookmarks, collections: state.user?.collections } }));
+
+      setState({});
       const deleteSuccess = await localDelete();
       return authRes && deleteSuccess;
     },

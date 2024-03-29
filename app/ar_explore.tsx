@@ -1,11 +1,11 @@
 import { ViroARSceneNavigator } from "@viro-community/react-viro";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MainBody, IconBtn, ARExploreProps, ARExploreScene } from "@components";
-import { ChevronLeftIcon, ArrowUpIcon } from "@components/icons";
+import { ChevronLeftIcon, ArrowUpIcon, CircleTickIcon } from "@components/icons";
 import * as Location from "expo-location";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, useEffect, createRef, useCallback, useRef, useMemo } from "react";
-import { View, StyleSheet, useWindowDimensions, Platform } from "react-native";
+import { View, StyleSheet, useWindowDimensions, Platform, Image } from "react-native";
 import _ from "lodash";
 import { ActivityIndicator, Button, Text } from "react-native-paper";
 import MapView, { LatLng, Marker } from "react-native-maps";
@@ -24,6 +24,7 @@ const TOP_PADDING = ICON_BUTTON_SIZE + 34;
 const DISTANCE_CONTAINER_H = 50;
 
 const DISTANCE_INTERVAL = 20;
+const GPS_ERROR_MARGIN = 50;
 export const ALERT_DISTANCE = 50;
 
 export default () => {
@@ -31,13 +32,15 @@ export default () => {
   // style const
   const { theme } = useAppTheme();
   const { top } = useSafeAreaInsets();
-  const { height: screenHeight } = useWindowDimensions();
+  const { height: screenHeight, width: screenWidth } = useWindowDimensions();
   const style = useStyle({ theme });
   const safeTop = useMemo(() => top + theme.spacing.xs, [top]);
 
   const animatedProps = { duration: 300, easing: Easing.inOut(Easing.quad) };
   const [mapExpand, setMapExpand] = useState<boolean>(false);
   const [animate, setAnimate] = useState<number>(0);
+  const [cameraReady, setCameraReady] = useState(true);
+  const [indoor, setIndoor] = useState(false);
 
   const miniMapStyle = useAnimatedStyle(() => {
     var pos = mapExpand
@@ -72,9 +75,10 @@ export default () => {
 
   const [nearestPoint, setNearestPoint] = useState<LatLng>();
   const [location, setLocation] = useState<Location.LocationObjectCoords>();
-
+  const [speed, setSpeed] = useState<number>(0.5); // meters per second
   const [heading, setHeading] = useState<number>();
   const [initHeading, setInitHeading] = useState<number>();
+
   // Move calPoint and calTarget in main component in order to erase the computation burden in Viro
   const calPoint = useMemo(() => transformGpsToAR(location, nearestPoint, initHeading), [location, initHeading, nearestPoint]);
   const calTarget = useMemo(() => transformGpsToAR(location, targetPoint, initHeading), [location, initHeading, points, targetIndex]);
@@ -109,21 +113,30 @@ export default () => {
 
   /** Init environment */
   useEffect(() => {
-    var headingAccuracyThreshold = 3;
+    const headingAccuracyThreshold = 3;
+
+    var locationInit: boolean = false;
     var headingInit: boolean = false;
+    var waited: boolean = false;
 
     let headingListener: Location.LocationSubscription | undefined;
     let locationListener: Location.LocationSubscription | undefined;
     var timer: NodeJS.Timeout;
     const headingFilter = new LPF();
+    const speedFilter = new LPF(0.75);
 
-    const adjustAccuracy = async () => {
-      const timeout = 10 * 1000;
+    const displayAlert = async () => {
       timer = setInterval(() => {
-        if (headingAccuracyThreshold > 0) {
-          headingAccuracyThreshold--;
+        // display a cameraReady and remind the user to face the device's camera forward,
+        // if the user completed the compass calibration
+        if (!headingInit) {
+          waited = true;
         }
-      }, timeout);
+        // remind the user to stay outside
+        if (!locationInit) {
+          setIndoor(true);
+        }
+      }, 30 * 1000); // 30 seconds
     };
 
     const getCurrentLocation = async () => {
@@ -138,29 +151,37 @@ export default () => {
 
         if (heading.accuracy >= headingAccuracyThreshold) {
           if (!headingInit) {
-            headingInit = true;
             setInitHeading(trueHeading);
-            timer && clearInterval(timer);
+            headingInit = true;
+            if (waited) {
+              setCameraReady(false);
+            }
           }
-        }
-        // Filter noise of true heading using low-pass-filter
-        if (!isAndroid || heading.accuracy >= headingAccuracyThreshold) {
-          const smoothHeading = Math.round(headingFilter?.next(trueHeading));
-          setHeading(smoothHeading);
+          if (!isAndroid || heading.accuracy > 0) {
+            // Filter noise of true heading using low-pass-filter
+            const smoothHeading = Math.round(headingFilter.next(trueHeading));
+            setHeading(smoothHeading);
+          }
         }
       });
       locationListener = await Location.watchPositionAsync(geoOpt, async (result: Location.LocationObject) => {
         const coords = result.coords;
+
         // Consider applying low-pass-filter to recompute accuracy threshold
-        if (coords.accuracy && coords.accuracy < 50) {
+        if (coords.accuracy && coords.accuracy < GPS_ERROR_MARGIN) {
           setLocation(coords);
+          let smoothSpeed = coords.speed || 0.5;
+          if (smoothSpeed < 0.5) smoothSpeed = 0.5;
+          smoothSpeed = speedFilter.next(smoothSpeed);
+          setSpeed(smoothSpeed);
+          if (!locationInit) locationInit = true;
         }
       });
     };
-
     headingFilter.init([]);
+    speedFilter.init([]);
     fetchData();
-    adjustAccuracy();
+    displayAlert();
     getCurrentLocation();
     return () => {
       locationListener?.remove();
@@ -183,12 +204,24 @@ export default () => {
   }, [location, targetIndex, points]);
 
   useEffect(() => {
+    if (!(initHeading && location)) return;
+
+    var timer = setTimeout(() => {
+      if (!cameraReady) {
+        setCameraReady(true);
+      }
+    }, 5000);
+    return () => timer && clearTimeout(timer);
+  }, [cameraReady, initHeading, location]);
+
+  useEffect(() => {
     if (animate == 0) return;
 
     // End animate after 2 sec
-    setTimeout(() => {
+    var timer = setTimeout(() => {
       setAnimate(0);
     }, 2000);
+    return () => timer && clearTimeout(timer);
   }, [animate]);
 
   const handleMapPressed = () => {
@@ -256,13 +289,43 @@ export default () => {
 
   return (
     <MainBody>
-      {loading ? (
+      {loading || !cameraReady ? (
         <View style={[style.centerContainer, { backgroundColor: theme.colors.secondary }]}>
           <View style={style.loadingCard}>
-            <Text variant="labelMedium" style={{ color: theme.colors?.primary, textAlign: "center", paddingBottom: theme.spacing.xs }}>
-              {"Waiting\nGPS information..."}
-            </Text>
-            <ActivityIndicator size={"large"} animating={true} />
+            <View style={style.columnCenterLayout}>
+              {loading ? (
+                !location ? (
+                  <>
+                    <ActivityIndicator size={"large"} animating={true} />
+                    <Text variant="labelMedium" style={{ color: theme.colors?.primary, textAlign: "center", paddingTop: theme.spacing.md }}>
+                      {"Waiting\nGPS information..."}
+                    </Text>
+                    {indoor && (
+                      <Text variant="bodySmall" style={{ color: theme.colors?.primary, textAlign: "center", paddingTop: theme.spacing.md }}>
+                        {"Low GPS accuracy\nMake sure you are outdoor or in an open area"}
+                      </Text>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Image source={require("@assets/images/compass-calibration.gif")} style={{ maxWidth: Math.round(screenWidth * 0.75) }} />
+                    <Text variant="labelMedium" style={{ color: theme.colors?.primary, textAlign: "center", paddingBottom: theme.spacing.xs }}>
+                      {"Please follow the above\ncompass calibration tutorial"}
+                    </Text>
+                  </>
+                )
+              ) : (
+                <>
+                  <CircleTickIcon style={{ width: 100, hight: 100 }} fill={theme.colors?.primary} />
+                  <Text variant="labelMedium" style={{ color: theme.colors?.primary, textAlign: "center", paddingBottom: theme.spacing.xs }}>
+                    Everything's Ready!
+                  </Text>
+                  <Text variant="labelMedium" style={{ color: theme.colors?.primary, textAlign: "center", paddingBottom: theme.spacing.xs }}>
+                    Face your device's camera forward
+                  </Text>
+                </>
+              )}
+            </View>
           </View>
         </View>
       ) : (
@@ -274,12 +337,11 @@ export default () => {
             initialScene={{ scene: ARExploreScene }}
             viroAppProps={
               {
-                location,
                 targetPoint,
                 setARnear,
                 calTarget,
                 calPoint,
-                speed: Math.round(location?.speed || 0),
+                speed,
               } as ARExploreProps
             }
           />
@@ -361,7 +423,7 @@ export default () => {
                 <View style={style.columnLayout}>
                   <Text variant="bodySmall">lat:{location.latitude}</Text>
                   <Text variant="bodySmall">lon:{location.longitude}</Text>
-                  <Text variant="bodySmall">speed:{Math.round(location.speed || 0)} m/s</Text>
+                  <Text variant="bodySmall">speed:{speed} m/s</Text>
                   <Text variant="bodySmall">init heading:{initHeading || 0}</Text>
                   <Text variant="bodySmall">heading:{heading}</Text>
                   <Text variant="bodySmall">bearing diff: {degree}</Text>
@@ -409,6 +471,12 @@ const useStyle = ({ theme }: { theme: AppTheme }) =>
       flexDirection: "column",
       alignContent: "flex-start",
       alignItems: "flex-start",
+      justifyContent: "center",
+    },
+    columnCenterLayout: {
+      flexDirection: "column",
+      alignContent: "center",
+      alignItems: "center",
       justifyContent: "center",
     },
     header: {
@@ -468,7 +536,7 @@ const useStyle = ({ theme }: { theme: AppTheme }) =>
     },
     loadingCard: {
       borderRadius: theme.borderRadius.md,
-      backgroundColor: theme.colors.container,
+      backgroundColor: "#FFF",
       overflow: "hidden",
       flexDirection: "column",
       paddingHorizontal: theme.spacing.lg,

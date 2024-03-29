@@ -75,7 +75,7 @@ export const lightTheme = {
     tertiary: "#DEA516",
     success: "#AAB624",
     error: "#F13B13",
-    background: "#F6F6F6",
+    background: "#FDFDFD",
     container: "#FFFFFF",
     grey1: "#1C1C1C",
     grey2: "#6D6D6D",
