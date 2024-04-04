@@ -1,3 +1,4 @@
+export { default as AddCommentIcon } from "@assets/icons/add-comment.svg";
 export { default as ArrowUpIcon } from "@assets/icons/arrow-up.svg";
 export { default as BackpackIcon } from "@assets/icons/backpack.svg";
 export { default as BookmarkOutlineIcon } from "@assets/icons/bookmark-outline.svg";

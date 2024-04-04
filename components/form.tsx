@@ -24,7 +24,7 @@ export interface Props {
   spacing?: number;
 }
 
-export default function AuthForm({ fields, setValid, spacing }: Props) {
+export default function Form({ fields, setValid, spacing }: Props) {
   const { theme } = useAppTheme();
   const style = useStyle(theme);
   const [errors, setErrors] = useState<(string | undefined)[]>(fields.map((_) => undefined));

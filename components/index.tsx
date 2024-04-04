@@ -17,6 +17,7 @@ export { default as EventItem } from "./home/event_item";
 export { default as NumInput } from "./num_input";
 export { default as AccountListItem } from "./account/list_item";
 export { default as ARExploreScene } from "./explore/ar_scene";
+export { default as CommentDialog } from "./explore/comment_dialog";
 
 import * as Icons from "./icons";
 export { Icons };
@@ -36,7 +37,8 @@ export type { Props as ArrowLineProps } from "./map/arrow_line";
 export type { Props as ModelViewProps } from "./model_view";
 export type { Props as NumInputProps } from "./num_input";
 export type { Props as AccountListItemProps } from "./account/list_item";
-export type { Props as ViroARSceneProps, ARExploreProps } from "./explore/ar_scene";
+export type { Props as ViroARSceneProps, ARExploreProps, Comment as ExploreComment } from "./explore/ar_scene";
+export type { Props as CommentDialogProps } from "./explore/comment_dialog";
 
 // Const
 export { NAVBAR_HEIGHT } from "./nav_bar";

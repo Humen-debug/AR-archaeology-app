@@ -1,3 +1,4 @@
+export { ArComment } from "./arComment";
 export { Artifact, File } from "./artifact";
 export { Tag } from "./tag";
 export { User } from "./user";

@@ -72,6 +72,9 @@ export function getBoundaries(points: LatLng[]) {
   };
 }
 
+// Earth radius in meters
+const smA = 6378137.0;
+
 /**
  * @param latDeg The latitude of point
  * @param longDeg The longitude of point
@@ -85,10 +88,26 @@ export function getBoundaries(points: LatLng[]) {
 export const latLongToMerc = (latDeg: number, longDeg: number) => {
   const longRad = deg2rad(longDeg);
   const latRad = deg2rad(latDeg);
-  const smA = 6378137.0;
   const xmeters = smA * longRad;
   const ymeters = smA * Math.log((Math.sin(latRad) + 1) / Math.cos(latRad));
   return { x: xmeters, y: ymeters };
+};
+
+/**
+ *
+ * @param x
+ * @param y
+ * @returns Latitude and longitude for given x- and y-coordinates
+ * @link
+ * (convert latitude in degrees for a given y) https://stackoverflow.com/questions/1166059/how-can-i-get-latitude-longitude-from-x-y-on-a-mercator-map-jpeg
+ */
+const mercToLatLong = (x: number, y: number): LatLng => {
+  const longRad = x / smA;
+  const constant = 2 ** (y / smA);
+  const latRad = 2 * Math.atan((constant - 1) / (constant + 1));
+  const latitude = rad2deg(longRad);
+  const longitude = rad2deg(latRad);
+  return { latitude, longitude };
 };
 
 /**
@@ -142,6 +161,24 @@ export const transformGpsToAR = (
     return result.map((value) => Math.round(value * 10 ** toDigit) / 10 ** toDigit) as Viro3DPoint;
   }
   return result;
+};
+
+export const transformARToGps = (deviceLoc: LatLng | undefined, position: Viro3DPoint, heading: number = 0): LatLng | undefined => {
+  if (!deviceLoc || position.length !== 3) return undefined;
+
+  const devicePoint = [deviceLoc.longitude, 0, deviceLoc.latitude];
+  let objPoint: LatLng;
+  let localPos: Viro3DPoint;
+  if (Platform.OS === "android") {
+    const rotated: number[][] = Matrix.rotate3D(Vector.toMatrix(position), heading, "y", true);
+    localPos = Matrix.toVector(rotated) as Viro3DPoint;
+    objPoint = mercToLatLong(localPos[0], localPos[2]);
+  } else {
+    objPoint = mercToLatLong(position[0], position[2]);
+  }
+  localPos = Vector.add([objPoint.longitude, 0, objPoint.latitude], devicePoint) as Viro3DPoint;
+  objPoint = { latitude: localPos[2], longitude: localPos[0] };
+  return objPoint;
 };
 
 /**

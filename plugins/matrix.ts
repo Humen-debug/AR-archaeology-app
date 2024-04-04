@@ -74,7 +74,7 @@ export const rotate = (m: Matrix, degree: number) => multiply(rotation(degree), 
 
 export const clockwiseRotate = (m: Matrix, degree: number) => multiply(clockwiseRotation(degree), m);
 
-export const rotate3D = (m: Matrix, degree: number, axis: "x" | "y" | "z" = "y") => {
+export const rotate3D = (m: Matrix, degree: number, axis: "x" | "y" | "z" = "y", isInverse: boolean = false) => {
   var rotation: number[][];
   switch (axis) {
     case "x":
@@ -87,6 +87,7 @@ export const rotate3D = (m: Matrix, degree: number, axis: "x" | "y" | "z" = "y")
       rotation = rotation3Z(degree);
       break;
   }
+  if (isInverse) rotation = inverse(rotation) as Matrix;
   return multiply(rotation, m);
 };
 
@@ -168,4 +169,104 @@ const rotation3Z = (degree: number) => {
     [sin, cos, 0],
     [0, 0, 1],
   ];
+};
+
+/**
+ * To get confactor of the matrix m in matrix temp
+ * @param m
+ * @param temp
+ * @param p
+ * @param q
+ * @param n Current dimension of m
+ */
+const cofactor = (m: Matrix, temp: Matrix, p: number, q: number, n: number) => {
+  let i = 0,
+    j = 0;
+  for (let row = 0; row < n; row++) {
+    for (let col = 0; col < n; col++) {
+      // Copying into temporary matrix only those element
+      // which are not in given row and column
+      if (row !== p && col !== q) {
+        temp[i][j++] = m[row][col];
+        // Row is filled, so increase row index and
+        // reset col index
+        if (j === n - 1) {
+          j = 0;
+          i++;
+        }
+      }
+    }
+  }
+};
+
+/**
+ * Recursive function for finding determinant of matrix.
+ * @param m A matrix to compute determinant
+ * @param N Origin dimension of matrix m
+ * @param n Current dimension of matrix m
+ * @returns The determinant of matrix m
+ */
+const determinant = (m: Matrix, N: number, n: number): number => {
+  let D = 0;
+  if (n === 1) return m[0][0];
+  let temp: Matrix = new Array(N);
+  for (let i = 0; i < N; i++) {
+    temp[i] = new Array(N);
+  }
+  let sign = 1;
+  for (let f = 0; f < n; f++) {
+    cofactor(m, temp, 0, f, n);
+    D += sign * m[0][f] * determinant(temp, N, n - 1);
+    sign = -sign;
+  }
+
+  return D;
+};
+
+const adjoint = (m: Matrix, adj: Matrix) => {
+  if (areValid(m, adj)) {
+    const N = rowLengthOf(m);
+    if (N === 1) {
+      adj[0][0] = 1;
+      return;
+    }
+
+    let sign = 1;
+    let i = 0,
+      j = 0;
+    let temp: Matrix = new Array(N);
+    for (i = 0; i < N; i++) {
+      temp[i] = new Array(N);
+    }
+
+    for (i = 0; i < N; i++) {
+      for (j = 0; j < N; j++) {
+        cofactor(m, temp, i, j, N);
+        sign = (i + j) % 2 === 0 ? 1 : -1;
+        adj[j][i] = sign * determinant(temp, N, N - 1);
+      }
+    }
+  }
+};
+
+export const inverse = (m: Matrix) => {
+  if (columnLengthOf(m) === rowLengthOf(m)) {
+    const n = rowLengthOf(m);
+    const det = determinant(m, n, n);
+    if (det === 0) return undefined;
+    let i = 0;
+    let adj = new Array(n);
+    for (i = 0; i < n; i++) {
+      adj[i] = new Array(n);
+    }
+    adjoint(m, adj);
+
+    let inverse = generateEmptyMatrix(n, n);
+    for (i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        inverse[i][j] = adj[i][j] / det;
+      }
+    }
+    return inverse;
+  }
 };

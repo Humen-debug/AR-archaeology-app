@@ -38,7 +38,7 @@ interface Props {
 export function AuthProvider({ children, fallback }: Props) {
   const feathers = useFeathers();
   const [state, setState] = useState<AuthState>(() => new AuthState());
-  const authPromise = useRef<Promise<void> | null>(null);
+  const authPromise = useRef<Promise<void | null> | null>(null);
   const authenticated = useRef(false);
   /**
    * Retrieve authState from local storage
@@ -124,12 +124,37 @@ export function AuthProvider({ children, fallback }: Props) {
 
   function handleFeathers() {
     if (feathers.io) {
-      feathers.io.on("disconnect", async () => {
-        if (authenticated) {
-          await reAuthentication();
-        }
+      feathers.io.on("disconnect", () => {
+        const promise = new Promise((resolve) => feathers.io!.once("connect", () => resolve(undefined))).then(() =>
+          authenticated.current ? reAuthentication(true) : null
+        );
+        authPromise.current = promise;
       });
     }
+
+    feathers.post = async function (url: string, data: any, params: any) {
+      const accessToken = state.token ?? (await fromStorage())?.token;
+      return fetch(`${feathers.apiURL}/${url}`, {
+        method: "POST",
+        body: data,
+        ...params,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          ...(params.headers || {}),
+        },
+      });
+    };
+
+    feathers.hooks({
+      before: {
+        async all(hook) {
+          if (hook.path === "authentication" || hook.params?.noAuthCheck) return;
+          if (!authenticated.current) {
+            await reAuthentication();
+          }
+        },
+      },
+    });
   }
 
   const authentication = useCallback(

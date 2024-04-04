@@ -3,7 +3,7 @@ import { useFeathers } from "@/providers/feathers_provider";
 import { useAppTheme } from "@/providers/style_provider";
 import { useEffect, useState } from "react";
 import { Image, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
-import { ActivityIndicator, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import type { Document } from "@/models";
 
 export default function HistoryPage() {
