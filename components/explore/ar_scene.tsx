@@ -18,8 +18,8 @@ import {
 import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
 import { createRef, useCallback, useMemo, useRef, useState } from "react";
 import * as Vector from "@/plugins/vector";
-import { useARLocation } from "@/providers/ar_location_provider";
 import moment from "moment";
+import { useARLocation } from "@/providers/ar_location_provider";
 
 export interface Props<T extends unknown> {
   arSceneNavigator: {
@@ -77,7 +77,7 @@ export default function ARExplorePage(props?: Props<ARExploreProps>) {
     const distance = Vector.distance(cameraPos, prePosition.current);
 
     // Filter distance delta smaller than speed(i.e. meters per second) in order to lift burden of React native
-    if (distance >= (speed || 0.5)) {
+    if (distance >= (speed < 0.5 ? 0.5 : speed)) {
       setPosition(cameraPos);
       prePosition.current = cameraPos;
     }

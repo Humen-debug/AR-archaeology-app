@@ -10,8 +10,9 @@ import ExploreModal from "@components/map/explore_modal";
 import Animated, { useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { useAppTheme } from "@providers/style_provider";
 import { Paginated, useFeathers } from "@/providers/feathers_provider";
-import { GeoPoint } from "@/models";
+import { AttractionType, GeoPoint } from "@/models";
 import { getCurrentPositionAsync } from "expo-location";
+import { Button, Text } from "react-native-paper";
 
 const ITEM_WIDTH = 300;
 const ITEM_SPACING = 10;
@@ -21,7 +22,11 @@ export default function Explore() {
   const feathers = useFeathers();
   const router = useRouter();
   const { id, latitude, longitude } = useLocalSearchParams<{ id?: string; latitude?: string; longitude?: string }>();
+  const typeTabs: (AttractionType | null)[] = [null, "Attraction", "Restaurant", "Lodging", "Other"];
+
   const [points, setPoints] = useState<GeoPoint[]>([]);
+  const [selectedType, setSelectedType] = useState<AttractionType | null>(null);
+  const filteredPoints = useMemo(() => (selectedType ? points.filter((point) => point.type === selectedType) : points), [selectedType, points]);
 
   const initPoint = {
     latitude: !!latitude ? Number(latitude) : 39.92634215565024,
@@ -62,7 +67,7 @@ export default function Explore() {
               latitude: { $exists: true },
               longitude: { $exists: true },
               $populate: ["tags"],
-              $sort: { order: 1 },
+              $sort: { type: 1, order: 1 },
               $skip: points.length,
             },
           });
@@ -140,7 +145,7 @@ export default function Explore() {
           showsMyLocationButton={false}
           rotateEnabled={false}
         >
-          {points.map((point) => (
+          {filteredPoints.map((point) => (
             <Marker
               key={point._id}
               coordinate={{ latitude: point.latitude, longitude: point.longitude }}
@@ -152,8 +157,38 @@ export default function Explore() {
             </Marker>
           ))}
         </MapView>
+        {/* Attraction types picker */}
+        <View style={{ position: "absolute", left: 0, right: 0, top: theme.spacing.lg }}>
+          <FlatList
+            horizontal
+            data={typeTabs}
+            ItemSeparatorComponent={() => <View style={{ width: ITEM_SPACING }} />}
+            renderItem={({ item }) => {
+              const isSelected = selectedType === item;
+              return (
+                <Button
+                  onPress={() => setSelectedType(item)}
+                  mode="contained"
+                  buttonColor={isSelected ? theme.colors.primary : theme.colors.container}
+                  labelStyle={{ marginHorizontal: theme.spacing.md, marginVertical: theme.spacing.xs }}
+                >
+                  <Text
+                    style={{
+                      color: isSelected ? theme.colors.textOnPrimary : theme.colors.text,
+                      fontWeight: isSelected ? "bold" : "normal",
+                    }}
+                  >
+                    {item || "All"}
+                  </Text>
+                </Button>
+              );
+            }}
+            contentContainerStyle={{ paddingHorizontal: theme.spacing.lg }}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
         {/* Point pickers */}
-        {points.length ? (
+        {filteredPoints.length ? (
           <Animated.View style={cardListStyle}>
             <FlatList
               ref={routeListRef}
@@ -162,7 +197,7 @@ export default function Explore() {
               decelerationRate={"fast"}
               horizontal
               ItemSeparatorComponent={() => <View style={{ width: ITEM_SPACING }} />}
-              data={points}
+              data={filteredPoints}
               keyExtractor={(item) => item._id}
               renderItem={({ item }) => <ExploreItem points={[item]} id={item._id} />}
               onMomentumScrollEnd={computeFocusPoint}

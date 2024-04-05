@@ -1,8 +1,8 @@
 import { Searchbar, Divider } from "react-native-paper";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View, TouchableOpacity, ScrollView } from "react-native";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
 import { useRef, useMemo, useCallback, useState, useEffect } from "react";
-import { BottomSheetModal, BottomSheetScrollView, BottomSheetScrollViewMethods } from "@gorhom/bottom-sheet";
+import { BottomSheetFlatList, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { SearchIcon } from "@components/icons";
 import ExploreItem from "./explore_item";
 import { GeoPoint } from "@/models";
@@ -26,8 +26,24 @@ export default function ExploreListModal<T extends GeoPoint>({ open, setOpen, da
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   //   const bottomSheetScrollRef = useRef<BottomSheetScrollViewMethods | null>(null);
   const snapPoints = useMemo(() => ["75%", "75%"], []);
-
   const [searchText, setSearchText] = useState("");
+  const filteredData: T[] = useMemo(
+    () =>
+      searchText.length > 0
+        ? data.filter((value) => {
+            const text = searchText.toLowerCase();
+            if (value.name && typeof value.name === "string") {
+              const name = value.name.toLowerCase();
+              return name.includes(text);
+            }
+            if (value.type && typeof value.type === "string") {
+              return value.type.toLowerCase().includes(text);
+            }
+            return false;
+          })
+        : data,
+    [data, searchText]
+  );
 
   useEffect(() => {
     if (open) {
@@ -52,11 +68,6 @@ export default function ExploreListModal<T extends GeoPoint>({ open, setOpen, da
     }
   };
 
-  // TODO
-  const onSubmit = () => {
-    console.log("filterList", searchText);
-  };
-
   if (!open) return <></>;
   return (
     <View style={{ ..._style.fill, position: "absolute" }}>
@@ -74,7 +85,6 @@ export default function ExploreListModal<T extends GeoPoint>({ open, setOpen, da
             placeholder="Search"
             value={searchText}
             onChangeText={setSearchText}
-            onSubmitEditing={onSubmit}
             mode="bar"
             icon={() => null}
             elevation={0}
@@ -85,16 +95,16 @@ export default function ExploreListModal<T extends GeoPoint>({ open, setOpen, da
           />
           <Divider style={{ backgroundColor: theme.colors.grey3, marginHorizontal: -theme.spacing.lg }} />
         </View>
-        <BottomSheetScrollView contentContainerStyle={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-          <View style={_style.list}>
-            {data.map((point) => (
-              <View key={point._id}>
-                <ExploreItem isSaved={point.save} points={isGrouped ? data : [point]} id={point._id} modalCLose={modalCLose} />
-                <Divider style={{ backgroundColor: theme.colors.grey1, marginHorizontal: -theme.spacing.lg }} />
-              </View>
-            ))}
-          </View>
-        </BottomSheetScrollView>
+        <BottomSheetFlatList
+          data={filteredData}
+          keyExtractor={(point) => point._id}
+          renderItem={({ item }) => (
+            <View key={item._id}>
+              <ExploreItem isSaved={item.save} points={isGrouped ? data : [item]} id={item._id} modalCLose={modalCLose} />
+              <Divider style={{ backgroundColor: theme.colors.grey1, marginHorizontal: -theme.spacing.lg }} />
+            </View>
+          )}
+        />
       </BottomSheetModal>
     </View>
   );
