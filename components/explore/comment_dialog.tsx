@@ -34,7 +34,6 @@ export default function CommentDialog({ setOpen, ...props }: Props) {
         Leave a Comment!
       </Text>
       <TextInput
-        label={"Comment"}
         mode="outlined"
         theme={{ ...theme, colors: { background: theme.colors.container } }}
         outlineColor={theme.colors.grey4}
@@ -48,7 +47,7 @@ export default function CommentDialog({ setOpen, ...props }: Props) {
           </Text>
         </Button>
         <Button mode="text" disabled={disabled} onPress={_onConfirm}>
-          <Text variant="labelLarge" style={{ color: theme.colors.primary, fontWeight: "bold" }}>
+          <Text variant="labelLarge" style={{ color: disabled ? theme.colors.grey3 : theme.colors.primary, fontWeight: "bold" }}>
             OK
           </Text>
         </Button>

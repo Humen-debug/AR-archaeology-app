@@ -98,8 +98,8 @@ export default function Explore() {
     if (isAnimate.current) return;
 
     isAnimate.current = true;
+    const focus = points[focusIndex];
     if (mapRef.current) {
-      const focus = points[focusIndex];
       mapRef.current.animateCamera?.({
         center: {
           latitude: focus?.latitude,
@@ -108,7 +108,8 @@ export default function Explore() {
       });
     }
     if (routeListRef.current) {
-      routeListRef.current.scrollToIndex({ animated: true, index: focusIndex, viewPosition: 0.5 });
+      const index = filteredPoints.indexOf(focus);
+      if (index > -1) routeListRef.current.scrollToIndex({ animated: true, index: index, viewPosition: 0.5 });
     }
 
     isAnimate.current = false;

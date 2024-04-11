@@ -1,14 +1,14 @@
 import LPF from "@/plugins/low-pass-filter";
 import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
 import * as Location from "expo-location";
-import { createContext, useContext, useEffect, useState } from "react";
-import { Platform } from "react-native";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 class ARLocationContext {
   initLocation: Location.LocationObjectCoords | undefined;
   location: Location.LocationObjectCoords | undefined;
   heading: number | undefined;
   initHeading: number | undefined;
+  headingAccuracy: number;
   speed: number;
   position: Viro3DPoint;
   indoor: boolean;
@@ -23,7 +23,10 @@ interface Props {
 const ARLocationStore = createContext<ARLocationContext | null>(null);
 
 const DISTANCE_INTERVAL = 20;
-const GPS_ERROR_MARGIN = 50;
+// optimal value is 5. 10 is for area with tall-buildings around.
+//  around 20 is for indoor
+const GPS_ERROR_MARGIN = 5;
+const TIME_INTERVAL = 1 * 1000;
 export function ARLocationProvider({ children }: Props) {
   const [cameraReady, setCameraReady] = useState(true);
   const [indoor, setIndoor] = useState(false);
@@ -33,10 +36,13 @@ export function ARLocationProvider({ children }: Props) {
   const [speed, setSpeed] = useState<number>(0.5); // meters per second
   const [heading, setHeading] = useState<number>();
   const [initHeading, setInitHeading] = useState<number>();
+  const [headingAccuracy, setHeadingAccuracy] = useState<number>();
 
   const [position, setPosition] = useState<Viro3DPoint>([0, 0, 0]);
 
-  const isAndroid: boolean = Platform.OS === "android";
+  const headingFilter = useRef(new LPF());
+  const speedFilter = useRef(new LPF(0.75));
+  const lastUpdateTimeStamp = useRef<Date>(new Date());
   /** Init environment */
   useEffect(() => {
     const headingAccuracyThreshold = 3;
@@ -48,8 +54,6 @@ export function ARLocationProvider({ children }: Props) {
     let headingListener: Location.LocationSubscription | undefined;
     let locationListener: Location.LocationSubscription | undefined;
     var timer: NodeJS.Timeout;
-    const headingFilter = new LPF();
-    const speedFilter = new LPF(0.75);
 
     const displayAlert = async () => {
       timer = setInterval(() => {
@@ -67,14 +71,15 @@ export function ARLocationProvider({ children }: Props) {
 
     const getCurrentLocation = async () => {
       const geoOpt: Location.LocationOptions = {
-        accuracy: Location.Accuracy.Balanced,
-        distanceInterval: DISTANCE_INTERVAL,
+        accuracy: Location.Accuracy.BestForNavigation,
+        timeInterval: TIME_INTERVAL,
+        // distanceInterval: DISTANCE_INTERVAL,
       };
 
       headingListener = await Location.watchHeadingAsync((heading) => {
         const { trueHeading } = heading;
         if (trueHeading < 0) return;
-
+        setHeadingAccuracy(heading.accuracy);
         if (heading.accuracy >= headingAccuracyThreshold) {
           if (!headingInit) {
             setInitHeading(trueHeading);
@@ -83,33 +88,46 @@ export function ARLocationProvider({ children }: Props) {
               setCameraReady(false);
             }
           }
-          if (!isAndroid || heading.accuracy > 0) {
-            // Filter noise of true heading using low-pass-filter
-            const smoothHeading = Math.round(headingFilter.next(trueHeading));
-            setHeading(smoothHeading);
-          }
+        }
+        if (headingInit) {
+          const smoothHeading = Math.round(headingFilter.current.next(trueHeading));
+          // Filter noise of true heading using low-pass-filter
+          setHeading(smoothHeading);
         }
       });
       locationListener = await Location.watchPositionAsync(geoOpt, async (result: Location.LocationObject) => {
         const coords = result.coords;
-
-        // Consider applying low-pass-filter to recompute accuracy threshold
-        if (coords.accuracy && coords.accuracy < GPS_ERROR_MARGIN) {
+        if (!locationInit) console.log("acc:", coords.accuracy);
+        if (!coords.accuracy) return;
+        const accuracy = Math.round(coords.accuracy);
+        const now = new Date();
+        if (accuracy <= GPS_ERROR_MARGIN) {
           if (!locationInit) {
             setInitLocation(coords);
             locationInit = true;
           }
           setLocation(coords);
+          lastUpdateTimeStamp.current = now;
 
           let smoothSpeed = coords.speed || 0.5;
-          if (smoothSpeed < 0.5) smoothSpeed = 0.5;
-          smoothSpeed = speedFilter.next(smoothSpeed);
-          setSpeed(smoothSpeed);
+          // filter stationary motion
+          if (smoothSpeed >= 0.5) {
+            smoothSpeed = speedFilter.current.next(smoothSpeed);
+            setSpeed(smoothSpeed);
+            console.log(now, "update:", coords.latitude, coords.longitude, smoothSpeed);
+          }
+        } else if (locationInit && (now.getTime() - lastUpdateTimeStamp.current.getTime()) / 1000 > 10) {
+          // if last update was 10 seconds ago, force update the location
+          if (coords.accuracy < GPS_ERROR_MARGIN * 2) {
+            setLocation(coords);
+            lastUpdateTimeStamp.current = now;
+            console.log(now, "force update:", coords.accuracy);
+          }
         }
       });
     };
-    headingFilter.init([]);
-    speedFilter.init([]);
+    headingFilter.current.init([]);
+    speedFilter.current.init([]);
 
     displayAlert();
     getCurrentLocation();
@@ -127,12 +145,25 @@ export function ARLocationProvider({ children }: Props) {
       if (!cameraReady) {
         setCameraReady(true);
       }
-    }, 10 * 1000);
+    }, 5 * 1000);
     return () => timer && clearTimeout(timer);
   }, [cameraReady, initHeading, location]);
 
   return (
-    <ARLocationStore.Provider value={{ initLocation, initHeading, location, heading, indoor, cameraReady, speed, position, setPosition }}>
+    <ARLocationStore.Provider
+      value={{
+        initLocation,
+        initHeading,
+        location,
+        heading,
+        headingAccuracy: headingAccuracy || 0,
+        indoor,
+        cameraReady,
+        speed,
+        position,
+        setPosition,
+      }}
+    >
       {children}
     </ARLocationStore.Provider>
   );

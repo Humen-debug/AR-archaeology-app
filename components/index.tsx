@@ -18,6 +18,7 @@ export { default as NumInput } from "./num_input";
 export { default as AccountListItem } from "./account/list_item";
 export { default as ARExploreScene } from "./explore/ar_scene";
 export { default as CommentDialog } from "./explore/comment_dialog";
+export { default as HeadingIndicator } from "./explore/heading_indicator";
 
 import * as Icons from "./icons";
 export { Icons };
@@ -39,6 +40,7 @@ export type { Props as NumInputProps } from "./num_input";
 export type { Props as AccountListItemProps } from "./account/list_item";
 export type { Props as ViroARSceneProps, ARExploreProps, Comment as ExploreComment } from "./explore/ar_scene";
 export type { Props as CommentDialogProps } from "./explore/comment_dialog";
+export type { Props as HeadingIndicatorProps } from "./explore/heading_indicator";
 
 // Const
 export { NAVBAR_HEIGHT } from "./nav_bar";

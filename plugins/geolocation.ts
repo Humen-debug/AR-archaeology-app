@@ -5,18 +5,39 @@ import { LatLng } from "react-native-maps";
 import * as Matrix from "./matrix";
 import * as Vector from "./vector";
 
+// Earth radius in meters
+const smA = 6378137.0;
+
 export function distanceFromLatLonInKm(p1?: LatLng, p2?: LatLng) {
   if (!p1 || !p2) return 0;
   const { latitude: lat1, longitude: lon1 } = p1;
   const { latitude: lat2, longitude: lon2 } = p2;
   if (lat1 === undefined || lon1 === undefined || lat2 === undefined || lon2 === undefined) return 0;
-  var R = 6371; // Radius of the earth in km
+  var R = smA / 1000; // Radius of the earth in km
   var dLat = deg2rad(lat2 - lat1); // deg2rad below
   var dLon = deg2rad(lon2 - lon1);
   var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   var d = R * c; // Distance in km
   return d;
+}
+
+/**
+ *
+ * @param point
+ * @param radius
+ * @returns maximum and minimum latitude and longitude around the point given range is radius in kilometers
+ * @link
+ * https://stackoverflow.com/questions/1253499/simple-calculations-for-working-with-lat-lon-and-km-distance
+ */
+export function latLongWithinRange(point: LatLng, radius: number = 2.5) {
+  const latDistance = 110.574; // km per degree
+  const lngDistance = (lat: number) => 111.32 * Math.cos(deg2rad(lat));
+
+  const { latitude: lat, longitude: lng } = point;
+  const dLat = radius / latDistance;
+  const dLon = radius / lngDistance(lat);
+  return { minLatitude: lat - dLat, maxLatitude: lat + dLat, minLongitude: lng - dLon, maxLongitude: lng + dLon };
 }
 
 export function deg2rad(deg: number): number {
@@ -71,9 +92,6 @@ export function getBoundaries(points: LatLng[]) {
     southWest: { latitude: south, longitude: west },
   };
 }
-
-// Earth radius in meters
-const smA = 6378137.0;
 
 /**
  * @param latDeg The latitude of point
@@ -170,6 +188,7 @@ export const transformARToGps = (deviceLoc: LatLng | undefined, position: Viro3D
   let objPoint: LatLng;
   let localPos: Viro3DPoint;
   if (Platform.OS === "android") {
+    position = [position[0], position[1], -position[2]];
     const rotated: number[][] = Matrix.rotate3D(Vector.toMatrix(position), heading, "y", true);
     localPos = Matrix.toVector(rotated) as Viro3DPoint;
     objPoint = mercToLatLong(localPos[0], localPos[2]);
@@ -190,9 +209,9 @@ export const transformARToGps = (deviceLoc: LatLng | undefined, position: Viro3D
  * @link
  * https://www.quora.com/Is-there-a-method-to-find-the-point-on-a-straight-line-g-which-is-closest-to-a-certain-point-P.
  */
-export const getClosestPointOnPath = (point: LatLng, ...path: [LatLng, LatLng]) => {
-  const { latitude: lat1, longitude: lon1 } = path[0];
-  const { latitude: lat2, longitude: lon2 } = path[1];
+export const getClosestPointOnPath = (point: LatLng, ...points: [LatLng, LatLng]) => {
+  const { latitude: lat1, longitude: lon1 } = points[0];
+  const { latitude: lat2, longitude: lon2 } = points[1];
 
   const lineAB = {
     longitude: lon2 - lon1,
@@ -207,7 +226,6 @@ export const getClosestPointOnPath = (point: LatLng, ...path: [LatLng, LatLng]) 
   let dot = lineAP.longitude * lineAB.longitude + lineAP.latitude * lineAB.latitude;
 
   const t = Math.min(1, Math.max(0, dot / len));
-  dot = lineAB.longitude * lineAP.latitude - lineAB.latitude * lineAP.longitude;
 
   return {
     latitude: lat1 + lineAB.latitude * t,
@@ -227,29 +245,50 @@ export const getClosestPointOnPath = (point: LatLng, ...path: [LatLng, LatLng]) 
  */
 export const getNextPoint = (targetIndex: number, points: LatLng[], location: LatLng, threshold: number = 0.025) => {
   let closestPoint = points[targetIndex];
-  let closestDistance = -1;
+  let closestDistance = distanceFromLatLonInKm(closestPoint, location);
   let currentAnimate = 0;
-  if (points.length > 1) {
-    for (let i = 0; i < points.length - 1; i++) {
-      const p = getClosestPointOnPath(location, points[i], points[i + 1]);
-      const d = distanceFromLatLonInKm(p, location);
-      if (closestDistance == -1 || closestDistance > d) {
-        closestDistance = d;
-        if (d > threshold) {
+
+  if (targetIndex > 0) {
+    if (closestDistance > threshold) {
+      const p = getClosestPointOnPath(location, points[targetIndex - 1], points[targetIndex]);
+      closestDistance = distanceFromLatLonInKm(p, location);
+      if (distanceFromLatLonInKm(points[targetIndex - 1], points[targetIndex]) > threshold) {
+        if (closestDistance > threshold) {
           currentAnimate = 1; // Getting far from path
-          closestPoint = p;
-        } else if (distanceFromLatLonInKm(points[i], points[targetIndex]) < distanceFromLatLonInKm(points[i + 1], points[targetIndex])) {
-          closestPoint = points[i];
         } else {
           currentAnimate = 2; // Getting to point
-          closestPoint = points[i + 1];
         }
       }
+      closestPoint = p;
     }
   }
-
   return { currentAnimate, closestPoint };
 };
+// export const getNextPoint = (targetIndex: number, points: LatLng[], location: LatLng, threshold: number = 0.025) => {
+//   let closestPoint = points[targetIndex];
+//   let closestDistance = -1;
+//   let currentAnimate = 0;
+//   if (points.length > 1) {
+//     for (let i = 0; i < points.length - 1; i++) {
+//       const p = getClosestPointOnPath(location, points[i], points[i + 1]);
+//       const d = distanceFromLatLonInKm(p, location);
+//       if (closestDistance == -1 || closestDistance > d) {
+//         closestDistance = d;
+//         if (d > threshold) {
+//           currentAnimate = 1; // Getting far from path
+//           closestPoint = p;
+//         } else if (distanceFromLatLonInKm(points[i], points[targetIndex]) < distanceFromLatLonInKm(points[i + 1], points[targetIndex])) {
+//           closestPoint = points[i];
+//         } else {
+//           currentAnimate = 2; // Getting to point
+//           closestPoint = points[i + 1];
+//         }
+//       }
+//     }
+//   }
+
+//   return { currentAnimate, closestPoint };
+// };
 
 /**
  *

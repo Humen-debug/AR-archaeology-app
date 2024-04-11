@@ -1,10 +1,9 @@
 import { GeoPoint } from "@/models";
-import { degBetweenPoints } from "@/plugins/geolocation";
+import { degBetweenPoints, transformGpsToAR } from "@/plugins/geolocation";
 import {
   Viro3DObject,
   ViroAmbientLight,
   ViroARScene,
-  ViroARTrackingReasonConstants,
   ViroBox,
   ViroCameraTransform,
   ViroFlexView,
@@ -15,8 +14,8 @@ import {
   ViroTrackingState,
   ViroTrackingStateConstants,
 } from "@viro-community/react-viro";
-import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
-import { createRef, useCallback, useMemo, useRef, useState } from "react";
+import { Viro3DPoint, ViroRotation } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
+import { createRef, useCallback, useMemo, useRef } from "react";
 import * as Vector from "@/plugins/vector";
 import moment from "moment";
 import { useARLocation } from "@/providers/ar_location_provider";
@@ -42,9 +41,16 @@ export interface ARExploreProps {
   comments?: Comment[];
 }
 
+interface ViroOrientation {
+  position: Viro3DPoint;
+  rotation: ViroRotation;
+  forward: Viro3DPoint;
+  up: Viro3DPoint;
+}
+
 export default function ARExplorePage(props?: Props<ARExploreProps>) {
   const { targetPoint, calPoint, calTarget, addComment, comments } = props?.arSceneNavigator?.viroAppProps ?? {};
-  const { speed, position, setPosition } = useARLocation();
+  const { speed, position, setPosition, initLocation, location, initHeading } = useARLocation();
   const sceneRef = createRef<ViroARScene>();
 
   function handleError(event) {
@@ -53,35 +59,64 @@ export default function ARExplorePage(props?: Props<ARExploreProps>) {
 
   const init = useRef(false);
   const prePosition = useRef<Viro3DPoint>([0, 0, 0]);
+  const preTimeStamp = useRef<Date>(new Date());
+  // const preConsoleTimeStamp = useRef<Date>(new Date());
   const degree = calTarget ? degBetweenPoints(position, calTarget) : 180;
 
   // In viro space, object distance larger than 60m will likely not appear on screen
-  const distance = useMemo(() => (calPoint ? Math.round(Vector.distance(calPoint, position)) : 1), [calPoint, position]);
-  const targetDistance = useMemo(() => (calTarget ? Math.round(Vector.distance(calTarget, position)) : -1), [calTarget, position]);
+  const distance = useMemo(() => (calPoint ? Math.max(1, Math.round(Vector.distance(calPoint, position))) : 1), [calPoint, position]);
+  const targetDistance = useMemo(() => (calTarget ? Math.max(1, Math.round(Vector.distance(calTarget, position))) : 1), [calTarget, position]);
   const targetScale = targetDistance > 10 ? 10 : targetDistance;
   const showDesc = calTarget && targetDistance <= 25 && targetPoint?.desc;
 
   /** Important to add initialized checking because Viro space needs real-world alignment before rending objects. */
-  const _onInitialized = (state: ViroTrackingState, reason: ViroTrackingReason) => {
-    if (state === ViroTrackingStateConstants.TRACKING_NORMAL && reason === ViroARTrackingReasonConstants.TRACKING_REASON_NONE) {
-      if (init.current) return;
-      init.current = true;
-    }
-    if (state === ViroTrackingStateConstants.TRACKING_UNAVAILABLE) {
-      // TODO urge user to update camera tracking
+  const _onTrackingUpdated = (state: ViroTrackingState, reason: ViroTrackingReason) => {
+    switch (state) {
+      case ViroTrackingStateConstants.TRACKING_NORMAL:
+        if (!init.current) {
+          init.current = true;
+        }
+        break;
+      default:
+        // in case the camera is off-tracked
+        if (init.current) {
+          console.log("camera off-tracked, try replace position with transform from GPS to AR ");
+          // try place the route object based on the geolocation of the device
+          try {
+            const pos = transformGpsToAR(initLocation, location, initHeading);
+            if (pos) {
+              setPosition(pos);
+            }
+          } catch (error) {
+            console.log("not available to transform location to AR space");
+          }
+        }
+        break;
     }
   };
 
-  const _onCameraTransformed = useCallback((cameraTransform: ViroCameraTransform) => {
-    const { position: cameraPos } = cameraTransform;
-    const distance = Vector.distance(cameraPos, prePosition.current);
+  const _onCameraTransformed = (cameraTransform: ViroCameraTransform) => {
+    if (!init.current) return;
 
-    // Filter distance delta smaller than speed(i.e. meters per second) in order to lift burden of React native
-    if (distance >= (speed < 0.5 ? 0.5 : speed)) {
+    const { position: cameraPos, rotation } = cameraTransform;
+
+    const distance = Vector.distance(cameraPos, prePosition.current);
+    const now = new Date();
+    const secondDiff = (now.getTime() - preTimeStamp.current.getTime()) / 1000;
+
+    // if ((now.getTime() - preConsoleTimeStamp.current.getTime()) / 1000 > 2) {
+    //   console.log("rotY:", rotation[1]);
+    //   preConsoleTimeStamp.current = now;
+    // }
+
+    // Filter distance delta smaller than speed(i.e. meters per second) in order to lift burden of render
+    if (Math.floor(distance) > speed && secondDiff > 0) {
       setPosition(cameraPos);
+
       prePosition.current = cameraPos;
+      preTimeStamp.current = now;
     }
-  }, []);
+  };
 
   const _onSceneClicked = useCallback(
     (position: Viro3DPoint) => {
@@ -132,7 +167,7 @@ export default function ARExplorePage(props?: Props<ARExploreProps>) {
   }, [comments]);
 
   return (
-    <ViroARScene onTrackingUpdated={_onInitialized} onCameraTransformUpdate={_onCameraTransformed} onClick={_onSceneClicked} ref={sceneRef}>
+    <ViroARScene onTrackingUpdated={_onTrackingUpdated} onCameraTransformUpdate={_onCameraTransformed} onClick={_onSceneClicked} ref={sceneRef}>
       <ViroAmbientLight intensity={2000} color={"white"} />
 
       {init.current && (
@@ -145,19 +180,18 @@ export default function ARExplorePage(props?: Props<ARExploreProps>) {
                 length={0.1}
                 width={0.6}
                 scalePivot={[0, 0, -0.05]}
-                scale={[1, 1, distance > 20 ? 20 * 10 : distance * 10]}
+                scale={[1, 1, targetDistance > 20 ? 20 * 10 : targetDistance * 10]}
                 materials={"path"}
                 position={[position[0], position[1] - 1, position[2]]}
                 rotation={[0, degree, 0]}
               />
               {(!calTarget || !Vector.equal(calPoint, calTarget)) && (
                 <ViroNode position={calPoint}>
-                  <ViroText text="Waypoint" color={"#fff"} transformBehaviors={["billboardY"]} position={[0, 1, 0]} />
                   <Viro3DObject
                     source={require("@assets/models/location_pin/object.obj")}
                     type="OBJ"
                     transformBehaviors={["billboardY"]}
-                    materials={"pin"}
+                    materials={"waypoint"}
                     onError={handleError}
                   />
                 </ViroNode>
@@ -167,14 +201,14 @@ export default function ARExplorePage(props?: Props<ARExploreProps>) {
           {calTarget && (
             <ViroNode position={calTarget}>
               {showDesc && (
-                <ViroFlexView height={1} width={3.5} position={[0, 1, 0]} style={{ backgroundColor: "#FFF" }} transformBehaviors={["billboardY"]}>
-                  <ViroText
-                    style={{ flex: 1 }}
-                    textLineBreakMode="CharWrap"
-                    textClipMode="None"
-                    color={"#000"}
-                    text={targetPoint ? targetPoint?.desc || "" : ""}
-                  />
+                <ViroFlexView
+                  height={1}
+                  width={3.5}
+                  position={[0, targetScale / 2, 0]}
+                  style={{ backgroundColor: "#FFF", paddingHorizontal: 0.1, paddingVertical: 0.05 }}
+                  transformBehaviors={["billboardY"]}
+                >
+                  <ViroText style={{ flex: 1 }} textLineBreakMode="CharWrap" textClipMode="None" color={"#000"} text={targetPoint?.desc || ""} />
                 </ViroFlexView>
               )}
               <Viro3DObject
@@ -209,5 +243,9 @@ ViroMaterials.createMaterials({
   pin: {
     lightingModel: "Constant",
     diffuseColor: "#D81C1C",
+  },
+  waypoint: {
+    lightingModel: "Constant",
+    diffuseColor: "#1CD8D2",
   },
 });

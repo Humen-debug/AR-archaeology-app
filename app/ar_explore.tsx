@@ -1,7 +1,7 @@
 import { ViroARSceneNavigator } from "@viro-community/react-viro";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { MainBody, IconBtn, ARExploreProps, ARExploreScene, CommentDialog, ExploreComment } from "@components";
-import { ChevronLeftIcon, ArrowUpIcon, CircleTickIcon, AddCommentIcon } from "@components/icons";
+import { MainBody, IconBtn, ARExploreProps, ARExploreScene, CommentDialog, ExploreComment, HeadingIndicator } from "@components";
+import { ChevronLeftIcon, CircleTickIcon, AddCommentIcon } from "@components/icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, useEffect, createRef, useCallback, useRef, useMemo } from "react";
 import { View, StyleSheet, useWindowDimensions, Platform, Image } from "react-native";
@@ -11,7 +11,7 @@ import MapView, { LatLng, Marker } from "react-native-maps";
 import Animated, { Easing, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { AppTheme, useAppTheme } from "@providers/style_provider";
-import { distanceFromLatLonInKm, bearingBetweenTwoPoints, getNextPoint, isNear, transformGpsToAR, transformARToGps } from "@/plugins/geolocation";
+import { distanceFromLatLonInKm, bearingBetweenTwoPoints, getNextPoint, isNear, transformGpsToAR, latLongWithinRange } from "@/plugins/geolocation";
 import { ArComment, GeoPoint } from "@/models";
 import { Paginated, useFeathers } from "@/providers/feathers_provider";
 import { Viro3DPoint } from "@viro-community/react-viro/dist/components/Types/ViroUtils";
@@ -25,13 +25,18 @@ const MAP_HEIGHT = 200;
 const TOP_PADDING = ICON_BUTTON_SIZE + 34;
 const DISTANCE_CONTAINER_H = 50;
 
-export const ALERT_DISTANCE = 50;
+export const ALERT_DISTANCE = 25;
+const COMMENT_FETCH_RADIUS = 2.5;
+
+type Comment = ArComment & { position?: Viro3DPoint };
+
 function ARExplorePage() {
   const feathers = useFeathers();
   const { user } = useAuth();
   const authenticated = !!(user && user._id);
 
-  const { initLocation, initHeading, location, heading, speed, position, cameraReady, indoor } = useARLocation();
+  const { initLocation, initHeading, location, heading, headingAccuracy, speed, position, cameraReady, indoor } = useARLocation();
+  const preLocation = useRef<LatLng | undefined>(location);
 
   // style const
   const { theme } = useAppTheme();
@@ -68,12 +73,12 @@ function ARExplorePage() {
   const { targetId = "0", idString, service = "locations" } = useLocalSearchParams<{ targetId: string; idString: string; service: string }>();
 
   // geo locations and viro coordinates
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [points, setPoints] = useState<GeoPoint[]>([]);
   const [targetIndex, setTargetIndex] = useState(parseInt(targetId));
   const targetPoint = points.length > 0 ? points[targetIndex] : undefined;
 
   const [arrived, setArrived] = useState(false);
-  const [arNear, setARnear] = useState(false);
 
   const [nearestPoint, setNearestPoint] = useState<LatLng>();
 
@@ -84,30 +89,23 @@ function ARExplorePage() {
   const calPoint = useMemo(() => computePoint(transformGpsToAR(location, nearestPoint, initHeading)), [location, initHeading, nearestPoint]);
   const calTarget = useMemo(() => computePoint(transformGpsToAR(location, targetPoint, initHeading)), [location, initHeading, points, targetIndex]);
 
-  const [comments, setComments] = useState<ExploreComment[]>([]);
-
-  const [comment, setComment] = useState("");
-  const [commentDialog, setCommentDialog] = useState(false);
-  const addingComment = comment.length > 0;
-  const [uploadingComment, setUploadingComment] = useState(false);
-
   // const
   const isAndroid: boolean = Platform.OS === "android";
   const mapRef = createRef<MapView>();
 
-  const convertComment = ({ content, user, createdAt, ...comment }: ArComment) => ({
+  const convertComment = ({ content, user, createdAt, position, ...comment }: Comment) => ({
     content,
-    position: transformGpsToAR(initLocation, comment, initHeading),
-    user:
-      typeof user === "object"
-        ? user.username
-          ? user.username
-          : user.firstName && user.lastName
-          ? `${user.firstName} ${user.lastName}`
-          : "User"
-        : "Anonymous",
+    position: position || computePoint(transformGpsToAR(location, comment, initHeading)),
+    user: typeof user === "object" ? user.username || (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : "User") : "Anonymous",
     createdAt,
   });
+
+  const [comments, setComments] = useState<Comment[]>([]);
+  const commentPoints = useMemo(() => comments.map(convertComment), [comments, location, initHeading]);
+  const [comment, setComment] = useState("");
+  const [commentDialog, setCommentDialog] = useState(false);
+  const addingComment = comment.length > 0;
+  const [uploadingComment, setUploadingComment] = useState(false);
 
   const fetchData = async () => {
     const points: GeoPoint[] = [];
@@ -131,26 +129,52 @@ function ARExplorePage() {
     }
 
     setPoints(points);
-    total = 1;
+  };
+
+  const fetchComments = async () => {
+    if (!location) return;
+    var total = 1;
     const comments: ArComment[] = [];
     while (total > comments.length) {
+      const range = latLongWithinRange(location, COMMENT_FETCH_RADIUS);
+
       const results: Paginated<ArComment> = await feathers.service("arComments").find({
         query: {
           $populate: ["user"],
           $skip: comments.length,
+          latitude: {
+            $lte: range.maxLatitude,
+            $gte: range.minLatitude,
+          },
+          longitude: {
+            $lte: range.maxLongitude,
+            $gte: range.minLongitude,
+          },
         },
       });
       if (total != results.total) total = results.total;
       if (results.total === 0 || results.data.length === 0) break;
       comments.push(...results.data);
     }
-    const commentPoints: ExploreComment[] = comments.map(convertComment);
-    setComments(commentPoints);
+
+    setComments(comments);
   };
 
   useEffect(() => {
-    fetchData();
+    try {
+      fetchData();
+    } finally {
+      setDataLoaded(true);
+    }
   }, []);
+  // init heading and location are required in mapping comments' positions
+  useEffect(() => {
+    if (!!!initHeading || !location) return;
+    if (!preLocation.current || distanceFromLatLonInKm(preLocation.current, location) > COMMENT_FETCH_RADIUS) {
+      fetchComments();
+      preLocation.current = location;
+    }
+  }, [initHeading, location]);
 
   /** Watch update of location */
   useEffect(() => {
@@ -184,7 +208,6 @@ function ARExplorePage() {
       setTargetIndex((index) => index + 1);
     }
     setArrived(false);
-    setARnear(false);
   };
 
   const placeMarkers = useCallback(() => {
@@ -211,15 +234,17 @@ function ARExplorePage() {
         return Math.round((360 - bearing - heading) % 360);
       }
     }
-    return Math.round(bearing);
+    return Math.round(bearing % 360);
   };
 
   const getNearestDistance = () => {
     if (!targetPoint || !location) return undefined;
     // convert km to m
     const distance = distanceFromLatLonInKm(location, targetPoint) * 1000;
-    console.log("reality distance:", distance);
-    if (distance > 99) {
+    // console.log("reality distance:", distance);
+    if (distance > 199) {
+      return ">200m";
+    } else if (distance > 99) {
       return ">100m";
     } else if (distance > 49) {
       return ">50m";
@@ -237,7 +262,7 @@ function ARExplorePage() {
   const addComment = useCallback(
     async (position: Viro3DPoint) => {
       if (!user?._id || uploadingComment || !comment.length) return;
-      const location = transformARToGps(initLocation, position, initHeading);
+
       if (!location) return;
       const data: ArComment = {
         user: user?._id,
@@ -248,18 +273,12 @@ function ARExplorePage() {
       };
       try {
         setUploadingComment(true);
-        console.log(data);
-        let result: ArComment = await feathers.service("arComments").create(data);
+
+        let result: Comment = await feathers.service("arComments").create(data);
         if (result) {
           result.user = user;
-          console.log(
-            "position compare:",
-            position,
-            transformGpsToAR(initLocation, data, initHeading),
-            computePoint(transformGpsToAR(location, data, initHeading))
-          );
-          const comment = { ...convertComment(result), position };
-          setComments((comments) => [comment, ...comments]);
+          result.position = position;
+          setComments((comments) => [result, ...comments]);
         }
       } catch (error) {
         console.warn(error);
@@ -273,15 +292,16 @@ function ARExplorePage() {
 
   const degree = useMemo(computeBearingDiff, [location, nearestPoint, heading, initHeading]);
   const distanceText = useMemo(getNearestDistance, [location, points, targetIndex]);
-  const loading: boolean = !(location && initHeading);
+  const geoLoading: boolean = !(location && initHeading);
+  const loading: boolean = geoLoading || !cameraReady || !dataLoaded;
 
   return (
     <MainBody>
-      {loading || !cameraReady ? (
+      {loading ? (
         <View style={[style.centerContainer, { backgroundColor: theme.colors.secondary }]}>
           <View style={style.loadingCard}>
             <View style={style.columnCenterLayout}>
-              {loading ? (
+              {geoLoading || !dataLoaded ? (
                 !location ? (
                   <>
                     <ActivityIndicator size={"large"} animating={true} />
@@ -326,12 +346,12 @@ function ARExplorePage() {
             viroAppProps={
               {
                 targetPoint,
-                setARnear,
+
                 calTarget,
                 calPoint,
                 speed,
                 addComment,
-                comments,
+                comments: commentPoints,
               } as ARExploreProps
             }
           />
@@ -352,7 +372,7 @@ function ARExplorePage() {
         ]}
       >
         <IconBtn icon={<ChevronLeftIcon fill={theme.colors.text} />} size={ICON_BUTTON_SIZE} onPress={() => router.back()} />
-        {authenticated && (
+        {!loading && authenticated && (
           <IconBtn icon={<AddCommentIcon fill={theme.colors.text} />} size={ICON_BUTTON_SIZE} onPress={() => setCommentDialog(true)} />
         )}
       </View>
@@ -363,10 +383,10 @@ function ARExplorePage() {
               style={[{ width: "100%", paddingHorizontal: theme.spacing.lg, justifyContent: "center", columnGap: theme.spacing.xs }, style.rowLayout]}
             >
               {uploadingComment && <ActivityIndicator size={"small"} />}
-              <Text variant={(arNear || arrived) && !addingComment ? "titleMedium" : "labelMedium"} style={{ color: "white", textAlign: "center" }}>
+              <Text variant={arrived && !addingComment ? "titleMedium" : "labelMedium"} style={{ color: "white", textAlign: "center" }}>
                 {addingComment
                   ? "Tap on screen to leave your comment"
-                  : arNear || arrived
+                  : arrived
                   ? `Congrats! You've arrived ${targetPoint?.name || `${targetIndex + 1} Stop`}!`
                   : "Please follow the direction on the bottom navigation"}
               </Text>
@@ -375,7 +395,12 @@ function ARExplorePage() {
           {!!distanceText && (
             <View style={[style.distanceContainer, { top: safeTop + TOP_PADDING }]}>
               <View style={[style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
-                <ArrowUpIcon fill={theme.colors.text} style={{ transform: [{ rotate: `${degree}deg` }], width: 24, height: 24 }} />
+                <HeadingIndicator
+                  rotateDegree={degree}
+                  degree={headingAccuracy > 2 ? 20 : headingAccuracy > 1 ? 35 : 50}
+                  stroke={theme.colors.primary}
+                  arrowColor={theme.colors.text}
+                />
                 <View style={style.columnLayout}>
                   <Text>Destination</Text>
                   <Text>{distanceText}</Text>
@@ -389,7 +414,7 @@ function ARExplorePage() {
               <TouchableHighlight onPress={handleMapPressed} activeOpacity={1}>
                 <MapView
                   ref={mapRef}
-                  style={style.miniMap}
+                  style={style.fill}
                   region={{ ...location, latitudeDelta: 0.05, longitudeDelta: 0.05 }}
                   showsUserLocation={true}
                   showsCompass={true}
@@ -407,30 +432,7 @@ function ARExplorePage() {
             </Animated.View>
           )}
 
-          {__DEV__ && location && (
-            <View
-              style={[
-                style.distanceContainer,
-                {
-                  top: safeTop + DISTANCE_CONTAINER_H + TOP_PADDING + (mapExpand ? 0 : MINI_MAP_HEIGHT + theme.spacing.md),
-                  height: 150,
-                },
-              ]}
-            >
-              <View style={[style.rowLayout, { padding: theme.spacing.xs, gap: theme.spacing.sm }]}>
-                <View style={style.columnLayout}>
-                  <Text variant="bodySmall">lat:{location.latitude}</Text>
-                  <Text variant="bodySmall">lon:{location.longitude}</Text>
-                  <Text variant="bodySmall">speed:{speed} m/s</Text>
-                  <Text variant="bodySmall">init heading:{initHeading || 0}</Text>
-                  <Text variant="bodySmall">heading:{heading}</Text>
-                  <Text variant="bodySmall">bearing diff: {degree}</Text>
-                </View>
-              </View>
-            </View>
-          )}
-
-          {(arNear || arrived) && targetIndex < points.length - 1 && (
+          {arrived && targetIndex < points.length - 1 && (
             <View style={{ position: "absolute", bottom: theme.spacing.lg, right: theme.spacing.lg }}>
               <Button
                 mode="contained"
@@ -542,7 +544,7 @@ const useStyle = ({ theme }: { theme: AppTheme }) =>
       borderWidth: 2,
       overflow: "hidden",
     },
-    miniMap: {
+    fill: {
       height: "100%",
       width: "100%",
     },
