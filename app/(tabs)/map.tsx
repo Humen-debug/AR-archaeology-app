@@ -267,7 +267,7 @@ const useStyle = ({ spacing, screenWidth }: { spacing: any; screenWidth: number 
       bottom: 86 + spacing.md,
     },
     listContainer: {
-      paddingHorizontal: (screenWidth - ITEM_WIDTH) / 2,
+      paddingHorizontal: Math.round((screenWidth - ITEM_WIDTH) / 2),
     },
     buttonsContainer: {
       position: "absolute",

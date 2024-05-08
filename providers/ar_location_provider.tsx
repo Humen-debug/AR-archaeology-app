@@ -23,7 +23,7 @@ interface Props {
 const ARLocationStore = createContext<ARLocationContext | null>(null);
 
 const DISTANCE_INTERVAL = 20;
-// optimal value is 5. 10 is for area with tall-buildings around.
+//  Theoretical the best value is 2.5. optimal value is 5. 10 is for area with tall-buildings around.
 //  around 20 is for indoor
 const GPS_ERROR_MARGIN = 5;
 const TIME_INTERVAL = 1 * 1000;
@@ -139,7 +139,7 @@ export function ARLocationProvider({ children }: Props) {
   }, []);
 
   useEffect(() => {
-    if (!(initHeading && location)) return;
+    if (!(initHeading && location) || cameraReady) return;
     // End animate after 10 sec
     var timer = setTimeout(() => {
       if (!cameraReady) {

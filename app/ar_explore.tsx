@@ -167,6 +167,7 @@ function ARExplorePage() {
       setDataLoaded(true);
     }
   }, []);
+
   // init heading and location are required in mapping comments' positions
   useEffect(() => {
     if (!!!initHeading || !location) return;
