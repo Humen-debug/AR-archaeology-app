@@ -1,14 +1,13 @@
-# XR-archaeology
+# Sharing the Past with the Public: Augmented Reality User Experience at Archaeological Site
 
-2023-2024 FYP in collaboration with Ararat Plain Southeast Archaeological Project
+Sharing the Past is 2023-2024 HKU FYP in collaboration with Ararat Plain Southeast Archaeological Project. [More info here](https://wp2023.cs.hku.hk/fyp23051/)
+Developers write in Expo with React Native, and Viro for AR development across all mobile platforms. For better type annotation, typescript was applied.
 
 ## Pre-requisites
 
-This project uses Expo for React Native. Ensure your node version is lower than 17 because the Expo Cli in this project does not support Node version 17+. You can use [Node Version Manager (nvm)](https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/). To use the packages provided by Expo, please install them by running `yarn`.
+Ensure your node version is lower than 17 because the Expo Cli in this project does not support Node version 17+. You can use [Node Version Manager (nvm)](https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/). To use the packages provided by Expo, please install them by running `yarn`.
 
-For better type annotation, typescript is recommended.
-
-## To begin the app [DEV]
+## Instructions for running app [DEV]
 
 - Run `nvm use 16.xx.x` for node version configuration, if your current node version is larger or equal to 17.
 - Run `yarn` for install packages.
@@ -43,8 +42,8 @@ For better type annotation, typescript is recommended.
 
 ## Package versions
 
-NOTE:
-
 - package: `expo-three-orbit-controls` on github is using outdated version of `three@0.108`. To solve the code conflict, an update is made by using `package-patch`.
 
 - If you want to run the app with a database that already had official data, please contact @Humen-debug to get the public API url.
+
+## Sample Overview
