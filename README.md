@@ -49,16 +49,16 @@ Node version is lower than 17 because the Expo Cli in this project does not supp
 
 ## Sample Overview
 
-<img src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/1e0d045f-a1e3-4ad8-9a31-bc7277081bee.png" data-canonical-src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/1e0d045f-a1e3-4ad8-9a31-bc7277081bee.png" width="33%" alt="POI_selection"/>
-<img src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/ce90798f-7193-415f-876b-1f7d7b2add05" data-canonical-src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/ce90798f-7193-415f-876b-1f7d7b2add05" width="33%" alt="AR_travel"/>
-<img width="33%" alt="arrival" src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/fa0b0fd2-6b37-4212-a17a-87aaf2f587e5">
+<img src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/1e0d045f-a1e3-4ad8-9a31-bc7277081bee.png" data-canonical-src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/1e0d045f-a1e3-4ad8-9a31-bc7277081bee.png" width="30%" alt="POI_selection"/>
+<img src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/ce90798f-7193-415f-876b-1f7d7b2add05" data-canonical-src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/ce90798f-7193-415f-876b-1f7d7b2add05" width="30%" alt="AR_travel"/>
+<img width="30%" alt="arrival" src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/fa0b0fd2-6b37-4212-a17a-87aaf2f587e5">
 <br/>
 AR travel directs the user to the points of interest on the selected route.
 <br/>
 
-<img width="33%" src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/51ee891f-0d39-4d9c-b833-5ae900c16e6e"/>
-<img width="33%" src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/ef406331-694d-4812-bcd2-08980947a3c1"/>
-<img width="33%" src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/9ff9306f-b15c-48e2-b226-f6a7a2806324"/>
+<img width="30%" src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/51ee891f-0d39-4d9c-b833-5ae900c16e6e"/>
+<img width="30%" src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/ef406331-694d-4812-bcd2-08980947a3c1"/>
+<img width="30%" src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/9ff9306f-b15c-48e2-b226-f6a7a2806324"/>
 <br/>
 Explore attractions in Vedi River Valley.
 <br/>
