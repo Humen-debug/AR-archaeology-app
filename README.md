@@ -24,8 +24,9 @@ Sharing the Past is an augmented reality (AR) app designed to enhance your exper
 
 ## 🚀 Run locally
 
-- Node version is lower than 17 because the Expo Cli in this project does not support Node version 17+. You can use [Node Version Manager (nvm)](https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/).
-- The app has been migrated from Realm api to our own [server and apis](https://github.com/Humen-debug/XR-archaeology-server/tree/main). Before running the app, please create a `.env` file and configure the server api uri as `EXPO_PUBLIC_API_URL`. After running the server, the connection URI should be your **hosting device IP with port _3002_**.
+> [!IMPORTANT]
+> - Node version is lower than 17 because the Expo Cli in this project does not support Node version 17+. You can use [Node Version Manager (nvm)](https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/).
+> - The app has been migrated from Realm api to our own [server and apis](https://github.com/Humen-debug/XR-archaeology-server/tree/main). Before running the app, please create a `.env` file and configure the server api uri as `EXPO_PUBLIC_API_URL`. After running the server, the connection URI should be your **hosting device IP with port _3002_**.
 
 1. Clone this project to your local environment
 ```
@@ -51,11 +52,10 @@ or
 yarn ios
 ```
 
-#### Remarks
-
-- `yarn start` has been duplicated by the `yarn android` and `yarn ios` because ViroReact does not support the Expo Go client.
-- if you are developing using Android, after running `yarn clean`, please rollback the Android Linking of ViroReact in the `android` directory, by the [ViroReact Installation Instructions](https://viro-community.readme.io/docs/installation-instructions), or using source controls in Git to revert the changes in `android` directory.
-- If you want to run the app with a database with official data, don't hesitate to contact @Humen-debug to get the public API URL.
+> [!NOTE]
+> - `yarn start` has been duplicated by the `yarn android` and `yarn ios` because ViroReact does not support the Expo Go client.
+> - if you are developing using Android, after running `yarn clean`, please rollback the Android Linking of ViroReact in the `android` directory, by the [ViroReact Installation Instructions](https://viro-community.readme.io/docs/installation-instructions), or using source controls in Git to revert the changes in `android` directory.
+> - If you want to run the app with a database with official data, don't hesitate to contact @Humen-debug to get the public API URL.
 
 ## Development
 
@@ -84,7 +84,7 @@ yarn ios
 
 #### 🧩 Built-with
 
-- TypeScript - Statically typed superset of JavaScript
+- [TypeScript](https://www.typescriptlang.org/) - Statically typed superset of JavaScript
 - [Expo](https://expo.dev/) - Open-source platform providing variety of packages and allowing easy deployment
 - [React Native](https://reactnative.dev/) - Frontend framework for creating reusable components
 - [ViroReact](https://viro-community.readme.io/docs/overview) - Library for buiding AR and VR experience
