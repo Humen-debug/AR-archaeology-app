@@ -18,15 +18,16 @@ Sharing the Past is an augmented reality (AR) app designed to enhance your exper
 ### Other features
 
 - Authentication (login / sign up with email & password)
-- Update user profiles and preference in the settings
+- Update user profiles and preferences in the settings
 - Dark mode toggle with local storage save
 - Clean, accessible and responsive UI across all screens
 
 ## 🚀 Run locally
 
 > [!IMPORTANT]
-> - Node version is lower than 17 because the Expo Cli in this project does not support Node version 17+. You can use [Node Version Manager (nvm)](https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/).
-> - The app has been migrated from Realm api to our own [server and apis](https://github.com/Humen-debug/XR-archaeology-server/tree/main). Before running the app, please create a `.env` file and configure the server api uri as `EXPO_PUBLIC_API_URL`. After running the server, the connection URI should be your **hosting device IP with port _3002_**.
+> - Node version is lower than 17 because the Expo Cli in this project does not support Node version 17+. You can use [Node Version Manager (nvm)](https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/) to manage the node version on your local machine.
+> - The app has been migrated from Realm api to our servers and APIs. If you want to use the app with functionality, you also need to run the [backend](https://github.com/Humen-debug/XR-archaeology-server/)
+> - Before running the app, please create a `.env` file and configure the server api uri as `EXPO_PUBLIC_API_URL`. After running the server, the connection URI should be your **hosting device IP with port _3002_** or the public URI set in `yarn public`.
 
 1. Clone this project to your local environment
 ```
@@ -85,9 +86,9 @@ yarn ios
 #### 🧩 Built-with
 
 - [TypeScript](https://www.typescriptlang.org/) - Statically typed superset of JavaScript
-- [Expo](https://expo.dev/) - Open-source platform providing variety of packages and allowing easy deployment
+- [Expo](https://expo.dev/) - Open-source platform providing a variety of packages and allowing easy deployment
 - [React Native](https://reactnative.dev/) - Frontend framework for creating reusable components
-- [ViroReact](https://viro-community.readme.io/docs/overview) - Library for buiding AR and VR experience
+- [ViroReact](https://viro-community.readme.io/docs/overview) - Library for building AR and VR experience
 - [Feathers.js](https://feathersjs.com/) - Framework for creating APIs and real-time application
 - [Three.js](https://threejs.org/) - Library to create lightweight, cross-browser 3D environment
 
