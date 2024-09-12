@@ -1,27 +1,26 @@
-# Sharing the Past with the Public: Augmented Reality User Experience at Archaeological Site
+<p align=center> <b>Sharing the Past with the Public: Augmented Reality User Experience at Archaeological Site</b> </p>
 
 ## 💡Overview: [More info here](https://wp2023.cs.hku.hk/fyp23051/)
 
 Sharing the Past is an augmented reality (AR) app designed to enhance your experience at archaeological sites, particularly in the stunning Vedi River Valley, Armenia. 2023-2024 HKU FYP in collaboration with the Ararat Plain Southeast Archaeological Project ([APSAP](https://hdt.arts.hku.hk/apsap-project)). 
 
-## 👀 Demo
+## ✨ Features
 
-Developers write in Expo with React Native and Viro for AR development across all mobile platforms.
+| 👀 Demo | 📝 Description |
+| :---: | --- |
+| ![FYP_img2](https://github.com/user-attachments/assets/08dc5f3a-3997-459b-9221-487b2e24ccb0) | Our app uses your smartphone’s GPS and magnetometer to guide you through the valley, offering a first-person perspective that makes exploring feel like a true adventure |
+| ![distance](https://github.com/user-attachments/assets/7c46431f-9a8a-4b30-bd0f-a9d16f341e9a) | Our app ensures you stay on track with real-time updates on your location and orientation |
+| <img width="50%" alt="trigger" src="https://github.com/user-attachments/assets/e8cc40a8-24b9-4ac9-9a4a-f07a6e31c03e"> | Trigger pop-up information windows that provide fascinating details about landmarks, history, and cultural heritage |
+| ![comments](https://github.com/user-attachments/assets/56386599-d9f3-4cf4-a8d0-3827486b9b8e) | The app allows users to leave comments and feedback on different attractions, fostering a sense of community among explorers |
+| ![Final FYP-- AR at Armenia](https://github.com/user-attachments/assets/90469273-c4eb-4c81-91b4-b781ab56652e) | Cloud-based syncing of the latest information of the sites to promote sustainable tourism |
 
-<img src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/1e0d045f-a1e3-4ad8-9a31-bc7277081bee.png" data-canonical-src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/1e0d045f-a1e3-4ad8-9a31-bc7277081bee.png" width="30%" alt="POI_selection"/>
-<img src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/ce90798f-7193-415f-876b-1f7d7b2add05" data-canonical-src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/ce90798f-7193-415f-876b-1f7d7b2add05" width="30%" alt="AR_travel"/>
-<img width="30%" alt="arrival" src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/fa0b0fd2-6b37-4212-a17a-87aaf2f587e5">
-<br/>
-AR travel directs the user to the points of interest on the selected route.
-<br/>
 
-<img width="30%" src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/51ee891f-0d39-4d9c-b833-5ae900c16e6e"/>
-<img width="30%" src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/ef406331-694d-4812-bcd2-08980947a3c1"/>
-<img width="30%" src="https://github.com/Humen-debug/XR-archaeology-app/assets/70459494/9ff9306f-b15c-48e2-b226-f6a7a2806324"/>
-<br/>
-Explore attractions in Vedi River Valley.
-<br/>
+### Other features
 
+- Authentication (login / sign up with email & password)
+- Update user profiles and preference in the settings
+- Dark mode toggle with local storage save
+- Clean, accessible and responsive UI across all screens
 
 ## 🚀 Run locally
 
@@ -52,7 +51,7 @@ or
 yarn ios
 ```
 
-### Remarks
+#### Remarks
 
 - `yarn start` has been duplicated by the `yarn android` and `yarn ios` because ViroReact does not support the Expo Go client.
 - if you are developing using Android, after running `yarn clean`, please rollback the Android Linking of ViroReact in the `android` directory, by the [ViroReact Installation Instructions](https://viro-community.readme.io/docs/installation-instructions), or using source controls in Git to revert the changes in `android` directory.
@@ -60,7 +59,7 @@ yarn ios
 
 ## Development
 
-### File Structure
+#### 📦 File Structure
 
 <details>
   <summary>Details</summary>
@@ -83,7 +82,17 @@ yarn ios
   ```  
 </details>
 
-### Package versions
+#### 🧩 Built-with
+
+- TypeScript - Statically typed superset of JavaScript
+- [Expo](https://expo.dev/) - Open-source platform providing variety of packages and allowing easy deployment
+- [React Native](https://reactnative.dev/) - Frontend framework for creating reusable components
+- [ViroReact](https://viro-community.readme.io/docs/overview) - Library for buiding AR and VR experience
+- [Feathers.js](https://feathersjs.com/) - Framework for creating APIs and real-time application
+- [Three.js](https://threejs.org/) - Library to create lightweight, cross-browser 3D environment
+
+
+#### 🔧 Package versions
 
 - `expo-three-orbit-controls` on Git Hub uses an outdated version of `three@0.108`. An update is made using `package-patch` to solve the code conflict.
 
